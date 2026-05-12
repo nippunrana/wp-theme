@@ -8,6 +8,13 @@ This file provides the **environmental ground rules** and **project identity** f
 - **Parent Theme**: `EgniTech One` (Folder: `egnitech-one`)
 - **Architecture**: WordPress Full Site Editing (FSE) / Block Theme.
 
+### Theme Metadata (Skill Variables)
+- **THEME_SLUG**: `egnitech-one-child`
+- **THEME_NAME**: `EgniTech One Child`
+- **TEXT_DOMAIN**: `egnitech-one-child`
+- **PARENT_THEME_SLUG**: `egnitech-one`
+- **IS_CHILD**: `true`
+
 ## Child Theme Principles (CRITICAL)
 1. **Parent Protection**: NEVER modify files in the parent theme directory (`egnitech-one`). All work MUST stay within the child theme folder.
 2. **Inheritance & Overrides**: 

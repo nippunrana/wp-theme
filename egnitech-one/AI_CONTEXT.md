@@ -7,6 +7,12 @@ This file provides the **architectural foundation** and **design system rules** 
 - **Role**: Core Foundation / Parent Theme.
 - **Performance Target**: Site-wide assets must remain under **50KB**.
 
+### Theme Metadata (Skill Variables)
+- **THEME_SLUG**: `egnitech-one`
+- **THEME_NAME**: `EgniTech One`
+- **TEXT_DOMAIN**: `egnitech-one`
+- **IS_CHILD**: `false`
+
 ## Core Development Principles
 1. **Child Theme First**: Whenever possible, implement features, templates, or styles in the `egnitech-one-child` theme instead of modifying this core.
 2. **Native-First**: Always prioritize native WordPress block capabilities and `theme.json` settings over custom CSS or PHP workarounds.
