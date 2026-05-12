@@ -1,0 +1,117 @@
+/*
+Theme Name: EgniTech One
+Theme URI: https://egnitech.com/themes/egnitech-one
+Author: Nippun Rana
+Author URI: https://egnitech.com
+Description: A lightweight, blazing-fast WordPress block theme by EgniTech. Features native dark/light mode support, modern typography with Inter, and a clean design system — all under 50 KB. Built for performance and full-site editing.
+Requires at least: 6.7
+Tested up to: 6.9
+Requires PHP: 7.4
+Version: 1.0.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: egnitech-one
+Tags: one-column, custom-colors, custom-menu, custom-logo, editor-style, featured-images, full-site-editing, block-patterns, wide-blocks, block-styles, accessibility-ready, blog, portfolio
+*/
+
+/* ─── Critical base styles ─── */
+
+/* Smooth color transitions for dark/light mode */
+*,
+*::before,
+*::after {
+	transition: background-color 0.25s ease, color 0.15s ease, border-color 0.25s ease;
+}
+
+/* Focus styles */
+:where(.wp-site-blocks *:focus) {
+	outline-width: 2px;
+	outline-style: solid;
+	outline-color: var(--wp--preset--color--accent);
+}
+
+/* Link underline refinement */
+a {
+	text-decoration-thickness: 1px !important;
+	text-underline-offset: 0.15em;
+}
+
+/* Better text wrapping */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+blockquote,
+caption,
+figcaption,
+p {
+	text-wrap: pretty;
+}
+
+/* Smooth scrolling */
+html {
+	scroll-behavior: smooth;
+}
+
+/* Preformatted text overflow */
+:where(pre) {
+	overflow-x: auto;
+}
+
+/* Selection highlight */
+::selection {
+	background-color: var(--wp--preset--color--accent);
+	color: var(--wp--preset--color--base);
+}
+
+/* ─── Header Logo Toggle ─── */
+:root,
+html[data-scheme="light"] {
+	--egnitech-show-light: flex;
+	--egnitech-show-dark: none;
+}
+
+html[data-scheme="dark"] {
+	--egnitech-show-light: none;
+	--egnitech-show-dark: flex;
+}
+
+.egnitech-light-logo {
+	display: var(--egnitech-show-light) !important;
+}
+
+.egnitech-dark-logo {
+	display: var(--egnitech-show-dark) !important;
+}
+
+/* ─── Header Refinement ─── */
+.egnitech-header-logo-container {
+	display: flex;
+	align-items: center;
+	height: 48px;
+}
+
+.egnitech-header-logo-container .egnitech-light-logo img,
+.egnitech-header-logo-container .egnitech-dark-logo img {
+	height: 40px;
+	width: auto;
+	max-width: none;
+	display: block;
+	object-fit: contain;
+}
+
+/* Ensure vertical alignment with toggle */
+.wp-site-blocks .wp-block-group.alignwide {
+	align-items: center;
+}
+
+/* ─── Flexible Sticky Header ─── */
+body.has-fixed-header .wp-site-blocks>header,
+body.has-fixed-header .wp-site-blocks>.wp-block-template-part:first-child {
+	position: sticky;
+	top: 0;
+	z-index: 100;
+	background-color: var(--wp--preset--color--base);
+}

@@ -1,0 +1,19 @@
+/* ─── Editor Styles for Dual Logo System ─── */
+
+/* Ensure the header container still shows both logos nicely in the editor */
+.editor-styles-wrapper .egnitech-header-logo-container {
+	height: auto;
+	padding: 10px 0;
+}
+
+.editor-styles-wrapper .egnitech-light-logo,
+.editor-styles-wrapper .wp-block-image.egnitech-dark-logo {
+	display: block;
+	margin: 10px 0;
+	opacity: 0.8;
+}
+
+.editor-styles-wrapper .egnitech-header-logo-container img {
+	height: 40px;
+	width: auto;
+}

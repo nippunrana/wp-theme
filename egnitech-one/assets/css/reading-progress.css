@@ -1,0 +1,18 @@
+/**
+ * EgniTech One — Reading Progress Bar
+ *
+ * @package EgniTech_One
+ * @since   1.2.0
+ */
+
+.egnitech-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: var(--wp--preset--color--accent, #00D4AA);
+    z-index: 99999;
+    transition: width 0.1s linear;
+    pointer-events: none;
+}

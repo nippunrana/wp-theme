@@ -1,0 +1,1215 @@
+/**
+ * EgniTech One — Theme Options Admin Styles - MODERN REDESIGN
+ *
+ * @package EgniTech_One
+ * @since   1.2.0
+ */
+
+/* ===== CSS Variables (Design System) ===== */
+:root {
+    /* Colors */
+    --egnitech-bg: #f3f4f6;
+    --egnitech-card-bg: rgba(255, 255, 255, 0.7);
+    --egnitech-card-border: rgba(255, 255, 255, 0.4);
+    --egnitech-text-main: #111827;
+    --egnitech-text-muted: #6b7280;
+    --egnitech-primary: #111827;
+    --egnitech-primary-hover: #374151;
+    --egnitech-accent: #00D4AA;
+    --egnitech-accent-glow: rgba(0, 212, 170, 0.2);
+    --egnitech-danger: #ef4444;
+    --egnitech-danger-hover: #b91c1c;
+    --egnitech-success: #10b981;
+    --egnitech-border: #e5e7eb;
+    --egnitech-input-bg: rgba(255, 255, 255, 0.9);
+
+    /* Shadows */
+    --egnitech-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --egnitech-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --egnitech-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    --egnitech-shadow-glow: 0 0 20px var(--egnitech-accent-glow);
+
+    /* Layout & Spacing */
+    --egnitech-radius-lg: 16px;
+    --egnitech-radius-md: 10px;
+    --egnitech-radius-sm: 6px;
+    --egnitech-spacing-xs: 4px;
+    --egnitech-spacing-sm: 8px;
+    --egnitech-spacing-md: 16px;
+    --egnitech-spacing-lg: 24px;
+    --egnitech-spacing-xl: 32px;
+
+    /* Typography */
+    --egnitech-font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --egnitech-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Base Wrapper Reset overriding WP Admin defaults */
+.egnitech-options-wrap {
+    font-family: var(--egnitech-font-sans);
+    color: var(--egnitech-text-main);
+    margin: 20px 20px 0 0;
+    max-width: 1100px;
+}
+
+.egnitech-options-wrap *,
+.egnitech-options-wrap *::before,
+.egnitech-options-wrap *::after {
+    box-sizing: border-box;
+}
+
+.egnitech-options-wrap h1,
+.egnitech-options-wrap h2,
+.egnitech-options-wrap h3,
+.egnitech-options-wrap p {
+    margin: 0;
+}
+
+/* ===== Header Area ===== */
+.egnitech-options-header {
+    margin-bottom: var(--egnitech-spacing-xl);
+    padding: var(--egnitech-spacing-lg) 0;
+}
+
+.egnitech-options-header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--egnitech-text-main);
+    margin-bottom: var(--egnitech-spacing-xs);
+    background: linear-gradient(90deg, #111827 0%, #4b5563 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.egnitech-options-subtitle {
+    font-size: 16px;
+    color: var(--egnitech-text-muted);
+}
+
+/* ===== Main Container Grid ===== */
+.egnitech-options-container {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: var(--egnitech-spacing-xl);
+    align-items: start;
+}
+
+/* ===== Sidebar Navigation ===== */
+.egnitech-options-sidebar {
+    position: sticky;
+    top: 40px;
+    /* Below WP Admin Bar */
+}
+
+.egnitech-options-tabs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--egnitech-spacing-xs);
+}
+
+.egnitech-options-tabs li {
+    margin: 0;
+}
+
+.egnitech-options-tabs a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: var(--egnitech-radius-md);
+    color: var(--egnitech-text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
+}
+
+.egnitech-options-tabs a .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.egnitech-options-tabs a:hover {
+    background: rgba(17, 24, 39, 0.05);
+    color: var(--egnitech-text-main);
+}
+
+.egnitech-options-tabs a.active {
+    background: var(--egnitech-primary);
+    color: white;
+    box-shadow: var(--egnitech-shadow-md);
+}
+
+.egnitech-options-tabs a.active .dashicons {
+    opacity: 1;
+}
+
+/* ===== Content Panels ===== */
+.egnitech-options-content {
+    position: relative;
+}
+
+.egnitech-tab-panel {
+    display: none;
+    animation: fadeUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.egnitech-tab-panel.active {
+    display: block;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Cards (Glassmorphism effect) ===== */
+.egnitech-card {
+    background: var(--egnitech-card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--egnitech-card-border);
+    border-radius: var(--egnitech-radius-lg);
+    box-shadow: var(--egnitech-shadow-sm);
+    margin-bottom: var(--egnitech-spacing-xl);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+.egnitech-card:hover {
+    box-shadow: var(--egnitech-shadow-md);
+}
+
+.egnitech-card-header {
+    padding: var(--egnitech-spacing-lg) var(--egnitech-spacing-xl);
+    border-bottom: 1px solid var(--egnitech-border);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.egnitech-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--egnitech-text-main);
+    margin-bottom: 4px !important;
+}
+
+.egnitech-card-desc {
+    font-size: 14px;
+    color: var(--egnitech-text-muted);
+}
+
+.egnitech-card-body {
+    padding: var(--egnitech-spacing-xl);
+}
+
+/* ===== Option Rows ===== */
+.egnitech-option-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--egnitech-spacing-xl);
+    padding-bottom: var(--egnitech-spacing-xl);
+    margin-bottom: var(--egnitech-spacing-xl);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    align-items: start;
+}
+
+.egnitech-option-row-vertical {
+    grid-template-columns: 1fr;
+    gap: var(--egnitech-spacing-md);
+}
+
+.egnitech-option-row:last-child {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.egnitech-option-info label {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--egnitech-text-main);
+    margin-bottom: 6px;
+}
+
+.egnitech-option-info .description {
+    font-size: 13px;
+    color: var(--egnitech-text-muted);
+    line-height: 1.5;
+    font-style: normal;
+}
+
+/* ===== Controls & Inputs ===== */
+.egnitech-flex-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--egnitech-spacing-md);
+    align-items: center;
+}
+
+/* Modern Input Fields */
+.egnitech-input,
+.egnitech-textarea {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1px solid var(--egnitech-border);
+    border-radius: var(--egnitech-radius-sm);
+    background-color: var(--egnitech-input-bg);
+    color: var(--egnitech-text-main);
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+textarea.egnitech-textarea {
+    max-width: 100%;
+    min-height: 100px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.egnitech-input:focus,
+.egnitech-textarea:focus {
+    outline: none;
+    border-color: var(--egnitech-accent);
+    box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.15);
+    background-color: #fff;
+}
+
+/* Input Suffixes (e.g., px) */
+.egnitech-input-label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--egnitech-text-muted);
+}
+
+.egnitech-input-suffix {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.egnitech-input-suffix .egnitech-input {
+    padding-right: 36px;
+    width: 120px;
+}
+
+.egnitech-input-suffix .suffix-text {
+    position: absolute;
+    right: 12px;
+    color: var(--egnitech-text-muted);
+    font-size: 13px;
+    pointer-events: none;
+}
+
+/* Color Picker Customization */
+.egnitech-color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    padding: 6px 12px 6px 8px;
+    border: 1px solid var(--egnitech-border);
+    border-radius: var(--egnitech-radius-md);
+    box-shadow: var(--egnitech-shadow-sm);
+}
+
+.color-label {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.egnitech-color-field {
+    -webkit-appearance: none;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.egnitech-color-field::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.egnitech-color-field::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+/* Modern Toggle Switch */
+.egnitech-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.egnitech-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.egnitech-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e5e7eb;
+    transition: .3s;
+    border-radius: 24px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.egnitech-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.egnitech-switch input:checked+.egnitech-slider {
+    background-color: var(--egnitech-accent);
+}
+
+.egnitech-switch input:focus+.egnitech-slider {
+    box-shadow: 0 0 1px var(--egnitech-accent), 0 0 0 3px rgba(0, 212, 170, 0.2);
+}
+
+.egnitech-switch input:checked+.egnitech-slider:before {
+    transform: translateX(20px);
+}
+
+.egnitech-range-control {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 400px;
+}
+
+.egnitech-range-input {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    outline: none;
+}
+
+.egnitech-range-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--egnitech-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 0 rgba(17, 24, 39, 0);
+    transition: all 0.2s ease;
+    border: 2px solid #fff;
+}
+
+.egnitech-range-input:hover::-webkit-slider-thumb {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 8px rgba(17, 24, 39, 0.1);
+}
+
+.egnitech-range-input:focus::-webkit-slider-thumb {
+    box-shadow: 0 0 0 8px rgba(0, 212, 170, 0.2);
+}
+
+.egnitech-range-value {
+    min-width: 50px;
+    padding: 6px 12px;
+    background: #f3f4f6;
+    border: 1px solid var(--egnitech-border);
+    border-radius: var(--egnitech-radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--egnitech-text-main);
+    text-align: center;
+}
+
+/* Custom Radio Buttons */
+.egnitech-radio-group {
+    display: flex;
+    gap: var(--egnitech-spacing-md);
+    flex-wrap: wrap;
+}
+
+.egnitech-radio-label {
+    position: relative;
+    cursor: pointer;
+}
+
+.egnitech-radio-label input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.egnitech-radio-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #fff;
+    border: 1px solid var(--egnitech-border);
+    border-radius: var(--egnitech-radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--egnitech-text-main);
+    transition: all 0.2s;
+    box-shadow: var(--egnitech-shadow-sm);
+}
+
+.egnitech-radio-label:hover .egnitech-radio-btn {
+    border-color: #d1d5db;
+    background: #f9fafb;
+}
+
+.egnitech-radio-label input[type="radio"]:checked+.egnitech-radio-btn {
+    background: var(--egnitech-primary);
+    color: #fff;
+    border-color: var(--egnitech-primary);
+    box-shadow: 0 4px 6px -1px rgba(17, 24, 39, 0.1);
+}
+
+/* Radio Button Pill Modifier */
+.egnitech-radio-btn-pill {
+    padding: 8px 20px;
+}
+
+.egnitech-radio-label input[type="radio"]:checked+.egnitech-radio-btn-pill {
+    background: #111827;
+    color: #ffffff;
+    border-color: #111827;
+    box-shadow: 0 4px 6px -1px rgba(17, 24, 39, 0.1);
+}
+
+.egnitech-radio-label input[type="radio"]:not(:checked)+.egnitech-radio-btn-pill {
+    color: var(--egnitech-text-main);
+    background: #ffffff;
+    border-color: var(--egnitech-border);
+}
+
+.egnitech-radio-label input[type="radio"]:not(:checked):hover+.egnitech-radio-btn-pill {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.egnitech-radio-label input[type="radio"]:focus+.egnitech-radio-btn {
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.15);
+}
+
+/* Custom Checkboxes */
+.egnitech-checkbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--egnitech-spacing-sm);
+}
+
+.egnitech-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.egnitech-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.egnitech-checkbox-box {
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--egnitech-border);
+    border-radius: 4px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.egnitech-checkbox:hover .egnitech-checkbox-box {
+    border-color: #9ca3af;
+}
+
+.egnitech-checkbox input:checked+.egnitech-checkbox-box {
+    background: var(--egnitech-primary);
+    border-color: var(--egnitech-primary);
+}
+
+.egnitech-checkbox input:checked+.egnitech-checkbox-box::after {
+    content: '';
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-top: -2px;
+}
+
+.egnitech-checkbox input:focus+.egnitech-checkbox-box {
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.15);
+}
+
+/* Code Fields */
+.egnitech-code-field {
+    font-family: var(--egnitech-font-mono);
+    background: #f8fafc;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--egnitech-radius-md);
+    padding: 16px;
+    font-size: 13px;
+    width: 100%;
+    resize: vertical;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.egnitech-code-field:focus {
+    outline: none;
+    background: #fff;
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 0 0 3px rgba(148, 163, 184, 0.2);
+}
+
+/* Buttons */
+.egnitech-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-family: var(--egnitech-font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: var(--egnitech-radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--egnitech-shadow-sm);
+    text-decoration: none;
+}
+
+.egnitech-btn .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.egnitech-btn-primary {
+    background: var(--egnitech-primary);
+    color: #fff;
+}
+
+.egnitech-btn-primary:hover {
+    background: var(--egnitech-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--egnitech-shadow-md);
+}
+
+.egnitech-btn-primary:active {
+    transform: translateY(0);
+}
+
+.egnitech-btn-secondary {
+    background: #fff;
+    color: var(--egnitech-text-main);
+    border: 1px solid var(--egnitech-border);
+}
+
+.egnitech-btn-secondary:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.egnitech-btn-danger {
+    background: #fff;
+    color: var(--egnitech-danger);
+    border: 1px solid #fecaca;
+}
+
+.egnitech-btn-danger:hover {
+    background: #fef2f2;
+    color: var(--egnitech-danger-hover);
+    border-color: #fca5a5;
+}
+
+.egnitech-btn-large {
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: var(--egnitech-radius-md);
+}
+
+
+/* Logo Uploader overrides */
+.egnitech-logo-uploader {
+    display: flex;
+    flex-direction: column;
+    gap: var(--egnitech-spacing-md);
+    align-items: flex-start;
+}
+
+.egnitech-logo-preview {
+    position: relative;
+    background: repeating-conic-gradient(#f3f4f6 0% 25%, #fff 0% 50%) 50% / 20px 20px;
+    border: 1px dashed #cbd5e1;
+    border-radius: var(--egnitech-radius-md);
+    padding: 20px;
+    display: inline-block;
+    max-width: 100%;
+}
+
+.egnitech-logo-preview img {
+    max-height: 80px;
+    display: block;
+    /* Add dark bg specifically for dark logos readability */
+    background: rgba(17, 24, 39, 0.9);
+    padding: 10px;
+    border-radius: var(--egnitech-radius-sm);
+    box-shadow: var(--egnitech-shadow-sm);
+}
+
+.egnitech-logo-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Status message */
+.egnitech-status-msg {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--egnitech-success);
+}
+
+/* Save Bar (Sticky Bottom) */
+.egnitech-options-footer {
+    position: sticky;
+    bottom: 0px;
+    padding: var(--egnitech-spacing-lg) 0;
+    background: linear-gradient(0deg, rgba(240, 240, 241, 1) 40%, rgba(240, 240, 241, 0.8) 70%, rgba(240, 240, 241, 0) 100%);
+    z-index: 10;
+    display: flex;
+    justify-content: flex-start;
+    margin-top: var(--egnitech-spacing-xl);
+}
+
+
+/* Typography Overview */
+.egnitech-typography-overview {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--egnitech-spacing-lg);
+    margin-bottom: var(--egnitech-spacing-xl);
+}
+
+@media (max-width: 900px) {
+    .egnitech-typography-overview {
+        grid-template-columns: 1fr;
+    }
+}
+
+.egnitech-typography-item {
+    background: #fff;
+    border: 1px solid var(--egnitech-border);
+    border-radius: var(--egnitech-radius-lg);
+    padding: var(--egnitech-spacing-lg);
+    box-shadow: var(--egnitech-shadow-sm);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.egnitech-typography-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--egnitech-shadow-md);
+    border-color: #d1d5db;
+}
+
+.egnitech-typography-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.egnitech-typography-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--egnitech-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.egnitech-typography-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--egnitech-text-main);
+    letter-spacing: -0.01em;
+}
+
+.egnitech-typography-preview {
+    font-size: 28px;
+    line-height: 1.2;
+    color: var(--egnitech-text-main);
+    padding: 24px;
+    background: #f8fafc;
+    border-radius: var(--egnitech-radius-md);
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #f1f5f9;
+}
+
+.egnitech-typography-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: var(--egnitech-spacing-xl);
+    padding-bottom: var(--egnitech-spacing-xl);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Color Palette Overview */
+.egnitech-palette-overview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.egnitech-palette-swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 60px;
+}
+
+.egnitech-palette-color {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s;
+}
+
+.egnitech-palette-swatch:hover .egnitech-palette-color {
+    transform: scale(1.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.egnitech-palette-label {
+    font-size: 10px;
+    color: var(--egnitech-text-muted);
+    text-align: center;
+    word-wrap: break-word;
+    line-height: 1.2;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 900px) {
+    .egnitech-options-container {
+        grid-template-columns: 1fr;
+    }
+
+    .egnitech-options-sidebar {
+        position: static;
+        margin-bottom: var(--egnitech-spacing-lg);
+    }
+
+    .egnitech-options-tabs {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .egnitech-option-row {
+        grid-template-columns: 1fr;
+        gap: var(--egnitech-spacing-md);
+    }
+
+    .egnitech-options-wrap {
+        margin-right: 10px;
+    }
+}
+
+/* ===== Scripts Manager (Advanced Tab) ===== */
+.egnitech-scripts-manager {
+    display: flex;
+    flex-direction: column;
+    gap: var(--egnitech-spacing-lg);
+}
+
+.egnitech-scripts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--egnitech-spacing-md);
+    border-bottom: 1px solid var(--egnitech-border);
+}
+
+.egnitech-scripts-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--egnitech-text-main);
+    margin: 0;
+}
+
+.egnitech-scripts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--egnitech-spacing-sm);
+}
+
+.egnitech-script-item {
+    background: #fff;
+    border: 1px solid var(--egnitech-border);
+    border-radius: var(--egnitech-radius-md);
+    overflow: hidden;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    box-shadow: var(--egnitech-shadow-sm);
+}
+
+.egnitech-script-item:hover {
+    border-color: #d1d5db;
+    box-shadow: var(--egnitech-shadow-md);
+}
+
+.egnitech-script-item.is-expanded {
+    border-color: var(--egnitech-accent);
+    box-shadow: 0 0 0 1px var(--egnitech-accent), var(--egnitech-shadow-md);
+}
+
+.egnitech-script-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    background: #fff;
+    transition: background 0.2s;
+}
+
+.egnitech-script-header:hover {
+    background: #f9fafb;
+}
+
+.egnitech-script-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.egnitech-script-toggle-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--egnitech-text-muted);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.egnitech-script-item.is-expanded .egnitech-script-toggle-icon {
+    transform: rotate(90deg);
+    color: var(--egnitech-accent);
+}
+
+.egnitech-script-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--egnitech-text-main);
+}
+
+/* Gray out title if inactive */
+.egnitech-script-item.is-inactive .egnitech-script-name {
+    color: var(--egnitech-text-muted);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.egnitech-script-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Prevent clicking actions from expanding accordion */
+.egnitech-script-status,
+.egnitech-script-delete {
+    position: relative;
+    z-index: 2;
+}
+
+.egnitech-btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: var(--egnitech-radius-sm);
+    color: var(--egnitech-text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.egnitech-btn-icon:hover {
+    background: #fee2e2;
+    color: var(--egnitech-danger);
+}
+
+.egnitech-script-content {
+    padding: var(--egnitech-spacing-lg) var(--egnitech-spacing-xl);
+    border-top: 1px solid var(--egnitech-border);
+    background: #fbfbfc;
+    /* slightly off white */
+}
+
+/* Adjust rows inside scripts content */
+.egnitech-script-content .egnitech-option-row {
+    padding-bottom: var(--egnitech-spacing-md);
+    margin-bottom: var(--egnitech-spacing-md);
+}
+
+.egnitech-script-content .egnitech-option-row:last-child {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+/* Highlights in header */
+.egnitech-script-highlights {
+    display: flex;
+    gap: 6px;
+    margin-left: 16px;
+    transition: all 0.2s ease;
+    align-items: center;
+}
+
+.egnitech-script-item.is-expanded .egnitech-script-highlights {
+    opacity: 0;
+    transform: translateX(-10px);
+    pointer-events: none;
+}
+
+.egnitech-highlight-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    line-height: normal;
+}
+
+.highlight-location {
+    background: var(--egnitech-accent-glow);
+    color: #008f72;
+}
+
+.highlight-load {
+    background: #e0f2fe;
+    /* Light Blue */
+    color: #0369a1;
+    /* Darker Blue */
+    border: 1px solid #bae6fd;
+}
+
+.egnitech-script-item.is-inactive .egnitech-highlight-badge {
+    opacity: 0.6;
+    filter: grayscale(1);
+}
+
+/* ===== Tooltips ===== */
+
+/* ===== Tooltips ===== */
+.egnitech-tooltip-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    color: var(--egnitech-text-muted);
+}
+
+.egnitech-tooltip-wrap .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    cursor: help;
+    transition: color 0.2s;
+}
+
+.egnitech-tooltip-wrap:hover .dashicons {
+    color: var(--egnitech-primary);
+}
+
+.egnitech-tooltip-content {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: #111827;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: var(--egnitech-radius-md);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    width: 250px;
+    text-align: left;
+    white-space: normal;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    box-shadow: var(--egnitech-shadow-lg);
+    pointer-events: none;
+}
+
+.egnitech-tooltip-content::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: #111827 transparent transparent transparent;
+}
+
+.egnitech-tooltip-wrap:hover .egnitech-tooltip-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-4px);
+}
+
+.egnitech-delayed-disclaimer {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #fffbeb;
+    border-radius: var(--egnitech-radius-sm);
+    border-left: 3px solid #f59e0b;
+    font-size: 12px;
+    color: #92400e;
+    line-height: 1.5;
+}
+
+.egnitech-delayed-disclaimer strong {
+    color: #b45309;
+}
+/* ===== Premium Notice Styles ===== */
+.egnitech-premium-notice {
+    display: flex;
+    align-items: center;
+    gap: var(--egnitech-spacing-xl);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--egnitech-card-border);
+    border-radius: var(--egnitech-radius-lg);
+    padding: var(--egnitech-spacing-xl);
+    margin: var(--egnitech-spacing-lg) 0 var(--egnitech-spacing-xl) 0;
+    box-shadow: var(--egnitech-shadow-lg);
+    animation: fadeUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.egnitech-notice-illustration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background: var(--egnitech-accent-glow);
+    border-radius: var(--egnitech-radius-md);
+    color: var(--egnitech-accent);
+    flex-shrink: 0;
+}
+
+.egnitech-notice-illustration .dashicons {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+}
+
+.egnitech-notice-content {
+    flex: 1;
+}
+
+.egnitech-notice-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--egnitech-text-main);
+    margin-bottom: var(--egnitech-spacing-xs) !important;
+    letter-spacing: -0.025em;
+}
+
+.egnitech-notice-text {
+    font-size: 15px;
+    color: var(--egnitech-text-muted);
+    line-height: 1.6;
+    margin-bottom: var(--egnitech-spacing-lg) !important;
+    max-width: 600px;
+}
+
+.egnitech-notice-footer {
+    display: flex;
+    gap: var(--egnitech-spacing-md);
+    align-items: center;
+}
+
+/* Disabled State Visual Enhancement */
+.egnitech-tab-panel input:disabled,
+.egnitech-tab-panel textarea:disabled,
+.egnitech-tab-panel button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.5);
+}
+
+.egnitech-tab-panel select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
