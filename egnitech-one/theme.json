@@ -1,6 +1,6 @@
 {
-    "$schema": "https://schemas.wp.org/wp/6.7/theme.json",
-    "version": 3,
+    "$schema": "https://schemas.wp.org/wp/7.0/theme.json",
+    "version": 4,
     "settings": {
         "appearanceTools": true,
         "color": {
@@ -486,13 +486,5 @@
             "title": "Footer"
         }
     ],
-    "customTemplates": [
-        {
-            "name": "egnitech-one-contact-us",
-            "title": "EgniTech One Contact Us",
-            "postTypes": [
-                "page"
-            ]
-        }
-    ]
+    "customTemplates": []
 }

@@ -56,37 +56,6 @@ function egnitech_one_color_scheme_script() {
 }
 add_action( 'wp_head', 'egnitech_one_color_scheme_script', 5 );
 
-/**
- * Expose contact form AJAX data and reCAPTCHA settings to the frontend.
- */
-function egnitech_one_contact_form_frontend_data() {
-	$recaptcha_enabled = get_option( 'egnitech_one_recaptcha_enabled', '' );
-	$site_key = get_option( 'egnitech_one_recaptcha_site_key', '' );
-	
-	// Enqueue Google reCAPTCHA API script ONLY if enabled
-	if ( 'yes' === $recaptcha_enabled && ! empty( $site_key ) ) {
-		wp_enqueue_script( 'google-recaptcha', 'https://www.google.com/recaptcha/api.js', array(), null, array( 'strategy' => 'async', 'in_footer' => false ) );
-	}
-
-	?>
-	<script id="egnitech-contact-form-js-extra">
-		window.egnitechContactForm = {
-			ajaxUrl: '<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>',
-			nonce: '<?php echo esc_js( wp_create_nonce( 'egnitech_contact_nonce' ) ); ?>',
-			recaptcha: {
-				enabled: <?php echo 'yes' === $recaptcha_enabled ? 'true' : 'false'; ?>,
-				siteKey: '<?php echo esc_js( $site_key ); ?>'
-			},
-			i18n: {
-				sending: '<?php echo esc_js( __( 'Sending...', 'egnitech-one' ) ); ?>',
-				fillAll: '<?php echo esc_js( __( 'Please fill in all required fields.', 'egnitech-one' ) ); ?>',
-				error:   '<?php echo esc_js( __( 'An error occurred. Please try again.', 'egnitech-one' ) ); ?>'
-			}
-		};
-	</script>
-	<?php
-}
-add_action( 'wp_head', 'egnitech_one_contact_form_frontend_data' );
 
 /**
  * Enqueue dark mode toggle script and styles.
@@ -206,66 +175,3 @@ function egnitech_one_enqueue_reading_progress() {
 }
 add_action( 'wp_enqueue_scripts', 'egnitech_one_enqueue_reading_progress' );
 
-/**
- * Automatically enqueue CSS and JS for modular templates stored in subfolders.
- * If the current template is 'templates/my-template/index.html', it will look for:
- * - /templates/my-template/style.css
- * - /templates/my-template/index.js
- */
-function egnitech_one_enqueue_modular_assets() {
-	if ( ! is_singular() && ! is_page_template() ) {
-		return;
-	}
-
-	// Get the template slug or name.
-	$template_slug = get_page_template_slug();
-	
-	// If no custom template slug, try to identify core templates.
-	if ( ! $template_slug ) {
-		if ( is_single() ) {
-			$template_slug = 'single';
-		} elseif ( is_page() ) {
-			$template_slug = 'page';
-		} elseif ( is_home() ) {
-			$template_slug = 'home';
-		}
-	}
-
-	if ( ! $template_slug ) {
-		return;
-	}
-
-	// Normalize slug (WordPress sometimes returns 'templates/slug.php' or just 'slug').
-	$template_slug = str_replace( '.html', '', $template_slug );
-	$template_slug = str_replace( 'templates/', '', $template_slug );
-
-	// Support for modular subfolders: templates/{slug}/
-	$base_path = 'templates/' . $template_slug . '/';
-	
-	// Check for modular CSS.
-	$css_file = $base_path . 'style.css';
-	if ( file_exists( get_theme_file_path( $css_file ) ) ) {
-		wp_enqueue_style(
-			'egnitech-modular-' . sanitize_title( $template_slug ),
-			get_theme_file_uri( $css_file ),
-			array( 'egnitech-one-style' ),
-			filemtime( get_theme_file_path( $css_file ) )
-		);
-	}
-
-	// Check for modular JS.
-	$js_file = $base_path . 'index.js';
-	if ( file_exists( get_theme_file_path( $js_file ) ) ) {
-		wp_enqueue_script(
-			'egnitech-modular-' . sanitize_title( $template_slug ),
-			get_theme_file_uri( $js_file ),
-			array(),
-			filemtime( get_theme_file_path( $js_file ) ),
-			array(
-				'strategy' => 'defer',
-				'in_footer' => true,
-			)
-		);
-	}
-}
-add_action( 'wp_enqueue_scripts', 'egnitech_one_enqueue_modular_assets' );

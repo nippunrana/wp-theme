@@ -24,15 +24,13 @@ require_once get_theme_file_path( 'inc/theme-setup.php' );
 // 3. Asset Enqueuing (Styles, Scripts, Dark Mode Toggle)
 require_once get_theme_file_path( 'inc/enqueue-assets.php' );
 
-// 4. Dynamic CSS & Header/Footer Scripts
-require_once get_theme_file_path( 'inc/dynamic-css.php' );
+// 4. Header/Footer Scripts
 require_once get_theme_file_path( 'inc/custom-scripts.php' );
 
-// 5. Admin Theme Options & Contact Form Handler
+// 5. Admin Theme Options
 if ( is_admin() ) {
 	require_once get_theme_file_path( 'inc/admin-options.php' );
 }
-require_once get_theme_file_path( 'inc/contact-handler.php' );
 
 // 6. SMTP Configuration (PHPMailer hook)
 require_once get_theme_file_path( 'inc/smtp-config.php' );

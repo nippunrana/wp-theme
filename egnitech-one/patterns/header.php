@@ -5,6 +5,7 @@
  * Categories: egnitech-one
  * Block Types: core/template-part/header
  * Description: Site header with logo, navigation, and dark mode toggle.
+ * Inserter: false
  */
 ?>
 <!-- wp:group {"className":"egnitech-site-header","layout":{"type":"constrained"}} -->

@@ -5,6 +5,7 @@
  * Categories: egnitech-one
  * Block Types: core/template-part/footer
  * Description: Minimal site footer with copyright and credits.
+ * Inserter: false
  */
 
 $footer_copyright = egnitech_one_get_footer_copyright();
