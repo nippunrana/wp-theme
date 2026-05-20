@@ -1,6 +1,10 @@
 # AI Context — EgniTech One (Parent Theme)
 
-This file provides the **architectural foundation** and **design system rules** for the EgniTech One parent theme. This is the core engine; for technical implementation procedures (creating templates, patterns, or asset loading), refer to the `wp-block-theme` skill.
+> [!IMPORTANT]
+> **Context Selection Rule:**
+> If you are working within a child theme (e.g., inside `egnitech-one-child/`, or if the user's objective is to extend/override the theme for `peptidebeacon.com`), you MUST ignore this file and use `AI_CONTEXT-Child.md` instead.
+
+This file provides the **architectural foundation** and **design system rules** for the EgniTech One parent theme. This is the core engine; for technical implementation procedures (creating templates, patterns, or asset loading), refer to the local `wp-block-theme` skill located in the directory `egnitech-one/.agent/skills/wp-block-theme/`.
 
 ## Project Identity
 - **Theme Name**: `EgniTech One` (Folder: `egnitech-one`)
@@ -20,13 +24,15 @@ This file provides the **architectural foundation** and **design system rules** 
 
 ## Implementation Workflow
 For all development tasks involving templates, patterns, or `theme.json`:
-1. **Use the `wp-block-theme` skill**. It contains the expert logic for HTML conversion, CSS scoping, and the atomic asset pipeline.
+1. **Use the `wp-block-theme` skill** located in `egnitech-one/.agent/skills/wp-block-theme/`. It contains the expert logic for HTML conversion, CSS scoping, and the atomic asset pipeline.
 2. **Modular Assets**: Follow the "Pattern-First" asset model. Enqueue section-specific assets inside PHP pattern files so they load only when rendered.
 
 ## Design System & `theme.json`
 The foundation uses a modern `theme.json` (v3) approach:
 - **Typography**: Uses fluid sizing (`clamp()`) and system-first fonts. Never hardcode pixel values; reference theme presets (e.g., `var(--wp--preset--font-size--large)`).
-- **Spacing**: Slug-based spacing scales (`20` to `80`). Use `var:preset|spacing|[slug]` tokens.
+- **Spacing**: Slug-based spacing scales (`20` to `80`). 
+  - Inside `theme.json`, reference them using `var:preset|spacing|[slug]` tokens.
+  - Inside CSS files, reference them using standard CSS variables e.g., `var(--wp--preset--spacing--[slug])`.
 
 ## Dark/Light Mode System (CRITICAL)
 EgniTech One handles color schemes via a foundational system:
@@ -38,13 +44,12 @@ EgniTech One handles color schemes via a foundational system:
   - Child themes can opt-in via PHP (`add_theme_support('egnitech-one-dark-mode')`) or via `theme.json` (`"settings": { "custom": { "darkMode": true } }`).
   - When disabled, `:root` color-scheme is forced to `light` to natively resolve all `light-dark()` colors to their light mode values with zero runtime overhead.
 
-
 ## Coding Standards
 1. **Text Domain**: Always use `egnitech-one` for core localization.
-2. **Safe Containers**: Use `core/group` for complex layouts instead of `core/columns` to avoid Site Editor validation errors.
-3. **SVGs**: Provide explicit `width` and `height` attributes on inline `<svg>` tags to prevent layout shifts in the Site Editor.
-4. **PHP 8.3 & WP 7.0 Compliance**: All core PHP files (such as `functions.php`, files in `inc/`) must include `declare(strict_types=1);` on line 2, and declare strict types for all parameters and return types. Any `theme.json` must use `"version": 3`.
+2. **CSS Scoping (MANDATORY)**: Scope all custom CSS strictly to the block's specific class or variation class (e.g., `.is-style-{slug}`). Avoid global rules or catch-all page wrappers to prevent style bleed.
+3. **Safe Containers**: Use `core/group` for complex layouts instead of `core/columns` to avoid Site Editor validation errors.
+4. **SVGs**: Provide explicit `width` and `height` attributes on inline `<svg>` tags to prevent layout shifts in the Site Editor.
+5. **PHP 8.3 & WP 7.0 Compliance**: All core PHP files (such as `functions.php`, files in `inc/`) must include `declare(strict_types=1);` on line 2, and declare strict types for all parameters and return types. Any `theme.json` must use `"version": 3`.
 
 ---
 *Final AI Reminder*: This is the CORE theme. Changes here affect all child-theme instances. Maintain stability and extreme performance.
-

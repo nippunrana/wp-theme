@@ -1,6 +1,10 @@
 # AI Context — EgniTech One Child Theme
 
-This file provides the **environmental ground rules** and **project identity** for the EgniTech One Child theme. For technical implementation procedures (creating templates, patterns, or asset loading), refer to the `wp-block-theme` skill.
+> [!IMPORTANT]
+> **Context Selection Rule:**
+> If you are working within the parent theme core (e.g., inside `egnitech-one/` folder, and the objective is to modify the core foundation), you MUST ignore this file and use `AI_CONTEXT.md` instead.
+
+This file provides the **environmental ground rules** and **project identity** for the EgniTech One Child theme. For technical implementation procedures (creating templates, patterns, or asset loading), refer to the local `wp-block-theme` skill located in the directory `egnitech-one/.agent/skills/wp-block-theme/`.
 
 ## Project Identity
 - **Site Domain**: `peptidebeacon.com`
@@ -24,7 +28,7 @@ This file provides the **environmental ground rules** and **project identity** f
 
 ## Implementation Workflow
 For all development tasks involving templates, patterns, `theme.json`, or asset enqueuing:
-1. **Use the `wp-block-theme` skill**. It contains the expert logic for HTML conversion, CSS scoping, and the atomic asset pipeline.
+1. **Use the `wp-block-theme` skill** located in `egnitech-one/.agent/skills/wp-block-theme/`. It contains the expert logic for HTML conversion, CSS scoping, and the atomic asset pipeline.
 2. **Follow the Pattern-First Model**: New patterns should use modular asset bundles (scoped `style.css` and `index.js` inside the pattern directory) registered via `register_block_style()` as detailed in the skill.
 
 ## Project-Specific Systems
@@ -37,19 +41,19 @@ By default, the parent theme's native dark/light mode is **disabled** to avoid s
 - **Writing Styles**: When enabled, write scoped styles using the `light-dark()` CSS function to dynamically support the scheme toggle. When disabled, the browser will natively resolve all `light-dark()` properties to their light mode values automatically.
 - **Example**: `color: light-dark(var(--wp--preset--color--base), var(--wp--preset--color--contrast));`
 
-
 ### Text Domains & Localization
-- Use `egnitech-one` when referencing parent-defined strings or functions.
-- Use `egnitech-one-child` for new strings unique to this child theme.
+- Use `egnitech-one` only when translating existing strings defined by the parent theme's translation files.
+- Use `egnitech-one-child` for all new translatable strings unique to the child theme.
 
 ## Coding Standards
 1. **Vanilla JS Only**: No jQuery. Use ES6+. For complex interactions, use the **Interactivity API**.
 2. **CSS Scoping (MANDATORY)**: All custom CSS must be scoped to the block's variation class (e.g., `.is-style-{slug}`). NEVER use catch-all page wrappers (e.g., `.{slug}-wrapper`) as they cause style bleed.
 3. **Performance**: Maintain the lean, high-performance philosophy of the parent theme.
-4. **PHP 8.3 & WP 7.0 Compliance (MANDATORY)**: All child theme PHP files (including `functions.php`, helper scripts, or template overrides) must include `declare(strict_types=1);` on line 2, and declare strict types for all parameters and return types. Any custom `theme.json` in the child theme must inherit from parent settings and use `"version": 3`.
+4. **SVGs**: Provide explicit `width` and `height` attributes on inline `<svg>` tags to prevent layout shifts in the Site Editor.
+5. **PHP 8.3 & WP 7.0 Compliance (MANDATORY)**: All child theme PHP files (including `functions.php`, helper scripts, or template overrides) must include `declare(strict_types=1);` on line 2, and declare strict types for all parameters and return types. Any custom `theme.json` in the child theme must inherit from parent settings and use `"version": 3`.
 
 ## Technical References
-Refer to the following in the `wp-block-theme` skill for deep-dives:
+Refer to the following in the local `wp-block-theme` skill (under `egnitech-one/.agent/skills/wp-block-theme/`) for deep-dives:
 - `references/html-conversion.md`: The 10-step process for converting designs to FSE.
 - `references/architecture.md`: Scoping rules and the asset pipeline.
 - `references/theme-json.md`: Global design system tokens.
