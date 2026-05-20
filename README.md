@@ -44,8 +44,8 @@ wp-theme/
 
 ## 🛠️ Installation & Requirements
 
-* **WordPress:** Version 6.7 or higher (tested up to 6.9+)
-* **PHP:** Version 7.4 or higher (compliant up to PHP 8.3)
+* **WordPress:** Version 7.0 or higher
+* **PHP:** Version 8.0 or higher (PHP 8.3 or greater recommended)
 
 1. Clone or upload the `egnitech-one` directory to your WordPress installation's `/wp-content/themes/` directory.
 2. Log in to the WordPress Admin dashboard.
