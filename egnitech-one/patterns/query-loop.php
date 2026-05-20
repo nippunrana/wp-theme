@@ -7,8 +7,8 @@
  * Description: Blog post listing with title, date, excerpt, and featured image.
  */
 ?>
-<!-- wp:query {"queryId":1,"query":{"perPage":10,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","inherit":true}} -->
-<div class="wp-block-query">
+<!-- wp:query {"queryId":1,"query":{"perPage":10,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","inherit":true},"lock":{"move":true,"remove":true},"className":"is-style-query-loop"} -->
+<div class="wp-block-query is-style-query-loop">
 	<!-- wp:post-template {"layout":{"type":"default"}} -->
 
 		<!-- wp:group {"style":{"spacing":{"padding":{"bottom":"var:preset|spacing|60"},"margin":{"bottom":"var:preset|spacing|60"}},"border":{"bottom":{"color":"var:preset|color|border","width":"1px"}}},"layout":{"type":"constrained"}} -->

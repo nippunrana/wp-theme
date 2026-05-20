@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * EgniTech One — Font Manager
  *
@@ -16,15 +18,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Get all fonts that are available for use (installed locally).
  * Merges theme-bundled fonts with any installed via the Font Library.
+ *
+ * @return array Installed fonts list.
  */
-function egnitech_one_get_installed_fonts() {
+function egnitech_one_get_installed_fonts(): array {
 	$fonts = array();
 
 	// 1. Theme-bundled fonts from theme.json.
 	$theme_json_path = get_theme_file_path( 'theme.json' );
 	if ( file_exists( $theme_json_path ) ) {
-		$theme_json = json_decode( file_get_contents( $theme_json_path ), true );
-		if ( isset( $theme_json['settings']['typography']['fontFamilies'] ) ) {
+		$theme_json = json_decode( (string) file_get_contents( $theme_json_path ), true );
+		if ( is_array( $theme_json ) && isset( $theme_json['settings']['typography']['fontFamilies'] ) ) {
 			foreach ( $theme_json['settings']['typography']['fontFamilies'] as $family ) {
 				if ( isset( $family['name'] ) && isset( $family['slug'] ) ) {
 					$fonts[ $family['slug'] ] = array(
@@ -68,8 +72,10 @@ function egnitech_one_get_installed_fonts() {
 
 /**
  * Get the current body and heading font assignment from Global Styles.
+ *
+ * @return array Body and heading font slug assignment.
  */
-function egnitech_one_get_font_assignments() {
+function egnitech_one_get_font_assignments(): array {
 	$styles = wp_get_global_styles();
 
 	$body_font    = '';
@@ -77,12 +83,12 @@ function egnitech_one_get_font_assignments() {
 
 	// Body font from root typography.
 	if ( isset( $styles['typography']['fontFamily'] ) ) {
-		$body_font = egnitech_one_parse_font_preset( $styles['typography']['fontFamily'] );
+		$body_font = egnitech_one_parse_font_preset( (string) $styles['typography']['fontFamily'] );
 	}
 
 	// Heading font from elements.heading typography.
 	if ( isset( $styles['elements']['heading']['typography']['fontFamily'] ) ) {
-		$heading_font = egnitech_one_parse_font_preset( $styles['elements']['heading']['typography']['fontFamily'] );
+		$heading_font = egnitech_one_parse_font_preset( (string) $styles['elements']['heading']['typography']['fontFamily'] );
 	}
 
 	// If headings not explicitly set, they inherit body.
@@ -99,10 +105,13 @@ function egnitech_one_get_font_assignments() {
 /**
  * Parse a font preset reference like "var:preset|font-family|inter"
  * or "var(--wp--preset--font-family--inter)" into the slug "inter".
+ *
+ * @param string $value The preset string value.
+ * @return string Font slug.
  */
-function egnitech_one_parse_font_preset( $value ) {
+function egnitech_one_parse_font_preset( string $value ): string {
 	// Format: var:preset|font-family|slug
-	if ( strpos( $value, 'var:preset|font-family|' ) === 0 ) {
+	if ( str_starts_with( $value, 'var:preset|font-family|' ) ) {
 		return substr( $value, strlen( 'var:preset|font-family|' ) );
 	}
 	// Format: var(--wp--preset--font-family--slug)

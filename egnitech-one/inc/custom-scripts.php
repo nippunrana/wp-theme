@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Frontend execution for Custom Scripts.
  * Combines scripts into 6 optimized blocks and uses minimal vanilla JS for deferred injection.
@@ -12,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class EgniTech_One_Custom_Scripts {
 
-	private static $blocks = [
+	private static array $blocks = [
 		'header_normal'    => '',
 		'footer_normal'    => '',
 		'header_after_dom' => '',
@@ -24,7 +26,7 @@ class EgniTech_One_Custom_Scripts {
 	/**
 	 * Initialize hooks.
 	 */
-	public static function init() {
+	public static function init(): void {
 		add_action( 'init', [ __CLASS__, 'prepare_scripts' ] );
 		add_action( 'wp_head', [ __CLASS__, 'output_header_normal' ], 99 );
 		add_action( 'wp_footer', [ __CLASS__, 'output_footer_scripts' ], 99 );
@@ -33,8 +35,11 @@ class EgniTech_One_Custom_Scripts {
 	/**
 	 * Read from DB and concatenate into the 6 strings once per request.
 	 */
-	public static function prepare_scripts() {
+	public static function prepare_scripts(): void {
 		$raw_scripts = get_option( 'egnitech_one_custom_scripts', '[]' );
+		if ( ! is_string( $raw_scripts ) ) {
+			$raw_scripts = '[]';
+		}
 		$scripts     = json_decode( $raw_scripts, true );
 
 		if ( ! is_array( $scripts ) || empty( $scripts ) ) {
@@ -42,14 +47,17 @@ class EgniTech_One_Custom_Scripts {
 		}
 
 		foreach ( $scripts as $s ) {
+			if ( ! is_array( $s ) ) {
+				continue;
+			}
 			// Skip inactive scripts or empty code.
 			$is_active = isset( $s['is_active'] ) ? filter_var( $s['is_active'], FILTER_VALIDATE_BOOLEAN ) : true;
 			if ( ! $is_active || empty( $s['code'] ) ) {
 				continue;
 			}
 
-			$loc  = isset( $s['location'] ) ? $s['location'] : 'header'; // header or footer
-			$type = isset( $s['load_type'] ) ? $s['load_type'] : 'normal'; // normal, after_dom, delayed_3s
+			$loc  = isset( $s['location'] ) ? (string) $s['location'] : 'header'; // header or footer
+			$type = isset( $s['load_type'] ) ? (string) $s['load_type'] : 'normal'; // normal, after_dom, delayed_3s
 
 			// Map type to block key
 			if ( 'delayed_3s' === $type ) {
@@ -71,7 +79,7 @@ class EgniTech_One_Custom_Scripts {
 	/**
 	 * Output immediate header scripts.
 	 */
-	public static function output_header_normal() {
+	public static function output_header_normal(): void {
 		if ( ! empty( self::$blocks['header_normal'] ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo self::$blocks['header_normal'];
@@ -81,7 +89,7 @@ class EgniTech_One_Custom_Scripts {
 	/**
 	 * Output immediate footer scripts AND the inline JS worker for deferred scripts.
 	 */
-	public static function output_footer_scripts() {
+	public static function output_footer_scripts(): void {
 		// Output Normal Footer Scripts
 		if ( ! empty( self::$blocks['footer_normal'] ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -114,10 +122,10 @@ class EgniTech_One_Custom_Scripts {
 
 				// Data encoded safely using base64 via PHP
 				var config = {
-					afterDomHeader: "<?php echo base64_encode( self::$blocks['header_after_dom'] ); ?>",
-					afterDomFooter: "<?php echo base64_encode( self::$blocks['footer_after_dom'] ); ?>",
-					delayedHeader: "<?php echo base64_encode( self::$blocks['header_delayed'] ); ?>",
-					delayedFooter: "<?php echo base64_encode( self::$blocks['footer_delayed'] ); ?>"
+					afterDomHeader: "<?php echo base64_encode( (string) self::$blocks['header_after_dom'] ); ?>",
+					afterDomFooter: "<?php echo base64_encode( (string) self::$blocks['footer_after_dom'] ); ?>",
+					delayedHeader: "<?php echo base64_encode( (string) self::$blocks['header_delayed'] ); ?>",
+					delayedFooter: "<?php echo base64_encode( (string) self::$blocks['footer_delayed'] ); ?>"
 				};
 
 				function decodeHtml(b64) {

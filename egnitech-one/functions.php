@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * EgniTech One functions and definitions.
  *

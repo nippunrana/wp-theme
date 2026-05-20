@@ -8,7 +8,7 @@
  * Inserter: false
  */
 ?>
-<!-- wp:group {"className":"egnitech-site-header","layout":{"type":"constrained"}} -->
+<!-- wp:group {"className":"egnitech-site-header","layout":{"type":"constrained"},"lock":{"move":true,"remove":true}} -->
 <div class="wp-block-group egnitech-site-header">
 	<!-- wp:group {"align":"wide","layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap"}} -->
 	<div class="wp-block-group alignwide">

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Enqueue scripts and styles for both frontend and admin.
  *
@@ -12,19 +14,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Enqueue theme stylesheet.
  */
-function egnitech_one_enqueue_styles() {
+function egnitech_one_enqueue_styles(): void {
 	wp_enqueue_style(
 		'egnitech-one-style',
 		get_theme_file_uri( 'style.css' ),
 		array(),
-		wp_get_theme()->get( 'Version' )
+		(string) wp_get_theme()->get( 'Version' )
 	);
 
 	wp_enqueue_style(
 		'egnitech-one-shared',
 		get_theme_file_uri( 'assets/css/shared-styles.css' ),
 		array( 'egnitech-one-style' ),
-		wp_get_theme()->get( 'Version' )
+		(string) wp_get_theme()->get( 'Version' )
 	);
 }
 add_action( 'wp_enqueue_scripts', 'egnitech_one_enqueue_styles' );
@@ -32,14 +34,14 @@ add_action( 'wp_enqueue_scripts', 'egnitech_one_enqueue_styles' );
 /**
  * Prevent FOUC by instantly applying dark mode before body renders.
  */
-function egnitech_one_color_scheme_script() {
+function egnitech_one_color_scheme_script(): void {
 	$admin_default = get_option( 'egnitech_one_dark_mode_default', 'system' );
 	?>
 	<script>
 		(function() {
 			var STORAGE_KEY = 'egnitech-one-color-scheme';
 			var saved = localStorage.getItem(STORAGE_KEY);
-			var adminDefault = '<?php echo esc_js( $admin_default ); ?>';
+			var adminDefault = '<?php echo esc_js( (string) $admin_default ); ?>';
 			var scheme;
 			if (saved) {
 				scheme = saved;
@@ -56,23 +58,22 @@ function egnitech_one_color_scheme_script() {
 }
 add_action( 'wp_head', 'egnitech_one_color_scheme_script', 5 );
 
-
 /**
  * Enqueue dark mode toggle script and styles.
  */
-function egnitech_one_enqueue_dark_mode() {
+function egnitech_one_enqueue_dark_mode(): void {
 	wp_enqueue_style(
 		'egnitech-one-dark-mode',
 		get_theme_file_uri( 'assets/css/dark-mode-toggle.css' ),
 		array(),
-		wp_get_theme()->get( 'Version' )
+		(string) wp_get_theme()->get( 'Version' )
 	);
 
 	wp_enqueue_script(
 		'egnitech-one-dark-mode',
 		get_theme_file_uri( 'assets/js/dark-mode-toggle.js' ),
 		array(),
-		wp_get_theme()->get( 'Version' ),
+		(string) wp_get_theme()->get( 'Version' ),
 		array(
 			'strategy' => 'defer',
 			'in_footer' => true,
@@ -84,7 +85,7 @@ add_action( 'wp_enqueue_scripts', 'egnitech_one_enqueue_dark_mode' );
 /**
  * Enqueue scroll-to-top button if enabled.
  */
-function egnitech_one_enqueue_scroll_to_top() {
+function egnitech_one_enqueue_scroll_to_top(): void {
 	if ( 'yes' !== get_option( 'egnitech_one_scroll_to_top', 'yes' ) ) {
 		return;
 	}
@@ -93,14 +94,14 @@ function egnitech_one_enqueue_scroll_to_top() {
 		'egnitech-one-scroll-top',
 		get_theme_file_uri( 'assets/css/scroll-to-top.css' ),
 		array(),
-		wp_get_theme()->get( 'Version' )
+		(string) wp_get_theme()->get( 'Version' )
 	);
 
 	wp_enqueue_script(
 		'egnitech-one-scroll-top',
 		get_theme_file_uri( 'assets/js/scroll-to-top.js' ),
 		array(),
-		wp_get_theme()->get( 'Version' ),
+		(string) wp_get_theme()->get( 'Version' ),
 		array(
 			'strategy' => 'defer',
 			'in_footer' => true,
@@ -111,8 +112,10 @@ add_action( 'wp_enqueue_scripts', 'egnitech_one_enqueue_scroll_to_top' );
 
 /**
  * Enqueue admin assets for the Theme Options page only.
+ *
+ * @param string $hook The admin page hook.
  */
-function egnitech_one_admin_scripts( $hook ) {
+function egnitech_one_admin_scripts( string $hook ): void {
 	if ( 'appearance_page_egnitech-one-options' !== $hook ) {
 		return;
 	}
@@ -123,14 +126,14 @@ function egnitech_one_admin_scripts( $hook ) {
 		'egnitech-one-admin',
 		get_theme_file_uri( 'assets/css/admin-options.css' ),
 		array(),
-		wp_get_theme()->get( 'Version' )
+		(string) wp_get_theme()->get( 'Version' )
 	);
 
 	wp_enqueue_script(
 		'egnitech-one-admin',
 		get_theme_file_uri( 'assets/js/admin-options.js' ),
 		array(),
-		wp_get_theme()->get( 'Version' ),
+		(string) wp_get_theme()->get( 'Version' ),
 		true
 	);
 
@@ -150,7 +153,7 @@ add_action( 'admin_enqueue_scripts', 'egnitech_one_admin_scripts' );
 /**
  * Enqueue reading progress bar if enabled.
  */
-function egnitech_one_enqueue_reading_progress() {
+function egnitech_one_enqueue_reading_progress(): void {
 	if ( 'yes' !== get_option( 'egnitech_one_reading_progress', 'yes' ) ) {
 		return;
 	}
@@ -159,14 +162,14 @@ function egnitech_one_enqueue_reading_progress() {
 		'egnitech-one-reading-progress',
 		get_theme_file_uri( 'assets/css/reading-progress.css' ),
 		array(),
-		wp_get_theme()->get( 'Version' )
+		(string) wp_get_theme()->get( 'Version' )
 	);
 
 	wp_enqueue_script(
 		'egnitech-one-reading-progress',
 		get_theme_file_uri( 'assets/js/reading-progress.js' ),
 		array(),
-		wp_get_theme()->get( 'Version' ),
+		(string) wp_get_theme()->get( 'Version' ),
 		array(
 			'strategy'  => 'defer',
 			'in_footer' => true,
@@ -174,4 +177,3 @@ function egnitech_one_enqueue_reading_progress() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'egnitech_one_enqueue_reading_progress' );
-

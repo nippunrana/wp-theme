@@ -1,9 +1,13 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Helper to generate shared accordion structure
+ *
+ * @param array $args The arguments array.
+ * @return string The generated card HTML.
  */
-function egnitech_one_render_admin_card_item( $args = array() ) {
+function egnitech_one_render_admin_card_item( array $args = array() ): string {
     $item_class = 'egnitech-script-item ' . ( isset( $args['class'] ) ? $args['class'] : '' );
     if ( ! empty( $args['is_inactive'] ) ) $item_class .= ' is-inactive';
     if ( ! empty( $args['is_expanded'] ) ) $item_class .= ' is-expanded';
@@ -41,7 +45,25 @@ function egnitech_one_render_admin_card_item( $args = array() ) {
 }
 
 // Function to generate script item HTML
-function egnitech_one_generate_script_item_html( $id, $name, $location = 'header', $load_type = 'normal', $code = '', $is_active = true, $is_expanded = false ) {
+function egnitech_one_generate_script_item_html( string|int $id, string $name, string $location = 'header', string $load_type = 'normal', string $code = '', bool $is_active = true, bool $is_expanded = false ): string {
+    $current_location_label = 'header' === $location ? __( 'Header', 'egnitech-one' ) : __( 'Footer', 'egnitech-one' );
+    
+    $current_load_type_label = __( 'Normal', 'egnitech-one' );
+    if ( 'after_dom' === $load_type ) {
+        $current_load_type_label = __( 'After DOM', 'egnitech-one' );
+    } elseif ( 'delayed_3s' === $load_type ) {
+        $current_load_type_label = __( 'Delayed', 'egnitech-one' );
+    }
+
+    $checked_attr = $is_active ? 'checked="checked"' : '';
+    
+    $loc_header_checked     = 'header' === $location ? 'checked="checked"' : '';
+    $loc_footer_checked     = 'footer' === $location ? 'checked="checked"' : '';
+    $load_normal_checked    = 'normal' === $load_type ? 'checked="checked"' : '';
+    $load_after_dom_checked = 'after_dom' === $load_type ? 'checked="checked"' : '';
+    $load_delayed_checked   = 'delayed_3s' === $load_type ? 'checked="checked"' : '';
+    $disclaimer_display     = 'delayed_3s' === $load_type ? 'block' : 'none';
+
     // Render using shared helper
     $highlights = '<span class="egnitech-highlight-badge highlight-location">' . esc_html( $current_location_label ) . '</span>' .
                   '<span class="egnitech-highlight-badge highlight-load">' . esc_html( $current_load_type_label ) . '</span>';
@@ -173,7 +195,7 @@ return;
 /**
  * Register the Theme Options page under Appearance.
  */
-function egnitech_one_add_theme_page() {
+function egnitech_one_add_theme_page(): void {
 add_theme_page(
 __( 'Theme Options', 'egnitech-one' ),
 __( 'Theme Options', 'egnitech-one' ),
@@ -187,7 +209,7 @@ add_action( 'admin_menu', 'egnitech_one_add_theme_page' );
 /**
  * Register all theme option settings.
  */
-function egnitech_one_register_settings() {
+function egnitech_one_register_settings(): void {
 
 /* ----- Header ----- */
 register_setting( 'egnitech_one_options', 'egnitech_one_sticky_header', [
@@ -459,11 +481,11 @@ add_action( 'admin_init', 'egnitech_one_register_settings' );
 /**
  * Sanitize scripts — only allow for users with unfiltered_html capability.
  */
-function egnitech_one_sanitize_scripts( $input ) {
+function egnitech_one_sanitize_scripts( mixed $input ): string {
 if ( ! current_user_can( 'unfiltered_html' ) ) {
 return '';
 }
-return $input;
+return is_string( $input ) ? $input : '';
 }
 
 /**
@@ -471,7 +493,7 @@ return $input;
  *
  * @return bool True if in use, false otherwise.
  */
-function egnitech_one_is_contact_template_in_use() {
+function egnitech_one_is_contact_template_in_use(): bool {
     $args = array(
         'post_type'      => 'page',
         'post_status'    => 'publish',
@@ -489,31 +511,31 @@ function egnitech_one_is_contact_template_in_use() {
 /**
  * Sanitize dark mode default option.
  */
-function egnitech_one_sanitize_dark_mode_default( $input ) {
+function egnitech_one_sanitize_dark_mode_default( mixed $input ): string {
 $valid = array( 'system', 'light', 'dark' );
-return in_array( $input, $valid, true ) ? $input : 'system';
+return in_array( $input, $valid, true ) ? (string) $input : 'system';
 }
 
 /**
  * Sanitize blog layout option.
  */
-function egnitech_one_sanitize_blog_layout( $input ) {
+function egnitech_one_sanitize_blog_layout( mixed $input ): string {
 $valid = array( 'list', 'grid-2', 'grid-3' );
-return in_array( $input, $valid, true ) ? $input : 'list';
+return in_array( $input, $valid, true ) ? (string) $input : 'list';
 }
 
 /**
  * Sanitize sidebar position option.
  */
-function egnitech_one_sanitize_sidebar_position( $input ) {
+function egnitech_one_sanitize_sidebar_position( mixed $input ): string {
 $valid = array( 'none', 'left', 'right' );
-return in_array( $input, $valid, true ) ? $input : 'none';
+return in_array( $input, $valid, true ) ? (string) $input : 'none';
 }
 
 /**
  * Sanitize content width and sync to Global Styles.
  */
-function egnitech_one_sanitize_content_width( $input ) {
+function egnitech_one_sanitize_content_width( mixed $input ): int {
 $value = absint( $input );
 if ( $value < 320 ) {
 $value = 320;
@@ -528,7 +550,7 @@ return $value;
 /**
  * Sanitize wide width and sync to Global Styles.
  */
-function egnitech_one_sanitize_wide_width( $input ) {
+function egnitech_one_sanitize_wide_width( mixed $input ): int {
 $value = absint( $input );
 if ( $value < 320 ) {
 $value = 320;
@@ -544,7 +566,7 @@ return $value;
  * Sync a layout property to the wp_global_styles post so the
  * Site Editor stays in sync with Theme Options.
  */
-function egnitech_one_sync_layout_to_global_styles( $property, $value ) {
+function egnitech_one_sync_layout_to_global_styles( string $property, string $value ): void {
 $global_styles_id = egnitech_one_get_global_styles_post_id();
 if ( ! $global_styles_id ) {
 return;
@@ -578,7 +600,7 @@ wp_update_post( array(
 /**
  * Get the wp_global_styles post ID for the active theme.
  */
-function egnitech_one_get_global_styles_post_id() {
+function egnitech_one_get_global_styles_post_id(): int {
 $query = new WP_Query( array(
 'post_type'      => 'wp_global_styles',
 'post_status'    => array( 'publish', 'draft' ),
@@ -594,7 +616,7 @@ array(
 ) );
 
 if ( $query->have_posts() ) {
-return $query->posts[0]->ID;
+return (int) $query->posts[0]->ID;
 }
 
 return 0;
@@ -603,7 +625,7 @@ return 0;
 /**
  * Read current layout sizes from Global Styles (merged with theme.json).
  */
-function egnitech_one_get_layout_settings() {
+function egnitech_one_get_layout_settings(): array {
 $layout = wp_get_global_settings( array( 'layout' ) );
 return array(
 'contentSize' => isset( $layout['contentSize'] ) ? intval( $layout['contentSize'] ) : 900,
@@ -619,7 +641,7 @@ return array(
 /**
  * Render the Theme Options page with tabbed navigation.
  */
-function egnitech_one_options_page_html() {
+function egnitech_one_options_page_html(): void {
 if ( ! current_user_can( 'edit_theme_options' ) ) {
 return;
 }
@@ -670,7 +692,8 @@ $contact_desc         = get_option( 'egnitech_one_contact_desc', 'Have a project
 $contact_email        = get_option( 'egnitech_one_contact_email', 'hello@egnitech.com' );
 $recipient_email      = get_option( 'egnitech_one_contact_recipient_email', '' );
 $contact_phone        = get_option( 'egnitech_one_contact_phone', '+1 (555) 000-0000' );
-$contact_fields       = json_decode( $contact_fields_raw, true );
+$contact_fields_raw   = get_option( 'egnitech_one_contact_form_fields', '[]' );
+$contact_fields       = json_decode( (string) $contact_fields_raw, true );
 if ( ! is_array( $contact_fields ) ) {
     $contact_fields = array();
 }
@@ -1523,14 +1546,14 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
 /**
  * AJAX handler for generating a new script item dynamically.
  */
-function egnitech_one_ajax_get_new_script_html() {
+function egnitech_one_ajax_get_new_script_html(): void {
     check_ajax_referer( 'egnitech_scripts_nonce', 'nonce' );
 
     if ( ! current_user_can( 'edit_theme_options' ) ) {
         wp_send_json_error( array( 'message' => __( 'Permission denied.', 'egnitech-one' ) ) );
     }
 
-    $script_id = isset( $_POST['script_id'] ) ? sanitize_text_field( wp_unslash( $_POST['script_id'] ) ) : time();
+    $script_id = isset( $_POST['script_id'] ) ? sanitize_text_field( wp_unslash( $_POST['script_id'] ) ) : (string) time();
     $name      = __( 'New Script', 'egnitech-one' );
 
     $html = egnitech_one_generate_script_item_html(
@@ -1550,14 +1573,14 @@ add_action( 'wp_ajax_egnitech_one_get_new_script_html', 'egnitech_one_ajax_get_n
 /**
  * AJAX handler for generating a new contact field item dynamically.
  */
-function egnitech_one_ajax_get_new_contact_field_html() {
+function egnitech_one_ajax_get_new_contact_field_html(): void {
     check_ajax_referer( 'egnitech_scripts_nonce', 'nonce' );
 
     if ( ! current_user_can( 'edit_theme_options' ) ) {
         wp_send_json_error( array( 'message' => __( 'Permission denied.', 'egnitech-one' ) ) );
     }
 
-    $field_id = isset( $_POST['field_id'] ) ? sanitize_text_field( wp_unslash( $_POST['field_id'] ) ) : time();
+    $field_id = isset( $_POST['field_id'] ) ? sanitize_text_field( wp_unslash( $_POST['field_id'] ) ) : (string) time();
     $label    = __( 'New Field', 'egnitech-one' );
 
     $html = egnitech_one_generate_contact_field_item_html(
@@ -1575,9 +1598,9 @@ add_action( 'wp_ajax_egnitech_one_get_new_contact_field_html', 'egnitech_one_aja
 /**
  * Function to generate contact field item HTML
  */
-function egnitech_one_generate_contact_field_item_html( $id, $label, $type = 'text', $placeholder = '', $is_required = true ) {
+function egnitech_one_generate_contact_field_item_html( string|int $id, string $label, string $type = 'text', string $placeholder = '', bool $is_required = true ): string {
     $item_id = 'field_' . $id;
-    $required_attr = $is_required ? 'checked' : '';
+    $required_attr = $is_required ? 'checked="checked"' : '';
 
     $types = array(
         'text'     => __( 'Text', 'egnitech-one' ),
@@ -1586,8 +1609,6 @@ function egnitech_one_generate_contact_field_item_html( $id, $label, $type = 'te
         'textarea' => __( 'Textarea', 'egnitech-one' ),
     );
 
-    ob_start();
-    ?>
     $highlights = '<span class="egnitech-highlight-badge highlight-type">' . esc_html( isset( $types[$type] ) ? $types[$type] : $type ) . '</span>';
     
     ob_start();
@@ -1643,5 +1664,4 @@ function egnitech_one_generate_contact_field_item_html( $id, $label, $type = 'te
         'delete_title' => __( 'Delete Field', 'egnitech-one' ),
         'is_expanded'  => false
     ) );
-    return ob_get_clean();
 }
