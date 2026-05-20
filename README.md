@@ -63,3 +63,7 @@ To extend the theme, it is strongly recommended to use a child theme (e.g., `egn
 2. **Strict PHP Typing:** All PHP code must start with `declare(strict_types=1);` on line 2, with fully typed parameters and return values.
 3. **Vanilla JS Scoping:** Scope custom scripts utilizing the WordPress Interactivity API or modular ES6+. Avoid enqueuing heavy external libraries.
 4. **Pattern-First Assets:** Load styling and scripts dynamically inside specific patterns using `register_block_style()` instead of adding massive styling sheets globally.
+5. **Selective Dark Mode Support:** Child themes have the native parent dark/light mode system **disabled by default** to avoid visual style regressions. 
+   - **How to Opt-in**: Call `add_theme_support( 'egnitech-one-dark-mode' );` in `functions.php` or set `"custom": { "darkMode": true }` under `"settings"` in the child theme's `theme.json`.
+   - **Browser-Level Resolution**: When disabled, `:root` is configured with `color-scheme: light;`, causing the browser to natively resolve all `light-dark()` CSS function calls to their light-mode fallback value with zero performance overhead.
+
