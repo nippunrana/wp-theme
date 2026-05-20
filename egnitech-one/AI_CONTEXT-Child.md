@@ -41,6 +41,7 @@ Inherited from the parent. Use the `light-dark()` CSS function for any new style
 1. **Vanilla JS Only**: No jQuery. Use ES6+. For complex interactions, use the **Interactivity API**.
 2. **CSS Scoping (MANDATORY)**: All custom CSS must be scoped to the block's variation class (e.g., `.is-style-{slug}`). NEVER use catch-all page wrappers (e.g., `.{slug}-wrapper`) as they cause style bleed.
 3. **Performance**: Maintain the lean, high-performance philosophy of the parent theme.
+4. **PHP 8.3 & WP 7.0 Compliance (MANDATORY)**: All child theme PHP files (including `functions.php`, helper scripts, or template overrides) must include `declare(strict_types=1);` on line 2, and declare strict types for all parameters and return types. Any custom `theme.json` in the child theme must inherit from parent settings and use `"version": 3`.
 
 ## Technical References
 Refer to the following in the `wp-block-theme` skill for deep-dives:

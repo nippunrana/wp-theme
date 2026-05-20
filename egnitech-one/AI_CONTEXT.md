@@ -38,6 +38,7 @@ EgniTech One handles color schemes via a foundational system:
 1. **Text Domain**: Always use `egnitech-one` for core localization.
 2. **Safe Containers**: Use `core/group` for complex layouts instead of `core/columns` to avoid Site Editor validation errors.
 3. **SVGs**: Provide explicit `width` and `height` attributes on inline `<svg>` tags to prevent layout shifts in the Site Editor.
+4. **PHP 8.3 & WP 7.0 Compliance**: All core PHP files (such as `functions.php`, files in `inc/`) must include `declare(strict_types=1);` on line 2, and declare strict types for all parameters and return types. Any `theme.json` must use `"version": 3`.
 
 ---
 *Final AI Reminder*: This is the CORE theme. Changes here affect all child-theme instances. Maintain stability and extreme performance.
