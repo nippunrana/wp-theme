@@ -2,7 +2,7 @@
 
 > [!IMPORTANT]
 > **Context Selection Rule:**
-> If you are working within a child theme (e.g., inside `egnitech-one-child/`, or if the user's objective is to extend/override the theme for `peptidebeacon.com`), you MUST ignore this file and use `AI_CONTEXT-Child.md` instead.
+> If you are working within a child theme (e.g., inside `egnitech-one-child/`, or if the user's objective is to extend/override the theme for the active site domain), you MUST ignore this file and use `AI_CONTEXT-Child.md` instead.
 
 This file provides the **architectural foundation** and **design system rules** for the EgniTech One parent theme. This is the core engine; for technical implementation procedures (creating templates, patterns, or asset loading), refer to the local `wp-block-theme` skill located in the directory `egnitech-one/.agent/skills/wp-block-theme/`.
 

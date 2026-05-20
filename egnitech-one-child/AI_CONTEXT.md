@@ -2,7 +2,7 @@
 
 > [!IMPORTANT]
 > **Context Selection Rule:**
-> If you are working within the parent theme core (e.g., inside `egnitech-one/` folder, and the objective is to modify the core foundation), you MUST ignore this file and use `AI_CONTEXT.md` instead.
+> If you are working within the parent theme core (e.g., inside `egnitech-one/` folder, and the objective is to modify the core foundation), you MUST ignore this file and use the parent `AI_CONTEXT.md` instead.
 
 This file provides the **environmental ground rules** and **project identity** for the EgniTech One Child theme. For technical implementation procedures (creating templates, patterns, or asset loading), refer to the local `wp-block-theme` skill located in the directory `egnitech-one/.agent/skills/wp-block-theme/`.
 
@@ -56,6 +56,3 @@ Refer to the following in the local `wp-block-theme` skill (under `egnitech-one/
 - `references/html-conversion.md`: The 10-step process for converting designs to FSE.
 - `references/architecture.md`: Scoping rules and the asset pipeline.
 - `references/theme-json.md`: Global design system tokens.
-
----
-*Final AI Reminder*: You are extending a production site. Always verify changes in the child theme and never touch the parent core.

@@ -1,0 +1,9 @@
+{
+    "$schema": "https://schemas.wp.org/wp/7.0/theme.json",
+    "version": 3,
+    "settings": {
+        "custom": {
+            "darkMode": false
+        }
+    }
+}
