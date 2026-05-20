@@ -16,11 +16,11 @@ $footer_credits   = egnitech_one_get_footer_credits();
 	<!-- wp:group {"align":"wide","layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap"}} -->
 	<div class="wp-block-group alignwide">
 		<!-- wp:paragraph {"fontSize":"small","style":{"elements":{"link":{"color":{"text":"var:preset|color|secondary"}}}}} -->
-		<p class="has-small-font-size"><?php echo $footer_credits; ?></p>
+		<p class="has-small-font-size"><?php echo wp_kses_post( $footer_credits ); ?></p>
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"fontSize":"small","style":{"elements":{"link":{"color":{"text":"var:preset|color|secondary"}}}},"textColor":"secondary"} -->
-		<p class="has-secondary-color has-text-color has-small-font-size"><?php echo $footer_copyright; ?></p>
+		<p class="has-secondary-color has-text-color has-small-font-size"><?php echo wp_kses_post( $footer_copyright ); ?></p>
 		<!-- /wp:paragraph -->
 	</div>
 	<!-- /wp:group -->

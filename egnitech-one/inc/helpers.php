@@ -18,8 +18,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param mixed  $default Default value.
  * @return mixed          Option value.
  */
-function egnitech_one_get_option( string $option, mixed $default = '' ): mixed {
-	return get_option( $option, $default );
+if ( ! function_exists( 'egnitech_one_get_option' ) ) {
+	function egnitech_one_get_option( string $option, mixed $default = '' ): mixed {
+		return get_option( $option, $default );
+	}
 }
 
 /**
@@ -27,8 +29,10 @@ function egnitech_one_get_option( string $option, mixed $default = '' ): mixed {
  *
  * @return string Copyright text.
  */
-function egnitech_one_get_footer_copyright(): string {
-	return (string) egnitech_one_get_option( 'egnitech_one_footer_copyright', '' );
+if ( ! function_exists( 'egnitech_one_get_footer_copyright' ) ) {
+	function egnitech_one_get_footer_copyright(): string {
+		return (string) egnitech_one_get_option( 'egnitech_one_footer_copyright', '' );
+	}
 }
 
 /**
@@ -36,11 +40,13 @@ function egnitech_one_get_footer_copyright(): string {
  *
  * @return string Credits HTML/text.
  */
-function egnitech_one_get_footer_credits(): string {
-	return (string) egnitech_one_get_option(
-		'egnitech_one_footer_credits',
-		'<a href="https://egnitech.com" rel="nofollow">EgniTech</a> &middot; Built with <a href="https://wordpress.org" rel="nofollow">WordPress</a>'
-	);
+if ( ! function_exists( 'egnitech_one_get_footer_credits' ) ) {
+	function egnitech_one_get_footer_credits(): string {
+		return (string) egnitech_one_get_option(
+			'egnitech_one_footer_credits',
+			'<a href="https://egnitech.com" rel="nofollow">EgniTech</a> &middot; Built with <a href="https://wordpress.org" rel="nofollow">WordPress</a>'
+		);
+	}
 }
 
 /**
@@ -50,23 +56,24 @@ function egnitech_one_get_footer_credits(): string {
  *
  * @return bool True if dark mode is enabled, false otherwise.
  */
-function egnitech_one_is_dark_mode_enabled(): bool {
-	// If parent theme is active, dark mode is always enabled.
-	if ( ! is_child_theme() ) {
-		return true;
-	}
+if ( ! function_exists( 'egnitech_one_is_dark_mode_enabled' ) ) {
+	function egnitech_one_is_dark_mode_enabled(): bool {
+		// If parent theme is active, dark mode is always enabled.
+		if ( ! is_child_theme() ) {
+			return true;
+		}
 
-	// Check PHP theme support declaration.
-	if ( current_theme_supports( 'egnitech-one-dark-mode' ) ) {
-		return true;
-	}
+		// Check PHP theme support declaration.
+		if ( current_theme_supports( 'egnitech-one-dark-mode' ) ) {
+			return true;
+		}
 
-	// Check JSON declaration in theme.json's settings.custom.darkMode.
-	$custom_settings = wp_get_global_settings( array( 'custom' ) );
-	if ( is_array( $custom_settings ) && ! empty( $custom_settings['darkMode'] ) ) {
-		return true;
-	}
+		// Check JSON declaration in theme.json's settings.custom.darkMode.
+		$custom_settings = wp_get_global_settings( array( 'custom' ) );
+		if ( is_array( $custom_settings ) && ! empty( $custom_settings['darkMode'] ) ) {
+			return true;
+		}
 
-	return false;
+		return false;
+	}
 }
-

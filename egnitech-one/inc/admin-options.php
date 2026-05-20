@@ -363,62 +363,6 @@ register_setting( 'egnitech_one_options', 'egnitech_one_custom_scripts', [
 'sanitize_callback' => 'egnitech_one_sanitize_scripts',
 ] );
 
-/* ----- Integrations: reCAPTCHA ----- */
-register_setting( 'egnitech_one_options', 'egnitech_one_recaptcha_enabled', [
-'type'              => 'string',
-'default'           => '',
-'sanitize_callback' => 'sanitize_text_field',
-] );
-
-register_setting( 'egnitech_one_options', 'egnitech_one_recaptcha_site_key', [
-'type'              => 'string',
-'default'           => '',
-'sanitize_callback' => 'sanitize_text_field',
-] );
-
-register_setting( 'egnitech_one_options', 'egnitech_one_recaptcha_secret_key', [
-'type'              => 'string',
-'default'           => '',
-'sanitize_callback' => 'sanitize_text_field',
-] );
-
-/* ----- Contact Us ----- */
-register_setting( 'egnitech_one_options', 'egnitech_one_contact_title', [
-'type'              => 'string',
-'default'           => 'Let\'s build something extraordinary.',
-'sanitize_callback' => 'wp_kses_post',
-] );
-
-register_setting( 'egnitech_one_options', 'egnitech_one_contact_desc', [
-'type'              => 'string',
-'default'           => 'Have a project in mind or just want to say hello? Drop us a message and we\'ll get back to you within 24 hours.',
-'sanitize_callback' => 'wp_kses_post',
-] );
-
-register_setting( 'egnitech_one_options', 'egnitech_one_contact_email', [
-'type'              => 'string',
-'default'           => 'hello@egnitech.com',
-'sanitize_callback' => 'sanitize_email',
-] );
-
-register_setting( 'egnitech_one_options', 'egnitech_one_contact_recipient_email', [
-'type'              => 'string',
-'default'           => '',
-'sanitize_callback' => 'sanitize_email',
-] );
-
-register_setting( 'egnitech_one_options', 'egnitech_one_contact_phone', [
-'type'              => 'string',
-'default'           => '+1 (555) 000-0000',
-'sanitize_callback' => 'sanitize_text_field',
-] );
-
-register_setting( 'egnitech_one_options', 'egnitech_one_contact_form_fields', [
-'type'              => 'string',
-'default'           => '[]',
-'sanitize_callback' => 'egnitech_one_sanitize_scripts', // Same unfiltered_html check
-] );
-
 /* ----- SMTP Settings ----- */
 register_setting( 'egnitech_one_options', 'egnitech_one_smtp_enabled', [
 'type'              => 'string',
@@ -486,26 +430,6 @@ if ( ! current_user_can( 'unfiltered_html' ) ) {
 return '';
 }
 return is_string( $input ) ? $input : '';
-}
-
-/**
- * Check if the "Contact Us" template is currently assigned to any published page.
- *
- * @return bool True if in use, false otherwise.
- */
-function egnitech_one_is_contact_template_in_use(): bool {
-    $args = array(
-        'post_type'      => 'page',
-        'post_status'    => 'publish',
-        'posts_per_page' => 1,
-        'meta_key'       => '_wp_page_template',
-        'meta_value'     => 'egnitech-one-contact-us',
-        'fields'         => 'ids',
-        'no_found_rows'  => true,
-    );
-
-    $query = new WP_Query( $args );
-    return $query->have_posts();
 }
 
 /**
@@ -681,22 +605,6 @@ $reading_progress     = get_option( 'egnitech_one_reading_progress', 'yes' );
 $reading_progress_height = get_option( 'egnitech_one_reading_progress_height', 2 );
 $breadcrumbs          = get_option( 'egnitech_one_breadcrumbs', '' );
 
-// Integrations options.
-$recaptcha_enabled    = get_option( 'egnitech_one_recaptcha_enabled', '' );
-$recaptcha_site_key   = get_option( 'egnitech_one_recaptcha_site_key', '' );
-$recaptcha_secret_key = get_option( 'egnitech_one_recaptcha_secret_key', '' );
-
-// Contact options
-$contact_title        = get_option( 'egnitech_one_contact_title', 'Let\'s build something extraordinary.' );
-$contact_desc         = get_option( 'egnitech_one_contact_desc', 'Have a project in mind or just want to say hello? Drop us a message and we\'ll get back to you within 24 hours.' );
-$contact_email        = get_option( 'egnitech_one_contact_email', 'hello@egnitech.com' );
-$recipient_email      = get_option( 'egnitech_one_contact_recipient_email', '' );
-$contact_phone        = get_option( 'egnitech_one_contact_phone', '+1 (555) 000-0000' );
-$contact_fields_raw   = get_option( 'egnitech_one_contact_form_fields', '[]' );
-$contact_fields       = json_decode( (string) $contact_fields_raw, true );
-if ( ! is_array( $contact_fields ) ) {
-    $contact_fields = array();
-}
 
 // SMTP options.
 $smtp_enabled     = get_option( 'egnitech_one_smtp_enabled', 'no' );
@@ -726,8 +634,7 @@ $layout               = egnitech_one_get_layout_settings();
 <li><a href="#tab-header"><span class="dashicons dashicons-editor-kitchensink"></span> <?php esc_html_e( 'Header', 'egnitech-one' ); ?></a></li>
 <li><a href="#tab-blog"><span class="dashicons dashicons-welcome-write-blog"></span> <?php esc_html_e( 'Blog', 'egnitech-one' ); ?></a></li>
 <li><a href="#tab-footer"><span class="dashicons dashicons-admin-links"></span> <?php esc_html_e( 'Footer', 'egnitech-one' ); ?></a></li>
-<li><a href="#tab-contact"><span class="dashicons dashicons-email"></span> <?php esc_html_e( 'Contact Us', 'egnitech-one' ); ?></a></li>
-<li><a href="#tab-integrations"><span class="dashicons dashicons-share"></span> <?php esc_html_e( 'Integrations', 'egnitech-one' ); ?></a></li>
+
 <li><a href="#tab-smtp"><span class="dashicons dashicons-admin-network"></span> <?php esc_html_e( 'SMTP Settings', 'egnitech-one' ); ?></a></li>
 <li><a href="#tab-advanced"><span class="dashicons dashicons-admin-tools"></span> <?php esc_html_e( 'Advanced', 'egnitech-one' ); ?></a></li>
 </ul>
@@ -1224,121 +1131,6 @@ esc_html_e( 'Customize the "EgniTech · Built with WordPress" text. HTML allowed
 </div>
 </div> <!-- end tab-footer -->
 
-<!-- ==================== CONTACT US TAB ==================== -->
-<div id="tab-contact" class="egnitech-tab-panel">
-    <?php if ( ! egnitech_one_is_contact_template_in_use() ) : ?>
-        <div class="egnitech-premium-notice">
-            <div class="egnitech-notice-illustration">
-                <span class="dashicons dashicons-layout"></span>
-            </div>
-            <div class="egnitech-notice-content">
-                <h3 class="egnitech-notice-title"><?php esc_html_e( 'Contact Template Not in Use', 'egnitech-one' ); ?></h3>
-                <p class="egnitech-notice-text"><?php esc_html_e( 'The "EgniTech One Contact Us" page template is not currently assigned to any published page. Settings configured here will only take effect on pages using this specific template.', 'egnitech-one' ); ?></p>
-                <div class="egnitech-notice-footer">
-                    <a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=page' ) ); ?>" class="egnitech-btn egnitech-btn-primary">
-                        <span class="dashicons dashicons-plus"></span> <?php esc_html_e( 'Create a Contact Page', 'egnitech-one' ); ?>
-                    </a>
-                    <a href="https://developer.wordpress.org/themes/template-files-section/page-template-files/" target="_blank" class="egnitech-btn egnitech-btn-secondary">
-                        <?php esc_html_e( 'Learn about Templates', 'egnitech-one' ); ?>
-                    </a>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
-
-    <div class="egnitech-card">
-        <div class="egnitech-card-header">
-            <h2 class="egnitech-card-title"><?php esc_html_e( 'Page Content', 'egnitech-one' ); ?></h2>
-            <p class="egnitech-card-desc"><?php esc_html_e( 'Manage the text content on your Contact Us page.', 'egnitech-one' ); ?></p>
-        </div>
-        <div class="egnitech-card-body">
-            <div class="egnitech-option-row egnitech-option-row-vertical">
-                <div class="egnitech-option-info">
-                    <label><?php esc_html_e( 'Hero Title', 'egnitech-one' ); ?></label>
-                </div>
-                <div class="egnitech-option-control">
-                    <textarea name="egnitech_one_contact_title" rows="2" class="egnitech-textarea" <?php disabled( ! egnitech_one_is_contact_template_in_use() ); ?>><?php echo esc_textarea( $contact_title ); ?></textarea>
-                </div>
-            </div>
-            <div class="egnitech-option-row egnitech-option-row-vertical">
-                <div class="egnitech-option-info">
-                    <label><?php esc_html_e( 'Hero Description', 'egnitech-one' ); ?></label>
-                </div>
-                <div class="egnitech-option-control">
-                    <textarea name="egnitech_one_contact_desc" rows="3" class="egnitech-textarea" <?php disabled( ! egnitech_one_is_contact_template_in_use() ); ?>><?php echo esc_textarea( $contact_desc ); ?></textarea>
-                </div>
-            </div>
-            <div class="egnitech-option-row">
-                <div class="egnitech-option-info">
-                    <label><?php esc_html_e( 'Public Contact Email', 'egnitech-one' ); ?></label>
-                    <p class="description"><?php esc_html_e( 'The email address displayed publicly on your website.', 'egnitech-one' ); ?></p>
-                </div>
-                <div class="egnitech-option-control">
-                    <input type="email" name="egnitech_one_contact_email" value="<?php echo esc_attr( $contact_email ); ?>" class="egnitech-input" <?php disabled( ! egnitech_one_is_contact_template_in_use() ); ?> />
-                </div>
-            </div>
-            <div class="egnitech-option-row">
-                <div class="egnitech-option-info">
-                    <label><?php esc_html_e( 'Recipient Email (Incoming)', 'egnitech-one' ); ?></label>
-                    <p class="description"><?php esc_html_e( 'Private address that receives form submissions. If empty, uses the Public Contact Email.', 'egnitech-one' ); ?></p>
-                </div>
-                <div class="egnitech-option-control">
-                    <input type="email" name="egnitech_one_contact_recipient_email" value="<?php echo esc_attr( $recipient_email ); ?>" class="egnitech-input" placeholder="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>" <?php disabled( ! egnitech_one_is_contact_template_in_use() ); ?> />
-                </div>
-            </div>
-            <div class="egnitech-option-row">
-                <div class="egnitech-option-info">
-                    <label><?php esc_html_e( 'Contact Phone', 'egnitech-one' ); ?></label>
-                </div>
-                <div class="egnitech-option-control">
-                    <input type="text" name="egnitech_one_contact_phone" value="<?php echo esc_attr( $contact_phone ); ?>" class="egnitech-input" <?php disabled( ! egnitech_one_is_contact_template_in_use() ); ?> />
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="egnitech-card">
-        <div class="egnitech-card-header">
-            <h2 class="egnitech-card-title"><?php esc_html_e( 'Contact Form Fields', 'egnitech-one' ); ?></h2>
-            <p class="egnitech-card-desc"><?php esc_html_e( 'Add, remove, or reorder fields in your contact form.', 'egnitech-one' ); ?></p>
-        </div>
-        <div class="egnitech-card-body">
-            <div class="egnitech-scripts-manager">
-                <div class="egnitech-scripts-header">
-                    <h3><?php esc_html_e( 'Manage Form Fields', 'egnitech-one' ); ?></h3>
-                    <button type="button" class="egnitech-btn egnitech-btn-primary" id="egnitech_add_contact_field_btn" <?php disabled( ! egnitech_one_is_contact_template_in_use() ); ?>>
-                        <span class="dashicons dashicons-plus-alt2"></span> <?php esc_html_e( 'Add New Field', 'egnitech-one' ); ?>
-                    </button>
-                </div>
-
-                <div class="egnitech-scripts-list" id="egnitech_contact_fields_list">
-                    <?php
-                    if ( ! empty( $contact_fields ) && is_array( $contact_fields ) ) {
-                        foreach ( $contact_fields as $index => $field ) {
-                            $id          = isset( $field['id'] ) ? $field['id'] : $index . '_' . wp_rand( 1000, 9999 );
-                            $label       = isset( $field['label'] ) ? $field['label'] : __( 'Unnamed Field', 'egnitech-one' );
-                            $type        = isset( $field['type'] ) ? $field['type'] : 'text';
-                            $placeholder = isset( $field['placeholder'] ) ? $field['placeholder'] : '';
-                            $is_required = isset( $field['required'] ) ? filter_var( $field['required'], FILTER_VALIDATE_BOOLEAN ) : true;
-
-                            echo egnitech_one_generate_contact_field_item_html(
-                                $id,
-                                $label,
-                                $type,
-                                $placeholder,
-                                $is_required
-                            );
-                        }
-                    }
-                    ?>
-                </div>
-
-                <input type="hidden" name="egnitech_one_contact_form_fields" id="egnitech_one_contact_form_fields" value="<?php echo esc_attr( wp_json_encode( $contact_fields ) ); ?>" />
-            </div>
-        </div>
-    </div>
-</div> <!-- end tab-contact -->
-
 <!-- ==================== ADVANCED TAB ==================== -->
 <div id="tab-advanced" class="egnitech-tab-panel">
 <div class="egnitech-card">
@@ -1387,52 +1179,6 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
 </div> <!-- .egnitech-card-body -->
 </div> <!-- .egnitech-card -->
 </div> <!-- end tab-advanced -->
-
-<!-- ==================== INTEGRATIONS TAB ==================== -->
-<div id="tab-integrations" class="egnitech-tab-panel">
-    <div class="egnitech-card">
-        <div class="egnitech-card-header">
-            <h2 class="egnitech-card-title"><?php esc_html_e( 'Google reCAPTCHA v2', 'egnitech-one' ); ?></h2>
-            <p class="egnitech-card-desc"><?php esc_html_e( 'Protect your contact form from spam with Google reCAPTCHA.', 'egnitech-one' ); ?></p>
-        </div>
-        <div class="egnitech-card-body">
-            <div class="egnitech-option-row">
-                <div class="egnitech-option-info">
-                    <label><?php esc_html_e( 'Enable reCAPTCHA', 'egnitech-one' ); ?></label>
-                    <p class="description"><?php esc_html_e( 'Enable reCAPTCHA verification on the contact form.', 'egnitech-one' ); ?></p>
-                </div>
-                <div class="egnitech-option-control">
-                    <label class="egnitech-switch">
-                        <input type="checkbox" name="egnitech_one_recaptcha_enabled" id="egnitech_one_recaptcha_enabled" value="yes" <?php checked( 'yes', $recaptcha_enabled ); ?> />
-                        <span class="egnitech-slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <div id="egnitech-recaptcha-keys-row" style="<?php echo 'yes' === $recaptcha_enabled ? '' : 'display: none;'; ?>">
-                <div class="egnitech-option-row">
-                    <div class="egnitech-option-info">
-                        <label><?php esc_html_e( 'Site Key', 'egnitech-one' ); ?></label>
-                        <p class="description"><?php esc_html_e( 'Your Google reCAPTCHA v2 "I\'m not a robot" Site Key.', 'egnitech-one' ); ?></p>
-                    </div>
-                    <div class="egnitech-option-control">
-                        <input type="text" name="egnitech_one_recaptcha_site_key" value="<?php echo esc_attr( $recaptcha_site_key ); ?>" class="egnitech-input" placeholder="<?php esc_attr_e( 'Enter Site Key here', 'egnitech-one' ); ?>" />
-                    </div>
-                </div>
-
-                <div class="egnitech-option-row">
-                    <div class="egnitech-option-info">
-                        <label><?php esc_html_e( 'Secret Key', 'egnitech-one' ); ?></label>
-                        <p class="description"><?php esc_html_e( 'Your Google reCAPTCHA v2 "I\'m not a robot" Secret Key.', 'egnitech-one' ); ?></p>
-                    </div>
-                    <div class="egnitech-option-control">
-                        <input type="password" name="egnitech_one_recaptcha_secret_key" value="<?php echo esc_attr( $recaptcha_secret_key ); ?>" class="egnitech-input" placeholder="<?php esc_attr_e( 'Enter Secret Key here', 'egnitech-one' ); ?>" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> <!-- end tab-integrations -->
 
 <!-- ==================== SMTP SETTINGS TAB ==================== -->
 <div id="tab-smtp" class="egnitech-tab-panel">
@@ -1583,98 +1329,3 @@ function egnitech_one_ajax_get_new_script_html(): void {
 }
 add_action( 'wp_ajax_egnitech_one_get_new_script_html', 'egnitech_one_ajax_get_new_script_html' );
 
-/**
- * AJAX handler for generating a new contact field item dynamically.
- */
-function egnitech_one_ajax_get_new_contact_field_html(): void {
-    check_ajax_referer( 'egnitech_scripts_nonce', 'nonce' );
-
-    if ( ! current_user_can( 'edit_theme_options' ) ) {
-        wp_send_json_error( array( 'message' => __( 'Permission denied.', 'egnitech-one' ) ) );
-    }
-
-    $field_id = isset( $_POST['field_id'] ) ? sanitize_text_field( wp_unslash( $_POST['field_id'] ) ) : (string) time();
-    $label    = __( 'New Field', 'egnitech-one' );
-
-    $html = egnitech_one_generate_contact_field_item_html(
-        $field_id,
-        $label,
-        'text',         // Default type
-        '',             // Empty placeholder
-        true            // Required
-    );
-
-    wp_send_json_success( array( 'html' => $html ) );
-}
-add_action( 'wp_ajax_egnitech_one_get_new_contact_field_html', 'egnitech_one_ajax_get_new_contact_field_html' );
-
-/**
- * Function to generate contact field item HTML
- */
-function egnitech_one_generate_contact_field_item_html( string|int $id, string $label, string $type = 'text', string $placeholder = '', bool $is_required = true ): string {
-    $item_id = 'field_' . $id;
-    $required_attr = $is_required ? 'checked="checked"' : '';
-
-    $types = array(
-        'text'     => __( 'Text', 'egnitech-one' ),
-        'email'    => __( 'Email', 'egnitech-one' ),
-        'tel'      => __( 'Phone', 'egnitech-one' ),
-        'textarea' => __( 'Textarea', 'egnitech-one' ),
-    );
-
-    $highlights = '<span class="egnitech-highlight-badge highlight-type">' . esc_html( isset( $types[$type] ) ? $types[$type] : $type ) . '</span>';
-    
-    ob_start();
-    ?>
-    <div class="egnitech-option-row">
-        <div class="egnitech-option-info">
-            <label><?php esc_html_e( 'Field Label', 'egnitech-one' ); ?></label>
-        </div>
-        <div class="egnitech-option-control">
-            <input type="text" class="egnitech-input field-label-input" value="<?php echo esc_attr( $label ); ?>" />
-        </div>
-    </div>
-    <div class="egnitech-option-row">
-        <div class="egnitech-option-info">
-            <label><?php esc_html_e( 'Field Type', 'egnitech-one' ); ?></label>
-        </div>
-        <div class="egnitech-option-control">
-            <select class="egnitech-input field-type-select">
-                <?php foreach ( $types as $val => $name ) : ?>
-                    <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $type, $val ); ?>><?php echo esc_html( $name ); ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-    </div>
-    <div class="egnitech-option-row">
-        <div class="egnitech-option-info">
-            <label><?php esc_html_e( 'Placeholder', 'egnitech-one' ); ?></label>
-        </div>
-        <div class="egnitech-option-control">
-            <input type="text" class="egnitech-input field-placeholder-input" value="<?php echo esc_attr( $placeholder ); ?>" />
-        </div>
-    </div>
-    <div class="egnitech-option-row">
-        <div class="egnitech-option-info">
-            <label><?php esc_html_e( 'Required', 'egnitech-one' ); ?></label>
-        </div>
-        <div class="egnitech-option-control">
-            <label class="egnitech-switch">
-                <input type="checkbox" class="field-required-toggle" <?php echo esc_attr( $required_attr ); ?> />
-                <span class="egnitech-slider"></span>
-            </label>
-        </div>
-    </div>
-    <?php
-    $content = ob_get_clean();
-
-    return egnitech_one_render_admin_card_item( array(
-        'class'        => 'egnitech-contact-field-item',
-        'data_id'      => $id,
-        'title'        => $label,
-        'highlights'   => $highlights,
-        'content'      => $content,
-        'delete_title' => __( 'Delete Field', 'egnitech-one' ),
-        'is_expanded'  => false
-    ) );
-}
