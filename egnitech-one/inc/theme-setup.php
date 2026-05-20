@@ -117,6 +117,9 @@ add_action( 'wp_body_open', 'egnitech_one_render_breadcrumbs' );
  * @return string Toggle HTML.
  */
 function egnitech_one_dark_mode_toggle_shortcode(): string {
+	if ( ! egnitech_one_is_dark_mode_enabled() ) {
+		return '';
+	}
 	return '<button class="egnitech-dark-mode-toggle" aria-label="Switch to dark mode" type="button">
 		<svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
 		<svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -139,3 +142,22 @@ function egnitech_one_force_render_shortcodes( string $block_content, array $blo
 	return $block_content;
 }
 add_filter( 'render_block', 'egnitech_one_force_render_shortcodes', 10, 2 );
+
+/**
+ * Filter theme.json data to strip dark mode color scheme if dark mode is disabled.
+ *
+ * @param WP_Theme_JSON_Data $theme_json_data Original theme.json data object.
+ * @return WP_Theme_JSON_Data Modified theme.json data object.
+ */
+function egnitech_one_filter_theme_json( WP_Theme_JSON_Data $theme_json_data ): WP_Theme_JSON_Data {
+	if ( ! egnitech_one_is_dark_mode_enabled() ) {
+		$data = $theme_json_data->get_data();
+		if ( isset( $data['styles']['css'] ) ) {
+			$data['styles']['css'] = str_replace( 'color-scheme: light dark;', 'color-scheme: light;', $data['styles']['css'] );
+		}
+		return new WP_Theme_JSON_Data( $data );
+	}
+	return $theme_json_data;
+}
+add_filter( 'wp_theme_json_data_theme', 'egnitech_one_filter_theme_json' );
+

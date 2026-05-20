@@ -33,6 +33,11 @@ EgniTech One handles color schemes via a foundational system:
 - **Mechanics**: Controls the `:root` pseudo-class using `color-scheme: light dark` and a persistent `data-scheme` attribute on the `<html>` root.
 - **Implementation**: DO NOT use media queries for dark modes. Use the native modern CSS `light-dark()` function.
 - **Example**: `color: light-dark(var(--wp--preset--color--base), var(--wp--preset--color--contrast));`
+- **Child Theme Behavior**: Disabled by default for active child themes to prevent visual regressions.
+  - To check support programmatically, use `egnitech_one_is_dark_mode_enabled()`.
+  - Child themes can opt-in via PHP (`add_theme_support('egnitech-one-dark-mode')`) or via `theme.json` (`"settings": { "custom": { "darkMode": true } }`).
+  - When disabled, `:root` color-scheme is forced to `light` to natively resolve all `light-dark()` colors to their light mode values with zero runtime overhead.
+
 
 ## Coding Standards
 1. **Text Domain**: Always use `egnitech-one` for core localization.

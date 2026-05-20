@@ -30,8 +30,13 @@ For all development tasks involving templates, patterns, `theme.json`, or asset 
 ## Project-Specific Systems
 
 ### Dark/Light Mode System
-Inherited from the parent. Use the `light-dark()` CSS function for any new styles to ensure they respect the theme's native color scheme toggle.
-- **Example**: `color: light-dark(#333, #fff);`
+By default, the parent theme's native dark/light mode is **disabled** to avoid style conflicts and regressions.
+- **Opt-In Mechanisms**:
+  1. **PHP**: Call `add_theme_support( 'egnitech-one-dark-mode' );` inside an `after_setup_theme` action hook in `functions.php`.
+  2. **JSON**: Set `"custom": { "darkMode": true }` under `"settings"` in the child theme's `theme.json`.
+- **Writing Styles**: When enabled, write scoped styles using the `light-dark()` CSS function to dynamically support the scheme toggle. When disabled, the browser will natively resolve all `light-dark()` properties to their light mode values automatically.
+- **Example**: `color: light-dark(var(--wp--preset--color--base), var(--wp--preset--color--contrast));`
+
 
 ### Text Domains & Localization
 - Use `egnitech-one` when referencing parent-defined strings or functions.

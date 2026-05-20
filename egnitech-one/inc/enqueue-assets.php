@@ -35,6 +35,18 @@ add_action( 'wp_enqueue_scripts', 'egnitech_one_enqueue_styles' );
  * Prevent FOUC by instantly applying dark mode before body renders.
  */
 function egnitech_one_color_scheme_script(): void {
+	if ( ! egnitech_one_is_dark_mode_enabled() ) {
+		?>
+		<script>
+			(function() {
+				document.documentElement.style.colorScheme = 'light';
+				document.documentElement.setAttribute('data-scheme', 'light');
+			})();
+		</script>
+		<?php
+		return;
+	}
+
 	$admin_default = get_option( 'egnitech_one_dark_mode_default', 'system' );
 	?>
 	<script>
@@ -62,6 +74,10 @@ add_action( 'wp_head', 'egnitech_one_color_scheme_script', 5 );
  * Enqueue dark mode toggle script and styles.
  */
 function egnitech_one_enqueue_dark_mode(): void {
+	if ( ! egnitech_one_is_dark_mode_enabled() ) {
+		return;
+	}
+
 	wp_enqueue_style(
 		'egnitech-one-dark-mode',
 		get_theme_file_uri( 'assets/css/dark-mode-toggle.css' ),
