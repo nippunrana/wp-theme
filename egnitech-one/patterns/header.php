@@ -26,6 +26,9 @@
 				</figure>
 				<!-- /wp:image -->
 			<?php endif; ?>
+			<?php if ( ! has_custom_logo() ) : ?>
+				<!-- wp:site-title {"isLink":true} /-->
+			<?php endif; ?>
 		</div>
 		<!-- /wp:group -->
 
