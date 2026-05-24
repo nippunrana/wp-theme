@@ -176,3 +176,52 @@ if ( ! function_exists( 'egnitech_one_filter_theme_json' ) ) {
 	}
 }
 add_filter( 'wp_theme_json_data_theme', 'egnitech_one_filter_theme_json' );
+
+/**
+ * Hide post metadata blocks on the frontend based on theme settings.
+ *
+ * @param string $block_content HTML content of the block.
+ * @param array  $block         Block attributes and data.
+ * @return string               Modified block content.
+ */
+if ( ! function_exists( 'egnitech_one_filter_post_meta_blocks' ) ) {
+	function egnitech_one_filter_post_meta_blocks( string $block_content, array $block ): string {
+		if ( is_admin() || ! isset( $block['blockName'] ) ) {
+			return $block_content;
+		}
+
+		$block_name = $block['blockName'];
+
+		// Author visibility.
+		if ( 'core/post-author' === $block_name || 'core/post-author-name' === $block_name ) {
+			if ( 'yes' !== get_option( 'egnitech_one_meta_author', 'yes' ) ) {
+				return '';
+			}
+		}
+
+		// Date visibility.
+		if ( 'core/post-date' === $block_name ) {
+			if ( 'yes' !== get_option( 'egnitech_one_meta_date', 'yes' ) ) {
+				return '';
+			}
+		}
+
+		// Categories & Tags visibility.
+		if ( 'core/post-terms' === $block_name ) {
+			$term = $block['attrs']['term'] ?? '';
+			if ( 'category' === $term ) {
+				if ( 'yes' !== get_option( 'egnitech_one_meta_categories', 'yes' ) ) {
+					return '';
+				}
+			} elseif ( 'post_tag' === $term ) {
+				if ( 'yes' !== get_option( 'egnitech_one_meta_tags', 'yes' ) ) {
+					return '';
+				}
+			}
+		}
+
+		return $block_content;
+	}
+}
+add_filter( 'render_block', 'egnitech_one_filter_post_meta_blocks', 10, 2 );
+

@@ -115,3 +115,97 @@ body.has-fixed-header .wp-site-blocks>.wp-block-template-part:first-child {
 	z-index: 100;
 	background-color: var(--wp--preset--color--base);
 }
+
+/* ─── Blog Layout Grids ─── */
+body.blog-layout-grid-2 .wp-block-post-template,
+body.blog-layout-grid-3 .wp-block-post-template {
+	list-style: none;
+	padding-left: 0;
+	margin: 0;
+}
+
+@media (min-width: 768px) {
+	body.blog-layout-grid-2 .wp-block-post-template {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--wp--preset--spacing--60);
+	}
+	body.blog-layout-grid-3 .wp-block-post-template {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--wp--preset--spacing--50);
+	}
+}
+
+/* ─── Sidebar Layout ─── */
+.egnitech-layout-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wp--preset--spacing--60);
+}
+
+.egnitech-main-content {
+	width: 100%;
+}
+
+.egnitech-sidebar-area {
+	width: 100%;
+}
+
+body:not(.has-sidebar) .egnitech-sidebar-area {
+	display: none !important;
+}
+
+body:not(.has-sidebar) .egnitech-main-content {
+	width: 100% !important;
+	max-width: 100% !important;
+}
+
+@media (min-width: 1024px) {
+	body.has-sidebar .egnitech-layout-wrapper {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 300px;
+		align-items: start;
+		gap: var(--wp--preset--spacing--70);
+	}
+
+	body.sidebar-left .egnitech-layout-wrapper {
+		grid-template-columns: 300px minmax(0, 1fr);
+	}
+
+	body.sidebar-left .egnitech-sidebar-area {
+		order: -1;
+	}
+}
+
+/* ─── Breadcrumbs Styling ─── */
+.egnitech-breadcrumbs {
+	max-width: var(--wp--preset--layout--content-size);
+	margin: var(--wp--preset--spacing--50) auto 0;
+	padding: 0 var(--wp--preset--spacing--50);
+	font-size: var(--wp--preset--font-size--small);
+	color: var(--wp--preset--color--secondary);
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.egnitech-breadcrumbs a {
+	color: var(--wp--preset--color--secondary);
+	text-decoration: none;
+	transition: color 0.15s ease;
+}
+
+.egnitech-breadcrumbs a:hover {
+	color: var(--wp--preset--color--accent);
+}
+
+.egnitech-breadcrumb-sep {
+	margin: 0 8px;
+	opacity: 0.5;
+}
+
+.egnitech-breadcrumb-current {
+	font-weight: 500;
+	color: var(--wp--preset--color--contrast);
+}

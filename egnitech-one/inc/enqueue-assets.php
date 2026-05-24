@@ -37,6 +37,24 @@ if ( ! function_exists( 'egnitech_one_enqueue_styles' ) ) {
 			absint( $desktop_top ),
 			absint( $desktop_bot )
 		);
+
+		// Dynamic Logo Widths
+		$logo_desktop = get_option( 'egnitech_one_logo_width_desktop', '' );
+		$logo_mobile  = get_option( 'egnitech_one_logo_width_mobile', '' );
+
+		if ( ! empty( $logo_mobile ) ) {
+			$custom_css .= sprintf(
+				' .egnitech-header-logo-container .egnitech-light-logo img, .egnitech-header-logo-container .egnitech-dark-logo img { max-width: %1$dpx !important; width: %1$dpx !important; height: auto !important; }',
+				absint( $logo_mobile )
+			);
+		}
+		if ( ! empty( $logo_desktop ) ) {
+			$custom_css .= sprintf(
+				' @media (min-width: 768px) { .egnitech-header-logo-container .egnitech-light-logo img, .egnitech-header-logo-container .egnitech-dark-logo img { max-width: %1$dpx !important; width: %1$dpx !important; height: auto !important; } }',
+				absint( $logo_desktop )
+			);
+		}
+
 		wp_add_inline_style( 'egnitech-one-style', $custom_css );
 	}
 }
