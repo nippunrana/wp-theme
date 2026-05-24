@@ -248,6 +248,12 @@ register_setting( 'egnitech_one_options', 'egnitech_one_dark_logo_url', [
 'sanitize_callback' => 'esc_url_raw',
 ] );
 
+register_setting( 'egnitech_one_options', 'egnitech_one_light_logo_id', [
+'type'              => 'integer',
+'default'           => 0,
+'sanitize_callback' => 'egnitech_one_sanitize_light_logo',
+] );
+
 /* ----- General ----- */
 register_setting( 'egnitech_one_options', 'egnitech_one_scroll_to_top', [
 'type'              => 'string',
@@ -487,6 +493,18 @@ return $value;
 }
 
 /**
+ * Sanitize light logo and sync it to custom_logo theme mod.
+ *
+ * @param mixed $input The input attachment ID.
+ * @return int The sanitized ID.
+ */
+function egnitech_one_sanitize_light_logo( mixed $input ): int {
+	$value = absint( $input );
+	set_theme_mod( 'custom_logo', $value );
+	return $value;
+}
+
+/**
  * Sync a layout property to the wp_global_styles post so the
  * Site Editor stays in sync with Theme Options.
  */
@@ -578,6 +596,9 @@ $mobile_padding_top   = get_option( 'egnitech_one_header_padding_mobile_top', '4
 $mobile_padding_bot   = get_option( 'egnitech_one_header_padding_mobile_bottom', '4' );
 $dark_logo_url        = get_option( 'egnitech_one_dark_logo_url', '' );
 $dark_logo_url        = $dark_logo_url ? set_url_scheme( $dark_logo_url, 'https' ) : '';
+$light_logo_id        = get_theme_mod( 'custom_logo', 0 );
+$light_logo_url       = $light_logo_id ? wp_get_attachment_image_url( (int) $light_logo_id, 'full' ) : '';
+$light_logo_url       = $light_logo_url ? set_url_scheme( $light_logo_url, 'https' ) : '';
 
 // Phase 1 options.
 $scroll_to_top        = get_option( 'egnitech_one_scroll_to_top', 'yes' );
@@ -950,8 +971,31 @@ if ( ! empty( $color_palette ) && is_array( $color_palette ) ) {
 <div class="egnitech-card-body">
 <div class="egnitech-option-row egnitech-option-row-vertical">
 <div class="egnitech-option-info">
+<label><?php esc_html_e( 'Light Mode Logo', 'egnitech-one' ); ?></label>
+<p class="description"><?php esc_html_e( 'Choose the logo image to show in Light Mode / Default. This syncs directly with the WordPress Site Logo block.', 'egnitech-one' ); ?></p>
+</div>
+<div class="egnitech-option-control">
+<div class="egnitech-logo-uploader">
+<div class="egnitech-logo-preview" style="<?php echo $light_logo_url ? '' : 'display: none;'; ?>">
+<img id="egnitech-light-logo-preview" src="<?php echo esc_url( $light_logo_url ); ?>" />
+</div>
+<input type="hidden" name="egnitech_one_light_logo_id" id="egnitech_one_light_logo_id" value="<?php echo esc_attr( $light_logo_id ); ?>" />
+<div class="egnitech-logo-actions">
+<button type="button" class="egnitech-btn" id="egnitech_select_light_logo">
+<span class="dashicons dashicons-upload"></span> <?php esc_html_e( 'Select Logo', 'egnitech-one' ); ?>
+</button>
+<button type="button" class="egnitech-btn egnitech-btn-danger" id="egnitech_remove_light_logo" style="<?php echo $light_logo_url ? '' : 'display:none;'; ?>">
+<?php esc_html_e( 'Remove', 'egnitech-one' ); ?>
+</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="egnitech-option-row egnitech-option-row-vertical">
+<div class="egnitech-option-info">
 <label><?php esc_html_e( 'Dark Mode Logo', 'egnitech-one' ); ?></label>
-<p class="description"><?php esc_html_e( 'Choose the logo image to show in Dark Mode. The light mode logo is set via Appearance → Editor → Site Logo.', 'egnitech-one' ); ?></p>
+<p class="description"><?php esc_html_e( 'Choose the logo image to show in Dark Mode.', 'egnitech-one' ); ?></p>
 </div>
 <div class="egnitech-option-control">
 <div class="egnitech-logo-uploader">

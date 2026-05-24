@@ -117,14 +117,39 @@
         if (tabs[0]) tabs[0].click();
     }
 
-    /* ===== Media Uploader (Dark Mode Logo) ===== */
+    /* ===== Media Uploader (Logo Uploaders) ===== */
     function initMediaUploader() {
-        var selectBtn = document.getElementById('egnitech_select_logo');
-        var removeBtn = document.getElementById('egnitech_remove_logo');
-        var urlInput = document.getElementById('egnitech_one_dark_logo_url');
-        var preview = document.getElementById('egnitech-dark-logo-preview');
+        // Dark Mode Logo
+        setupLogoUploader(
+            'egnitech_select_logo',
+            'egnitech_remove_logo',
+            'egnitech_one_dark_logo_url',
+            'egnitech-dark-logo-preview',
+            egnitechAdmin.selectLogoTitle || 'Select Dark Mode Logo',
+            false // Store URL
+        );
 
-        if (!selectBtn || !urlInput) return;
+        // Light Mode Logo
+        setupLogoUploader(
+            'egnitech_select_light_logo',
+            'egnitech_remove_light_logo',
+            'egnitech_one_light_logo_id',
+            'egnitech-light-logo-preview',
+            'Select Light Mode Logo',
+            true // Store ID
+        );
+    }
+
+    /**
+     * Setup helper for logo uploaders
+     */
+    function setupLogoUploader(selectId, removeId, inputId, previewId, title, storeId) {
+        var selectBtn = document.getElementById(selectId);
+        var removeBtn = document.getElementById(removeId);
+        var inputVal = document.getElementById(inputId);
+        var preview = document.getElementById(previewId);
+
+        if (!selectBtn || !inputVal) return;
 
         var frame;
 
@@ -137,17 +162,20 @@
             }
 
             frame = wp.media({
-                title: egnitechAdmin.selectLogoTitle || 'Select Dark Mode Logo',
+                title: title,
                 button: { text: egnitechAdmin.useLogoText || 'Use this logo' },
                 multiple: false
             });
 
             frame.on('select', function () {
                 var attachment = frame.state().get('selection').first().toJSON();
-                urlInput.value = attachment.url;
+                inputVal.value = storeId ? attachment.id : attachment.url;
                 if (preview) {
                     preview.src = attachment.url;
-                    preview.style.display = 'block';
+                    var previewContainer = preview.closest('.egnitech-logo-preview');
+                    if (previewContainer) {
+                        previewContainer.style.display = 'block';
+                    }
                 }
                 if (removeBtn) removeBtn.style.display = '';
             });
@@ -158,10 +186,13 @@
         if (removeBtn) {
             removeBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                urlInput.value = '';
+                inputVal.value = storeId ? '0' : '';
                 if (preview) {
                     preview.src = '';
-                    preview.style.display = 'none';
+                    var previewContainer = preview.closest('.egnitech-logo-preview');
+                    if (previewContainer) {
+                        previewContainer.style.display = 'none';
+                    }
                 }
                 if (removeBtn) removeBtn.style.display = 'none';
             });
