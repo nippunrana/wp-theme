@@ -1,69 +1,176 @@
-# EgniTech One1
+# EgniTech One
 
-EgniTech One is a modern, lightweight, and performance-first WordPress FSE (Full Site Editing) block parent theme. Designed for speed, simplicity, and ease of custom extension, it ships with native dark/light mode support, clean typography, a modular architecture, and zero jQuery dependencies.
+[![WordPress](https://img.shields.io/badge/WordPress-v7.0%2B-blue.svg?style=flat-square&logo=wordpress)](https://wordpress.org)
+[![PHP](https://img.shields.io/badge/PHP-v8.0%2B-purple.svg?style=flat-square&logo=php)](https://php.net)
+[![License](https://img.shields.io/badge/License-GPL--2.0-green.svg?style=flat-square)](http://www.gnu.org/licenses/gpl-2.0.html)
+[![Aesthetics](https://img.shields.io/badge/Performance-%3C%2050KB-brightgreen.svg?style=flat-square)](#)
 
-## 🚀 Key Features
-
-* **Performance-First (< 50KB Weight):** Asset-optimized codebase keeping page load times minimal and Core Web Vitals scores high.
-* **Native Dark/Light Mode:** Integrates native CSS `light-dark()` functionality, respecting browser/OS color scheme preferences. Fully toggleable without layout shifts or FOUC (Flash of Unstyled Content).
-* **Zero jQuery Dependency:** Handcrafted utilizing modern ES6+ vanilla JavaScript.
-* **FSE Ready:** Built entirely with Full Site Editing capabilities to customize pages, templates, and template parts visually.
-* **Custom Admin Options Panel:** A robust settings page under **Appearance > Theme Options** allowing administrators to control layouts, logo widths, typography, footer credits, and other settings.
-* **Performance Script Manager:** Allows normal, after-DOM, or 3-second delayed script insertion to optimize tracking/analytics loading and maximize page speed scores.
-* **SMTP Integration:** Global SMTP options to securely handle outbound emails via standard WordPress PHPMailer filters.
-* **Modern Design Foundations:** System-first font presets, fluid typography (`clamp()`), and slug-based spacing scales defined inside `theme.json` (v3).
+**EgniTech One** is a modern, lightweight, and performance-first WordPress FSE (Full Site Editing) block parent theme. Designed for speed, flexibility, and painless child-theme extension, it delivers native light/dark mode transitions, fluid typography, a modular administration system, and zero jQuery dependencies.
 
 ---
 
-## 📁 Repository Structure
+## 📖 Table of Contents
+* [Key Highlights](#-key-highlights)
+* [File Structure](#-file-structure)
+* [Architectural Deep Dives](#-architectural-deep-dives)
+  * [1. Native Light/Dark Mode Engine](#1-native-lightdark-mode-engine)
+  * [2. Performance Script Manager](#2-performance-script-manager)
+  * [3. SMTP Global Pipeline](#3-smtp-global-pipeline)
+  * [4. Layout Synchronization](#4-layout-synchronization)
+* [Admin Theme Options Registry](#-admin-theme-options-registry)
+* [Installation & Requirements](#%EF%B8%8F-installation--requirements)
+* [Developer Guidelines & Child Themes](#-developer-guidelines--child-themes)
+  * [Coding Standards](#coding-standards)
+  * [Activating Dark Mode in Child Themes](#activating-dark-mode-in-child-themes)
+
+---
+
+## 🚀 Key Highlights
+
+*   **Ultralight Payload (< 50KB):** Asset-optimized codebase keeping page load times minimal and Core Web Vitals scores high.
+*   **FSE Native (Version 3 `theme.json`):** Visually customize templates, parts, and styles in the Site Editor without drag-and-drop page builders.
+*   **Anti-FOUC Color Scheme:** Uses native `light-dark()` CSS styling paired with a render-blocking head snippet to ensure zero Flash of Unstyled Content (FOUC).
+*   **Performance Script Manager:** Allows normal, DOMContentLoaded-deferred, or 3-second delayed script insertion to optimize tracking/analytics loading.
+*   **Robust Options Panel:** Dedicated dashboard under **Appearance > Theme Options** to configure layout constraints, paddings, metadata visibility, custom logos, SMTP, and scripts.
+
+---
+
+## 📁 File Structure
 
 ```text
 wp-theme/
 ├── egnitech-one/                   # Parent Theme Root Directory
 │   ├── assets/                     # Scoped CSS, JS, and font resources
-│   │   ├── css/                    # Component stylesheet files (Admin, Dark Mode, etc.)
+│   │   ├── css/                    # Component stylesheets (admin, dark-mode-toggle, scroll-top, etc.)
 │   │   ├── fonts/                  # Local typography assets (Inter Variable)
-│   │   └── js/                     # Modular script assets (toggle, progress bar, etc.)
-│   ├── inc/                        # Core PHP sub-modules & class definitions
-│   │   ├── admin-options.php       # Theme options settings & UI registration
-│   │   ├── custom-scripts.php      # Custom script insertion class
-│   │   ├── enqueue-assets.php      # Asset enqueuing logic
-│   │   ├── font-manager.php        # Font library & site-editor typography loader
-│   │   ├── helpers.php             # Core utility functions
-│   │   ├── smtp-config.php         # SMTP mailer configuration hook
-│   │   └── theme-setup.php         # General theme features & bloat cleanup hooks
-│   ├── parts/                      # FSE HTML header & footer parts
-│   ├── patterns/                   # Core block pattern templates (PHP wrapper)
-│   ├── templates/                  # Block template layouts (404, archive, home, page, etc.)
-│   ├── functions.php               # Theme initialization entrypoint
-│   ├── style.css                   # Critical base styles & WP Metadata
-│   └── theme.json                  # Global design tokens and settings (version 3)
+│   │   └── js/                     # Modular vanilla scripts (toggle, scroll, progress-bar)
+│   ├── inc/                        # Core PHP helper files and configuration modules
+│   │   ├── admin-options.php       # Theme Options panel structure, callbacks, and validation
+│   │   ├── custom-scripts.php      # Custom Script loader and base64 worker injector
+│   │   ├── enqueue-assets.php      # Global and contextual style/script enqueuing
+│   │   ├── font-manager.php        # Font library cataloging and Global Styles parser
+│   │   ├── helpers.php             # Core utility APIs and option getters
+│   │   ├── smtp-config.php         # SMTP mailer hooks filtering PHPMailer
+│   │   └── theme-setup.php         # Theme capability registration and bloat removal
+│   ├── parts/                      # FSE HTML template parts (header, footer, sidebar)
+│   ├── patterns/                   # Dynamic block patterns (header, footer, query, sidebar)
+│   ├── templates/                  # Block template layouts (404, page, single, archive, index, etc.)
+│   ├── functions.php               # Theme bootstrapping entrypoint
+│   ├── style.css                   # Critical base styles & WordPress Theme Metadata
+│   └── theme.json                  # Global design tokens, layout sizes, and spacing definitions
+└── egnitech-one-child/             # Recommended Developer Extension Theme
+    ├── functions.php               # Child theme customization and override overrides
+    ├── style.css                   # Custom child styles (inheriting parent definitions)
+    └── theme.json                  # Child-specific overrides (version 3)
 ```
+
+---
+
+## 🛠️ Architectural Deep Dives
+
+### 1. Native Light/Dark Mode Engine
+Color variables are defined inside [theme.json](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one/theme.json) using the CSS `light-dark()` function:
+```json
+{
+  "color": "light-dark(#ffffff, #0f0f0f)",
+  "name": "Base",
+  "slug": "base"
+}
+```
+*   **Prevention of FOUC:** The helper [egnitech_one_color_scheme_script()](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one/inc/enqueue-assets.php#L66-L102) binds to the `wp_head` action at priority `5`. It immediately reads local storage, the theme options default preference, or system-wide media preferences, assigning `data-scheme` and `color-scheme` to `<html>` before the DOM renders.
+*   **Theme Toggle:** Triggered by [egnitech-one/assets/js/dark-mode-toggle.js](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one/assets/js/dark-mode-toggle.js), updating local storage and root document attributes gracefully with transition layers.
+
+### 2. Performance Script Manager
+Managed via the [EgniTech_One_Custom_Scripts](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one/inc/custom-scripts.php#L15) class, scripts added inside the options panel are categorized, consolidated into 6 internal blocks, and dynamically handled:
+1.  **Normal:** Rendered immediately on `wp_head` or `wp_footer`.
+2.  **After DOM:** Embedded as base64-encoded strings and decoded using a single vanilla JS worker dynamically appending nodes on `DOMContentLoaded` via `document.createRange().createContextualFragment()`.
+3.  **Delayed:** Injected exactly `3000ms` after page load to bypass render blocks and protect Core Web Vitals (LCP/INP).
+
+### 3. SMTP Global Pipeline
+Bypasses default server mail relays by hooking directly into `phpmailer_init` inside [inc/smtp-config.php](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one/inc/smtp-config.php). If enabled:
+*   Standard PHPMailer variables are filtered dynamically with values specified under the **SMTP Settings** panel (Port, Host, Encryption, Username, Password).
+*   Enforces global sender name and email sanitization across all outbound notifications.
+
+### 4. Layout Synchronization
+Modifying layout dimensions in the WordPress Admin Options automatically synchronizes with the Block Editor. 
+The helper [egnitech_one_sync_layout_to_global_styles()](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one/inc/admin-options.php#L511-L540) decodes the active theme's global styles custom post type (`wp_global_styles`), updates the `settings.layout.contentSize` or `wideSize` parameters, and updates the database entry to ensure layout widths mirror perfectly between front-end and editor styling.
+
+---
+
+## 🎛️ Admin Theme Options Registry
+
+These settings are managed under **Appearance > Theme Options** in the WordPress admin dashboard.
+
+| Category | Option Key | Type | Default | Purpose / Synchronized Output |
+| :--- | :--- | :--- | :--- | :--- |
+| **General** | `egnitech_one_content_width` | `int` | `900` | Syncs content width constraints to Global Styles (`wp_global_styles` post). |
+| | `egnitech_one_wide_width` | `int` | `1280` | Syncs wide-alignment constraints to Global Styles. |
+| | `egnitech_one_scroll_to_top` | `string` | `yes` | Loads a smooth scroll-to-top layout helper element. |
+| | `egnitech_one_dark_mode_default` | `string` | `system` | Initial mode choice: `system`, `light`, or `dark`. |
+| | `egnitech_one_reading_progress` | `string` | `yes` | Toggles progress bar tracking reading percentage on posts. |
+| | `egnitech_one_breadcrumbs` | `string` | `no` | Conditionally outputs standard post path navigation. |
+| **Header** | `egnitech_one_sticky_header` | `string` | `yes` | Forces first block navigation to remain sticky on top. |
+| | `egnitech_one_dark_logo_url` | `string` | `""` | Dedicated dark mode logo url fallback. |
+| | `egnitech_one_light_logo_id` | `int` | `0` | Default site logo ID synced directly with `custom_logo` theme mod. |
+| | `egnitech_one_logo_width_desktop` | `int` | `0` | Custom desktop logo scaling max-width (px). |
+| | `egnitech_one_logo_width_mobile` | `int` | `0` | Custom mobile logo scaling max-width (px). |
+| **Blog** | `egnitech_one_blog_layout` | `string` | `list` | Layout rendering choice: `list`, `grid-2`, or `grid-3`. |
+| | `egnitech_one_sidebar_position` | `string` | `none` | Layout configurations: `none`, `left`, or `right` sidebar position. |
+| | `egnitech_one_meta_author` | `string` | `yes` | Toggles theme rendering for author metadata on pages. |
+| | `egnitech_one_meta_date` | `string` | `yes` | Toggles theme rendering for date metadata on pages. |
+| **Footer** | `egnitech_one_footer_copyright` | `string` | `""` | Customizable HTML copyright statement. |
+| | `egnitech_one_footer_credits` | `string` | *EgniTech link* | Customizable developer metadata/credits markup. |
+| **SMTP** | `egnitech_one_smtp_enabled` | `string` | `no` | Toggle SMTP mail pipeline filter activation. |
+| | `egnitech_one_smtp_host` | `string` | `""` | Outbound SMTP server hostname. |
+| | `egnitech_one_smtp_port` | `int` | `587` | Outbound mail port (587, 465, etc.). |
+| | `egnitech_one_smtp_encryption` | `string` | `tls` | TLS, SSL, or None security specification. |
+| | `egnitech_one_smtp_auth` | `string` | `yes` | Toggle SMTP server user authentication logic. |
 
 ---
 
 ## 🛠️ Installation & Requirements
 
-* **WordPress:** Version 7.0 or higher
-* **PHP:** Version 8.0 or higher (PHP 8.3 or greater recommended)
+*   **WordPress:** Version 7.0 or higher
+*   **PHP:** Version 8.0 or higher (PHP 8.3 recommended)
 
-1. Clone or upload the `egnitech-one` directory to your WordPress installation's `/wp-content/themes/` directory.
-2. Log in to the WordPress Admin dashboard.
-3. Navigate to **Appearance > Themes** and activate **EgniTech One**.
-4. Configure global options via **Appearance > Theme Options**.
+1.  Download or clone the `egnitech-one` parent theme and the `egnitech-one-child` theme folders.
+2.  Upload them to `/wp-content/themes/` inside your WordPress installation directory.
+3.  Log in to the WordPress Admin dashboard.
+4.  Navigate to **Appearance > Themes** and activate **EgniTech One Child**.
+5.  Configure global options via **Appearance > Theme Options**.
 
 ---
 
-## 💻 Development & Child Theme Extension
+## 💻 Developer Guidelines & Child Themes
 
-To extend the theme, it is strongly recommended to use a child theme (e.g., `egnitech-one-child`) to protect the core engine files from being modified directly.
+### Coding Standards
+For developers building templates, custom block styles, or patterns inside child themes:
+1.  **PHP Typing:** Every PHP file must begin with `declare(strict_types=1);` on line 2. All functions must define parameter types and return type declarations.
+2.  **Asset Scoping:** Custom styles must be registered utilizing block variation classes (e.g., `.is-style-{slug}`) to avoid cascading global pollution.
+3.  **No jQuery:** Scripts must rely on vanilla ES6+ module parameters or the WordPress Interactivity API.
+4.  **Inline SVGs:** Always define explicit `width` and `height` properties on inline SVGs to avoid Layout Shifts (CLS) in the site editor.
+5.  **Layouts:** Use `core/group` for columns/grid wrapping to avoid layout validator warnings in the block editor.
 
-### Guidelines for Child Themes:
-1. **Never Modify Parent Files:** All template modifications, custom blocks, and overrides should live inside the child theme directory.
-2. **Strict PHP Typing:** All PHP code must start with `declare(strict_types=1);` on line 2, with fully typed parameters and return values.
-3. **Vanilla JS Scoping:** Scope custom scripts utilizing the WordPress Interactivity API or modular ES6+. Avoid enqueuing heavy external libraries.
-4. **Pattern-First Assets:** Load styling and scripts dynamically inside specific patterns using `register_block_style()` instead of adding massive styling sheets globally.
-5. **Selective Dark Mode Support:** Child themes have the native parent dark/light mode system **disabled by default** to avoid visual style regressions. 
-   - **How to Opt-in**: Call `add_theme_support( 'egnitech-one-dark-mode' );` in `functions.php` or set `"custom": { "darkMode": true }` under `"settings"` in the child theme's `theme.json`.
-   - **Browser-Level Resolution**: When disabled, `:root` is configured with `color-scheme: light;`, causing the browser to natively resolve all `light-dark()` CSS function calls to their light-mode fallback value with zero performance overhead.
+### Activating Dark Mode in Child Themes
+By default, child themes disable the dark mode toggle to avoid visual regressions on customized components. 
+
+To enable dark mode support in your child theme:
+*   **PHP Approach:** Register theme support in [egnitech-one-child/functions.php](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one-child/functions.php):
+    ```php
+    add_action( 'after_setup_theme', function(): void {
+        add_theme_support( 'egnitech-one-dark-mode' );
+    } );
+    ```
+*   **JSON Approach:** Declare dark mode settings inside the child's `theme.json` file:
+    ```json
+    {
+      "settings": {
+        "custom": {
+          "darkMode": true
+        }
+      }
+    }
+    ```
+When disabled, the theme forces the document `color-scheme` to `light`, natively rendering all `light-dark()` values to their fallback mode with zero parsing delay.
+
 
