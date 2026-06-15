@@ -1,4 +1,4 @@
-# EgniTech One
+# EgniTech One1
 
 EgniTech One is a modern, lightweight, and performance-first WordPress FSE (Full Site Editing) block parent theme. Designed for speed, simplicity, and ease of custom extension, it ships with native dark/light mode support, clean typography, a modular architecture, and zero jQuery dependencies.
 
