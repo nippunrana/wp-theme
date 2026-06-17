@@ -369,6 +369,25 @@ register_setting( 'egnitech_one_options', 'egnitech_one_custom_scripts', [
 'sanitize_callback' => 'egnitech_one_sanitize_scripts',
 ] );
 
+/* ----- Integrations ----- */
+register_setting( 'egnitech_one_options', 'egnitech_one_recaptcha_enabled', [
+	'type'              => 'string',
+	'default'           => 'no',
+	'sanitize_callback' => 'sanitize_text_field',
+] );
+
+register_setting( 'egnitech_one_options', 'egnitech_one_recaptcha_site_key', [
+	'type'              => 'string',
+	'default'           => '',
+	'sanitize_callback' => 'sanitize_text_field',
+] );
+
+register_setting( 'egnitech_one_options', 'egnitech_one_recaptcha_secret_key', [
+	'type'              => 'string',
+	'default'           => '',
+	'sanitize_callback' => 'sanitize_text_field',
+] );
+
 /* ----- SMTP Settings ----- */
 register_setting( 'egnitech_one_options', 'egnitech_one_smtp_enabled', [
 'type'              => 'string',
@@ -694,6 +713,11 @@ $smtp_password    = get_option( 'egnitech_one_smtp_password', '' );
 $smtp_from_email  = get_option( 'egnitech_one_smtp_from_email', '' );
 $smtp_from_name   = get_option( 'egnitech_one_smtp_from_name', get_bloginfo( 'name' ) );
 
+// Integrations options.
+$recaptcha_enabled    = get_option( 'egnitech_one_recaptcha_enabled', 'no' );
+$recaptcha_site_key   = get_option( 'egnitech_one_recaptcha_site_key', '' );
+$recaptcha_secret_key = get_option( 'egnitech_one_recaptcha_secret_key', '' );
+
 // FastCGI Cache options.
 $fastcgi_cache_enabled = get_option( 'egnitech_one_fastcgi_cache_enabled', 'no' );
 $fastcgi_purge_method  = get_option( 'egnitech_one_fastcgi_purge_method', 'filesystem' );
@@ -719,6 +743,7 @@ $layout               = egnitech_one_get_layout_settings();
 <?php if ( class_exists( 'WooCommerce' ) ) : ?>
 <li><a href="#tab-woocommerce"><span class="dashicons dashicons-cart"></span> <?php esc_html_e( 'WooCommerce', 'egnitech-one' ); ?></a></li>
 <?php endif; ?>
+<li><a href="#tab-integrations"><span class="dashicons dashicons-share"></span> <?php esc_html_e( 'Integrations', 'egnitech-one' ); ?></a></li>
 <li><a href="#tab-smtp"><span class="dashicons dashicons-admin-network"></span> <?php esc_html_e( 'SMTP Settings', 'egnitech-one' ); ?></a></li>
 <?php if ( egnitech_one_is_nginx() ) : ?>
 <li><a href="#tab-fastcgi"><span class="dashicons dashicons-performance"></span> <?php esc_html_e( 'FastCGI Cache', 'egnitech-one' ); ?></a></li>
@@ -1382,6 +1407,52 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
 </div> <!-- .egnitech-card-body -->
 </div> <!-- .egnitech-card -->
 </div> <!-- end tab-advanced -->
+
+<!-- ==================== INTEGRATIONS TAB ==================== -->
+<div id="tab-integrations" class="egnitech-tab-panel">
+    <div class="egnitech-card">
+        <div class="egnitech-card-header">
+            <h2 class="egnitech-card-title"><?php esc_html_e( 'Google reCAPTCHA v2', 'egnitech-one' ); ?></h2>
+            <p class="egnitech-card-desc"><?php esc_html_e( 'Protect your contact form from spam with Google reCAPTCHA.', 'egnitech-one' ); ?></p>
+        </div>
+        <div class="egnitech-card-body">
+            <div class="egnitech-option-row">
+                <div class="egnitech-option-info">
+                    <label><?php esc_html_e( 'Enable reCAPTCHA', 'egnitech-one' ); ?></label>
+                    <p class="description"><?php esc_html_e( 'Enable reCAPTCHA verification on the contact form.', 'egnitech-one' ); ?></p>
+                </div>
+                <div class="egnitech-option-control">
+                    <label class="egnitech-switch">
+                        <input type="checkbox" name="egnitech_one_recaptcha_enabled" id="egnitech_one_recaptcha_enabled" value="yes" <?php checked( 'yes', $recaptcha_enabled ); ?> />
+                        <span class="egnitech-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="egnitech-recaptcha-details" style="<?php echo 'yes' === $recaptcha_enabled ? '' : 'display: none;'; ?>">
+                <div class="egnitech-option-row">
+                    <div class="egnitech-option-info">
+                        <label><?php esc_html_e( 'Site Key', 'egnitech-one' ); ?></label>
+                        <p class="description"><?php esc_html_e( 'Your Google reCAPTCHA v2 "I\'m not a robot" Site Key.', 'egnitech-one' ); ?></p>
+                    </div>
+                    <div class="egnitech-option-control">
+                        <input type="text" name="egnitech_one_recaptcha_site_key" value="<?php echo esc_attr( $recaptcha_site_key ); ?>" class="egnitech-input" />
+                    </div>
+                </div>
+
+                <div class="egnitech-option-row">
+                    <div class="egnitech-option-info">
+                        <label><?php esc_html_e( 'Secret Key', 'egnitech-one' ); ?></label>
+                        <p class="description"><?php esc_html_e( 'Your Google reCAPTCHA v2 "I\'m not a robot" Secret Key.', 'egnitech-one' ); ?></p>
+                    </div>
+                    <div class="egnitech-option-control">
+                        <input type="password" name="egnitech_one_recaptcha_secret_key" value="<?php echo esc_attr( $recaptcha_secret_key ); ?>" class="egnitech-input" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- end tab-integrations -->
 
 <!-- ==================== SMTP SETTINGS TAB ==================== -->
 <div id="tab-smtp" class="egnitech-tab-panel">

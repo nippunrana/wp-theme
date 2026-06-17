@@ -44,6 +44,19 @@ EgniTech One handles color schemes via a foundational system:
   - Child themes can opt-in via PHP (`add_theme_support('egnitech-one-dark-mode')`) or via `theme.json` (`"settings": { "custom": { "darkMode": true } }`).
   - When disabled, `:root` color-scheme is forced to `light` to natively resolve all `light-dark()` colors to their light mode values with zero runtime overhead.
 
+## Google reCAPTCHA v2 System
+The parent theme contains a built-in Integrations tab under Theme Options to configure Google reCAPTCHA v2.
+- **Retrieval Helper**: Retrieve site-wide reCAPTCHA settings using the global helper function `egnitech_one_get_recaptcha_settings()`.
+- **Returned Schema**: Returns `array{enabled: bool, site_key: string, secret_key: string}`.
+- **Example Usage**:
+  ```php
+  $recaptcha = egnitech_one_get_recaptcha_settings();
+  if ( $recaptcha['enabled'] ) {
+      $site_key = $recaptcha['site_key'];
+      // Integrate Site Key in recaptcha HTML element
+  }
+  ```
+
 ## Coding Standards
 1. **Text Domain**: Always use `egnitech-one` for core localization.
 2. **CSS Scoping (MANDATORY)**: Scope all custom CSS strictly to the block's specific class or variation class (e.g., `.is-style-{slug}`). Avoid global rules or catch-all page wrappers to prevent style bleed.

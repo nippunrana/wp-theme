@@ -15,6 +15,7 @@
         initReadingProgress();
         initScriptsManager();
         initSmtpToggle();
+        initRecaptchaToggle();
         initWooCommerceLayoutToggle();
         initFastCgiToggle();
     }
@@ -30,6 +31,13 @@
      */
     function initSmtpToggle() {
         setupToggleVisibility('egnitech_one_smtp_enabled', 'egnitech-smtp-details');
+    }
+
+    /**
+     * Initialize reCAPTCHA Toggle Logic
+     */
+    function initRecaptchaToggle() {
+        setupToggleVisibility('egnitech_one_recaptcha_enabled', 'egnitech-recaptcha-details');
     }
 
     /**

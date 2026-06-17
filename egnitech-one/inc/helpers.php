@@ -77,3 +77,18 @@ if ( ! function_exists( 'egnitech_one_is_dark_mode_enabled' ) ) {
 		return false;
 	}
 }
+
+/**
+ * Get the Google reCAPTCHA v2 credentials and enabled status.
+ *
+ * @return array The reCAPTCHA settings.
+ */
+if ( ! function_exists( 'egnitech_one_get_recaptcha_settings' ) ) {
+	function egnitech_one_get_recaptcha_settings(): array {
+		return array(
+			'enabled'    => 'yes' === egnitech_one_get_option( 'egnitech_one_recaptcha_enabled', 'no' ),
+			'site_key'   => (string) egnitech_one_get_option( 'egnitech_one_recaptcha_site_key', '' ),
+			'secret_key' => (string) egnitech_one_get_option( 'egnitech_one_recaptcha_secret_key', '' ),
+		);
+	}
+}
