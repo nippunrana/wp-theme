@@ -1,0 +1,728 @@
+/**
+ * Scoped styles for Single Product Details
+ * Block variation style class: .is-style-single-product-details
+ */
+
+.is-style-single-product-details {
+	display: block;
+	width: 100%;
+}
+
+/* Two-column layout for desktop */
+@media (min-width: 992px) {
+	.is-style-single-product-details {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 32px;
+		align-items: start;
+	}
+
+	.egnitech-product-gallery-column {
+		position: sticky;
+		top: calc(var(--wp--admin-bar--height, 0px) + 80px);
+		align-self: start;
+		width: 100%;
+		min-width: 0;
+	}
+}
+
+@media (max-width: 991px) {
+	.egnitech-product-gallery-column {
+		margin-bottom: var(--wp--preset--spacing--50);
+		position: static;
+		width: 100%;
+		min-width: 0;
+	}
+}
+
+/* Product Gallery Styling */
+.woocommerce .egnitech-product-gallery-column .wp-block-woocommerce-product-image-gallery {
+	max-width: none;
+	width: 100%;
+}
+
+.egnitech-product-gallery-column .wc-block-components-product-gallery,
+.egnitech-product-gallery-column .wc-block-components-product-image,
+.egnitech-product-gallery-column img {
+	border-radius: 12px;
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04), 0 2px 10px rgba(0, 0, 0, 0.02);
+	overflow: hidden;
+}
+
+/* WooCommerce gallery fix before initialization */
+.woocommerce-product-gallery > .woocommerce-product-gallery__wrapper > .woocommerce-product-gallery__image:first-child {
+	width: 100% !important;
+	display: block !important;
+}
+
+.woocommerce-product-gallery > .woocommerce-product-gallery__wrapper > .woocommerce-product-gallery__image:nth-child(n+2) {
+	display: none !important;
+}
+
+
+/* Info Column Details */
+.egnitech-product-info-column .wp-block-post-title {
+	font-family: var(--wp--preset--font-family--inter), sans-serif;
+	font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+	font-weight: 700;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+	margin-bottom: var(--wp--preset--spacing--20);
+	color: var(--wp--preset--color--contrast);
+}
+
+/* Ratings */
+.egnitech-product-info-column .wc-block-components-product-rating {
+	margin-bottom: var(--wp--preset--spacing--30);
+	font-size: 0.9rem;
+}
+
+.egnitech-product-info-column .wc-block-components-product-rating__stars,
+.egnitech-product-info-column .star-rating {
+	color: var(--wp--preset--color--accent, #00D4AA);
+}
+
+/* Pricing - Apple/D2C Clean Aesthetic */
+.egnitech-product-info-column .wc-block-components-product-price,
+.egnitech-product-info-column .price {
+	display: flex;
+	align-items: baseline;
+	gap: 12px;
+	margin-bottom: var(--wp--preset--spacing--30);
+	font-family: var(--wp--preset--font-family--inter), sans-serif;
+}
+
+.egnitech-product-info-column .wc-block-components-product-price ins,
+.egnitech-product-info-column .price ins {
+	font-size: 1.85rem;
+	font-weight: 700;
+	color: var(--wp--preset--color--accent, #00D4AA);
+	text-decoration: none;
+}
+
+.egnitech-product-info-column .wc-block-components-product-price del,
+.egnitech-product-info-column .price del {
+	font-size: 1.25rem;
+	color: var(--wp--preset--color--contrast);
+	opacity: 0.5;
+	text-decoration: line-through;
+}
+
+/* Fallback for simple (non-sale) price */
+.egnitech-product-info-column .wc-block-components-product-price span:not(del):not(ins),
+.egnitech-product-info-column .price span:not(del):not(ins) {
+	font-size: 1.85rem;
+	font-weight: 700;
+	color: var(--wp--preset--color--contrast);
+}
+
+/* Excerpt/Short Description */
+.egnitech-product-info-column .wp-block-post-excerpt,
+.egnitech-product-info-column .post-excerpt {
+	font-size: 1rem;
+	line-height: 1.6;
+	color: var(--wp--preset--color--contrast);
+	opacity: 0.85;
+	margin-bottom: var(--wp--preset--spacing--40);
+}
+
+/* Add to Cart Form & Button */
+.egnitech-product-info-column .wc-block-components-add-to-cart-form {
+	margin-bottom: var(--wp--preset--spacing--40);
+}
+
+/* Style the button for premium hover actions */
+.egnitech-product-info-column .wc-block-components-button,
+.egnitech-product-info-column button.wp-block-woocommerce-add-to-cart-form {
+	background-color: var(--wp--preset--color--accent, #00D4AA);
+	color: #000000;
+	font-weight: 600;
+	font-size: 1rem;
+	padding: 14px 28px;
+	border-radius: 8px;
+	border: none;
+	width: 100%;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	box-shadow: 0 4px 14px rgba(0, 212, 170, 0.2);
+	cursor: pointer;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.egnitech-product-info-column .wc-block-components-button:hover,
+.egnitech-product-info-column button.wp-block-woocommerce-add-to-cart-form:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(0, 212, 170, 0.35);
+	background-color: var(--wp--preset--color--accent, #00D4AA);
+	filter: brightness(0.95);
+}
+
+.egnitech-product-info-column .wc-block-components-button:active,
+.egnitech-product-info-column button.wp-block-woocommerce-add-to-cart-form:active {
+	transform: translateY(0);
+}
+
+/* Trust Badges */
+.egnitech-product-trust-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	padding: 20px 0;
+	margin: 24px 0 var(--wp--preset--spacing--40) 0;
+	border-top: 1px solid var(--wp--preset--color--border, rgba(0, 0, 0, 0.08));
+	border-bottom: 1px solid var(--wp--preset--color--border, rgba(0, 0, 0, 0.08));
+}
+
+.egnitech-trust-badge {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	background: light-dark(rgba(0, 212, 170, 0.05), rgba(0, 212, 170, 0.1));
+	color: var(--wp--preset--color--accent, #00D4AA);
+	padding: 6px 14px;
+	border-radius: 30px;
+	font-size: 0.85rem;
+	font-weight: 500;
+}
+
+.egnitech-trust-badge .trust-icon {
+	stroke: var(--wp--preset--color--accent, #00D4AA);
+	flex-shrink: 0;
+}
+
+.egnitech-trust-badge .badge-text {
+	color: var(--wp--preset--color--contrast);
+}
+
+/* Product Meta (SKU, Category, Tags) */
+.egnitech-product-info-column .wp-block-woocommerce-product-meta {
+	font-size: 0.85rem;
+	color: var(--wp--preset--color--contrast);
+	opacity: 0.7;
+	margin-bottom: var(--wp--preset--spacing--50);
+}
+
+.egnitech-product-info-column .wp-block-woocommerce-product-meta .wp-block-group {
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+/* Vertical Content Sections (Description, Specs, Reviews) */
+.egnitech-product-sections {
+	margin-top: var(--wp--preset--spacing--50);
+}
+
+.egnitech-product-section {
+	border-top: 1px solid var(--wp--preset--color--border, rgba(0, 0, 0, 0.08));
+	padding-top: var(--wp--preset--spacing--40);
+	margin-bottom: var(--wp--preset--spacing--50);
+}
+
+.egnitech-product-section:first-child {
+	border-top: none;
+	padding-top: 0;
+}
+
+.egnitech-section-title {
+	font-family: var(--wp--preset--font-family--inter), sans-serif;
+	font-size: 1.15rem;
+	font-weight: 600;
+	margin-bottom: var(--wp--preset--spacing--30);
+	color: var(--wp--preset--color--contrast);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+/* WooCommerce Description Content Styling */
+.egnitech-section-description .wc-block-product-description {
+	font-size: 1rem;
+	line-height: 1.6;
+	color: var(--wp--preset--color--contrast);
+	opacity: 0.9;
+}
+
+.egnitech-section-description .wc-block-product-description p {
+	margin-bottom: 16px;
+}
+
+.egnitech-section-description .wc-block-product-description p:last-child {
+	margin-bottom: 0;
+}
+
+/* WooCommerce Reviews Content Styling */
+.egnitech-section-reviews .wp-block-woocommerce-product-reviews {
+	margin-top: 16px;
+}
+
+/* ==========================================================================
+   Modernized WooCommerce Default Product Gallery
+   ========================================================================== */
+
+/* Container and main wrapper adjustments */
+.woocommerce-product-gallery {
+	position: relative;
+	width: 100%;
+	margin-bottom: var(--wp--preset--spacing--40);
+	display: flex;
+	flex-direction: column;
+}
+
+.woocommerce-product-gallery .woocommerce-product-gallery__wrapper {
+	margin: 0 !important;
+}
+
+.woocommerce-product-gallery .flex-viewport {
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04), 0 2px 10px rgba(0, 0, 0, 0.02);
+	background: var(--wp--preset--color--surface, rgba(0, 0, 0, 0.02));
+	aspect-ratio: 1 / 1;
+}
+
+.woocommerce-product-gallery .flex-viewport img {
+	width: 100% !important;
+	height: 100% !important;
+	object-fit: cover !important;
+	display: block !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+}
+
+/* Glassmorphic Zoom Trigger */
+.woocommerce-product-gallery__trigger {
+	position: absolute !important;
+	top: 16px !important;
+	right: 16px !important;
+	z-index: 10;
+	width: 38px !important;
+	height: 38px !important;
+	background: rgba(0, 0, 0, 0.5) !important;
+	backdrop-filter: blur(8px) !important;
+	-webkit-backdrop-filter: blur(8px) !important;
+	border-radius: 50% !important;
+	border: 1px solid rgba(255, 255, 255, 0.25) !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.woocommerce-product-gallery__trigger:hover {
+	background: rgba(0, 0, 0, 0.7) !important;
+	transform: scale(1.05) !important;
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+.woocommerce-product-gallery__trigger::before {
+	border-color: #ffffff !important;
+}
+
+.woocommerce-product-gallery__trigger::after {
+	background-color: #ffffff !important;
+}
+
+/* Modernized Thumbnail Row */
+.woocommerce-product-gallery ol.flex-control-thumbs {
+	display: flex !important;
+	flex-wrap: wrap !important;
+	justify-content: center !important;
+	gap: 12px !important;
+	margin: 16px 0 0 0 !important;
+	padding: 4px 2px !important;
+	list-style: none !important;
+}
+
+.woocommerce-product-gallery ol.flex-control-thumbs li {
+	flex: 0 0 80px !important;
+	width: 80px !important;
+	height: 80px !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	float: none !important; /* Reset default WooCommerce floats */
+	border-radius: 8px !important;
+	border: 1px solid var(--wp--preset--color--border, rgba(0, 0, 0, 0.08)) !important;
+	background: var(--wp--preset--color--surface, rgba(0, 0, 0, 0.02)) !important;
+	cursor: pointer !important;
+	overflow: hidden !important;
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+	position: relative !important;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02) !important;
+}
+
+.woocommerce-product-gallery ol.flex-control-thumbs li:hover {
+	opacity: 0.95 !important;
+	transform: translateY(-2px) !important;
+	border-color: var(--wp--preset--color--secondary, rgba(0, 0, 0, 0.3)) !important;
+}
+
+/* Specific resets for thumbnail images to prevent layout clashes */
+.woocommerce-product-gallery ol.flex-control-thumbs li img {
+	width: 100% !important;
+	height: 100% !important;
+	object-fit: cover !important;
+	display: block !important;
+	opacity: 0.65 !important;
+	border-radius: 0 !important; /* Reset generic img radius */
+	box-shadow: none !important; /* Reset generic img shadow */
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.woocommerce-product-gallery ol.flex-control-thumbs li:hover img {
+	opacity: 0.9 !important;
+	transform: scale(1.05) !important;
+}
+
+/* Active Indicator using :has() for modern browsers */
+.woocommerce-product-gallery ol.flex-control-thumbs li:has(img.flex-active) {
+	border-color: var(--wp--preset--color--accent, #00D4AA) !important;
+	transform: translateY(-2px) !important;
+	box-shadow: 0 0 0 2px var(--wp--preset--color--base, #ffffff),
+	            0 0 0 4px var(--wp--preset--color--accent, #00D4AA),
+	            0 6px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+.woocommerce-product-gallery ol.flex-control-thumbs li img.flex-active {
+	opacity: 1 !important;
+}
+
+/* Responsive details */
+@media (max-width: 767px) {
+	.egnitech-product-gallery-column {
+		margin-right: calc(-1 * var(--wp--preset--spacing--50, 24px)) !important;
+		width: auto !important;
+	}
+
+	.woocommerce-product-gallery ol.flex-control-thumbs {
+		gap: 8px !important;
+		margin-top: 12px !important;
+	}
+	
+	.woocommerce-product-gallery ol.flex-control-thumbs li {
+		flex: 0 0 64px !important;
+		width: 64px !important;
+		height: 64px !important;
+		border-radius: 6px !important;
+	}
+}
+
+/* ==========================================================================
+   Bulk Discount Selector (Vertical Stack Layout)
+   ========================================================================== */
+
+.egnitech-bulk-discount-wrapper {
+	margin: var(--wp--preset--spacing--40) 0;
+	padding: var(--wp--preset--spacing--30);
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: 16px;
+	background: light-dark(#ffffff, #161616);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.02), 0 2px 10px rgba(0, 0, 0, 0.01);
+}
+
+.egnitech-bulk-discount-heading {
+	font-family: var(--wp--preset--font-family--inter), sans-serif;
+	font-size: 1.05rem;
+	font-weight: 700;
+	margin-bottom: var(--wp--preset--spacing--30);
+	color: var(--wp--preset--color--contrast);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.egnitech-bulk-discount-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-bottom: var(--wp--preset--spacing--30);
+}
+
+/* Individual Vertical Card Row */
+.egnitech-bulk-discount-card {
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: var(--wp--preset--spacing--30);
+	border: 2px solid var(--wp--preset--color--border);
+	border-radius: 12px;
+	background: light-dark(rgba(0, 0, 0, 0.01), rgba(255, 255, 255, 0.02));
+	cursor: pointer;
+	transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+	user-select: none;
+	gap: 16px;
+}
+
+/* Hover and active row states */
+.egnitech-bulk-discount-card:hover {
+	transform: translateY(-2px);
+	border-color: light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.25));
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.egnitech-bulk-discount-card.active {
+	transform: scale(1.015);
+	border-color: var(--wp--preset--color--accent, #00D4AA);
+	background: light-dark(rgba(0, 212, 170, 0.04), rgba(0, 212, 170, 0.08));
+	box-shadow: 0 4px 20px rgba(0, 212, 170, 0.12);
+}
+
+.egnitech-bulk-discount-card.active:hover {
+	transform: scale(1.015) translateY(-2px);
+}
+
+/* Custom Radio Indicator */
+.egnitech-card-selector {
+	flex-shrink: 0;
+}
+
+.egnitech-card-radio {
+	width: 20px;
+	height: 20px;
+	border: 2px solid var(--wp--preset--color--border);
+	border-radius: 50%;
+	position: relative;
+	transition: all 0.25s ease;
+	background: light-dark(#ffffff, #222);
+}
+
+.egnitech-bulk-discount-card.active .egnitech-card-radio {
+	border-color: var(--wp--preset--color--accent, #00D4AA);
+}
+
+.egnitech-card-radio::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) scale(0);
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background-color: var(--wp--preset--color--accent, #00D4AA);
+	transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.egnitech-bulk-discount-card.active .egnitech-card-radio::after {
+	transform: translate(-50%, -50%) scale(1);
+}
+
+/* Card Content / Info Columns */
+.egnitech-card-info {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+.egnitech-card-qty {
+	font-family: var(--wp--preset--font-family--inter), sans-serif;
+	font-size: 1.15rem;
+	font-weight: 700;
+	color: var(--wp--preset--color--contrast);
+}
+
+.egnitech-card-save {
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: var(--wp--preset--color--accent, #00D4AA);
+	margin-left: 6px;
+}
+
+.egnitech-card-desc {
+	font-size: 0.85rem;
+	color: var(--wp--preset--color--contrast);
+	opacity: 0.6;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.egnitech-bulk-discount-card.active .egnitech-card-desc {
+	opacity: 0.85;
+}
+
+/* Pricing Section inside Card */
+.egnitech-card-pricing {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	justify-content: center;
+	gap: 2px;
+	flex-shrink: 0;
+	text-align: right;
+}
+
+.egnitech-price-original {
+	font-size: 0.85rem;
+	color: var(--wp--preset--color--contrast);
+	opacity: 0.45;
+	text-decoration: line-through;
+}
+
+.egnitech-price-amount {
+	font-family: var(--wp--preset--font-family--inter), sans-serif;
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--wp--preset--color--contrast);
+}
+
+.egnitech-bulk-discount-card.active .egnitech-price-amount {
+	color: var(--wp--preset--color--accent, #00D4AA);
+}
+
+.egnitech-price-label {
+	font-size: 0.75rem;
+	color: var(--wp--preset--color--contrast);
+	opacity: 0.55;
+}
+
+/* "Best Value" Badge on active/top discount card */
+.egnitech-card-top-badge {
+	position: absolute;
+	top: -9px;
+	left: 16px;
+	right: auto;
+	font-family: var(--wp--preset--font-family--inter), sans-serif;
+	font-size: 0.7rem;
+	font-weight: 800;
+	padding: 3px 10px;
+	border-radius: 4px;
+	background: var(--wp--preset--color--contrast);
+	color: var(--wp--preset--color--base);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+@media (min-width: 768px) {
+	.egnitech-card-top-badge {
+		left: auto;
+		right: 16px;
+	}
+}
+
+/* Summary Footer Box */
+.egnitech-bulk-discount-summary {
+	margin-top: var(--wp--preset--spacing--30);
+	padding-top: var(--wp--preset--spacing--30);
+	border-top: 1px solid var(--wp--preset--color--border);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.egnitech-summary-text {
+	font-family: var(--wp--preset--font-family--inter), sans-serif;
+	font-size: 1.15rem;
+	font-weight: 600;
+	color: var(--wp--preset--color--contrast);
+}
+
+.egnitech-summary-total {
+	font-size: 1.4rem;
+	font-weight: 700;
+	color: var(--wp--preset--color--accent, #00D4AA);
+	margin-left: 4px;
+}
+
+.egnitech-summary-savings {
+	font-family: var(--wp--preset--font-family--inter), sans-serif;
+	font-size: 0.95rem;
+	font-weight: 600;
+	background: light-dark(rgba(0, 212, 170, 0.06), rgba(0, 212, 170, 0.12));
+	color: var(--wp--preset--color--accent, #00D4AA);
+	padding: 6px 14px;
+	border-radius: 30px;
+	border: 1px solid light-dark(rgba(0, 212, 170, 0.15), rgba(0, 212, 170, 0.25));
+}
+
+/* Mobile responsive fixes */
+@media (max-width: 480px) {
+	.egnitech-bulk-discount-card {
+		padding: var(--wp--preset--spacing--20);
+		gap: 12px;
+	}
+	
+	.egnitech-card-qty {
+		font-size: 1rem;
+	}
+	
+	.egnitech-card-desc {
+		font-size: 0.78rem;
+		max-width: 140px;
+	}
+	
+	.egnitech-price-amount {
+		font-size: 1.1rem;
+	}
+}
+
+/* Custom Quantity Stepper styling overrides */
+.quantity.egnitech-quantity-stepper {
+	display: inline-flex !important;
+	align-items: center !important;
+	border: 2px solid var(--wp--preset--color--border, #ccc) !important;
+	border-radius: 6px !important;
+	overflow: hidden !important;
+	background: var(--wp--preset--color--base, #fff) !important;
+	height: 44px !important;
+	vertical-align: middle !important;
+	margin: 0 12px 0 0 !important;
+	padding: 0 !important;
+}
+
+/* Hide native number input arrows */
+.quantity.egnitech-quantity-stepper input[type="number"]::-webkit-outer-spin-button,
+.quantity.egnitech-quantity-stepper input[type="number"]::-webkit-inner-spin-button {
+	-webkit-appearance: none !important;
+	margin: 0 !important;
+}
+.quantity.egnitech-quantity-stepper input[type="number"] {
+	-moz-appearance: textfield !important;
+	appearance: textfield !important;
+	border: none !important;
+	outline: none !important;
+	text-align: center !important;
+	width: 50px !important;
+	font-size: 1rem !important;
+	font-weight: 700 !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	height: 100% !important;
+	background: transparent !important;
+	color: var(--wp--preset--color--contrast, #000) !important;
+	box-shadow: none !important;
+}
+
+.egnitech-qty-btn {
+	border: none !important;
+	background: transparent !important;
+	width: 40px !important;
+	height: 100% !important;
+	font-size: 1.2rem !important;
+	font-weight: 600 !important;
+	cursor: pointer !important;
+	color: var(--wp--preset--color--contrast, #000) !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	transition: background-color 0.2s ease, opacity 0.2s ease !important;
+	user-select: none !important;
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+.egnitech-qty-btn:hover {
+	background-color: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.08)) !important;
+}
+
+.egnitech-qty-btn:active {
+	background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.15)) !important;
+}
+
+

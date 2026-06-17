@@ -56,6 +56,74 @@ if ( ! function_exists( 'egnitech_one_enqueue_styles' ) ) {
 		}
 
 		wp_add_inline_style( 'egnitech-one-style', $custom_css );
+
+		// Enqueue WooCommerce product page custom style if on single product page.
+		if ( function_exists( 'is_product' ) && is_product() ) {
+			$product_style_path = 'patterns/single-product-details/style.css';
+			$product_style_ver  = file_exists( get_theme_file_path( $product_style_path ) ) ? (string) filemtime( get_theme_file_path( $product_style_path ) ) : (string) wp_get_theme()->get( 'Version' );
+			wp_enqueue_style(
+				'egnitech-one-single-product-details',
+				get_theme_file_uri( $product_style_path ),
+				array(),
+				$product_style_ver
+			);
+
+			// Enqueue bulk discount script if product has active discount tiers.
+			$product_id = get_the_ID();
+			$has_tiers  = false;
+			if ( $product_id ) {
+				for ( $i = 1; $i <= 3; $i++ ) {
+					$qty = (int) get_post_meta( $product_id, "_bulk_discount_tier_{$i}_qty", true );
+					$val = (float) get_post_meta( $product_id, "_bulk_discount_tier_{$i}_val", true );
+					if ( $qty > 0 && $val > 0 ) {
+						$has_tiers = true;
+						break;
+					}
+				}
+			}
+
+			if ( $has_tiers ) {
+				$bulk_js_path = 'patterns/single-product-details/bulk-discount.js';
+				$bulk_js_ver  = file_exists( get_theme_file_path( $bulk_js_path ) ) ? (string) filemtime( get_theme_file_path( $bulk_js_path ) ) : (string) wp_get_theme()->get( 'Version' );
+				wp_enqueue_script(
+					'egnitech-one-bulk-discount',
+					get_theme_file_uri( $bulk_js_path ),
+					array( 'jquery' ),
+					$bulk_js_ver,
+					array(
+						'strategy'  => 'defer',
+						'in_footer' => true,
+					)
+				);
+			}
+
+			$gallery_layout = get_option( 'egnitech_one_woocommerce_gallery_layout', 'custom' );
+			if ( 'custom' === $gallery_layout ) {
+				wp_enqueue_style(
+					'egnitech-one-product-gallery',
+					get_theme_file_uri( 'patterns/product-gallery/style.css' ),
+					array(),
+					(string) wp_get_theme()->get( 'Version' )
+				);
+
+				wp_enqueue_script(
+					'egnitech-one-product-gallery',
+					get_theme_file_uri( 'patterns/product-gallery/index.js' ),
+					array(),
+					(string) wp_get_theme()->get( 'Version' ),
+					array(
+						'strategy'  => 'defer',
+						'in_footer' => true,
+					)
+				);
+			} else {
+				// Add inline script to trigger window resize on load to fix Flexslider layout in grid/sticky containers.
+				wp_add_inline_script(
+					'wc-single-product',
+					'jQuery(window).on("load", function() { setTimeout(function() { jQuery(window).trigger("resize"); }, 100); });'
+				);
+			}
+		}
 	}
 }
 add_action( 'wp_enqueue_scripts', 'egnitech_one_enqueue_styles' );
@@ -174,18 +242,20 @@ if ( ! function_exists( 'egnitech_one_admin_scripts' ) ) {
 
 		wp_enqueue_media();
 
+		$admin_css_ver = file_exists( get_theme_file_path( 'assets/css/admin-options.css' ) ) ? (string) filemtime( get_theme_file_path( 'assets/css/admin-options.css' ) ) : (string) wp_get_theme()->get( 'Version' );
 		wp_enqueue_style(
 			'egnitech-one-admin',
 			get_theme_file_uri( 'assets/css/admin-options.css' ),
 			array(),
-			(string) wp_get_theme()->get( 'Version' )
+			$admin_css_ver
 		);
 
+		$admin_js_ver = file_exists( get_theme_file_path( 'assets/js/admin-options.js' ) ) ? (string) filemtime( get_theme_file_path( 'assets/js/admin-options.js' ) ) : (string) wp_get_theme()->get( 'Version' );
 		wp_enqueue_script(
 			'egnitech-one-admin',
 			get_theme_file_uri( 'assets/js/admin-options.js' ),
 			array(),
-			(string) wp_get_theme()->get( 'Version' ),
+			$admin_js_ver,
 			true
 		);
 

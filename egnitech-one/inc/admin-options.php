@@ -423,6 +423,56 @@ register_setting( 'egnitech_one_options', 'egnitech_one_smtp_from_name', [
 'default'           => get_bloginfo( 'name' ),
 'sanitize_callback' => 'sanitize_text_field',
 ] );
+
+/* ----- WooCommerce ----- */
+register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_gallery_zoom', [
+'type'              => 'string',
+'default'           => 'yes',
+'sanitize_callback' => 'sanitize_text_field',
+] );
+
+register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_gallery_lightbox', [
+'type'              => 'string',
+'default'           => 'yes',
+'sanitize_callback' => 'sanitize_text_field',
+] );
+
+register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_gallery_lightbox_icon', [
+'type'              => 'string',
+'default'           => 'yes',
+'sanitize_callback' => 'sanitize_text_field',
+] );
+
+register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_gallery_layout', [
+'type'              => 'string',
+'default'           => 'custom',
+'sanitize_callback' => 'sanitize_text_field',
+] );
+
+register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_gallery_thumbnail_style', [
+'type'              => 'string',
+'default'           => 'bottom-carousel',
+'sanitize_callback' => 'sanitize_text_field',
+] );
+
+register_setting( 'egnitech_one_options', 'egnitech_one_fastcgi_cache_enabled', [
+'type'              => 'string',
+'default'           => 'no',
+'sanitize_callback' => 'sanitize_text_field',
+] );
+
+register_setting( 'egnitech_one_options', 'egnitech_one_fastcgi_purge_method', [
+'type'              => 'string',
+'default'           => 'filesystem',
+'sanitize_callback' => 'sanitize_text_field',
+] );
+
+register_setting( 'egnitech_one_options', 'egnitech_one_fastcgi_cache_path', [
+'type'              => 'string',
+'default'           => '/var/cache/nginx/' . ( wp_parse_url( home_url(), PHP_URL_HOST ) ?: ( $_SERVER['HTTP_HOST'] ?? 'example.com' ) ),
+'sanitize_callback' => 'sanitize_text_field',
+] );
+
 }
 add_action( 'admin_init', 'egnitech_one_register_settings' );
 
@@ -626,6 +676,12 @@ $reading_progress     = get_option( 'egnitech_one_reading_progress', 'yes' );
 $reading_progress_height = get_option( 'egnitech_one_reading_progress_height', 2 );
 $breadcrumbs          = get_option( 'egnitech_one_breadcrumbs', '' );
 
+// WooCommerce options.
+$gallery_zoom          = get_option( 'egnitech_one_woocommerce_gallery_zoom', 'yes' );
+$gallery_lightbox      = get_option( 'egnitech_one_woocommerce_gallery_lightbox', 'yes' );
+$gallery_lightbox_icon = get_option( 'egnitech_one_woocommerce_gallery_lightbox_icon', 'yes' );
+$gallery_layout        = get_option( 'egnitech_one_woocommerce_gallery_layout', 'custom' );
+
 
 // SMTP options.
 $smtp_enabled     = get_option( 'egnitech_one_smtp_enabled', 'no' );
@@ -637,6 +693,11 @@ $smtp_username    = get_option( 'egnitech_one_smtp_username', '' );
 $smtp_password    = get_option( 'egnitech_one_smtp_password', '' );
 $smtp_from_email  = get_option( 'egnitech_one_smtp_from_email', '' );
 $smtp_from_name   = get_option( 'egnitech_one_smtp_from_name', get_bloginfo( 'name' ) );
+
+// FastCGI Cache options.
+$fastcgi_cache_enabled = get_option( 'egnitech_one_fastcgi_cache_enabled', 'no' );
+$fastcgi_purge_method  = get_option( 'egnitech_one_fastcgi_purge_method', 'filesystem' );
+$fastcgi_cache_path    = get_option( 'egnitech_one_fastcgi_cache_path', '/var/cache/nginx/' . ( wp_parse_url( home_url(), PHP_URL_HOST ) ?: ( $_SERVER['HTTP_HOST'] ?? 'example.com' ) ) );
 
 // Layout from Global Styles (synced).
 $layout               = egnitech_one_get_layout_settings();
@@ -655,8 +716,13 @@ $layout               = egnitech_one_get_layout_settings();
 <li><a href="#tab-header"><span class="dashicons dashicons-editor-kitchensink"></span> <?php esc_html_e( 'Header', 'egnitech-one' ); ?></a></li>
 <li><a href="#tab-blog"><span class="dashicons dashicons-welcome-write-blog"></span> <?php esc_html_e( 'Blog', 'egnitech-one' ); ?></a></li>
 <li><a href="#tab-footer"><span class="dashicons dashicons-admin-links"></span> <?php esc_html_e( 'Footer', 'egnitech-one' ); ?></a></li>
-
+<?php if ( class_exists( 'WooCommerce' ) ) : ?>
+<li><a href="#tab-woocommerce"><span class="dashicons dashicons-cart"></span> <?php esc_html_e( 'WooCommerce', 'egnitech-one' ); ?></a></li>
+<?php endif; ?>
 <li><a href="#tab-smtp"><span class="dashicons dashicons-admin-network"></span> <?php esc_html_e( 'SMTP Settings', 'egnitech-one' ); ?></a></li>
+<?php if ( egnitech_one_is_nginx() ) : ?>
+<li><a href="#tab-fastcgi"><span class="dashicons dashicons-performance"></span> <?php esc_html_e( 'FastCGI Cache', 'egnitech-one' ); ?></a></li>
+<?php endif; ?>
 <li><a href="#tab-advanced"><span class="dashicons dashicons-admin-tools"></span> <?php esc_html_e( 'Advanced', 'egnitech-one' ); ?></a></li>
 </ul>
 </div>
@@ -1175,6 +1241,99 @@ esc_html_e( 'Customize the "EgniTech · Built with WordPress" text. HTML allowed
 </div>
 </div> <!-- end tab-footer -->
 
+<?php if ( class_exists( 'WooCommerce' ) ) : ?>
+<!-- ==================== WOOCOMMERCE TAB ==================== -->
+<div id="tab-woocommerce" class="egnitech-tab-panel">
+	<div class="egnitech-card">
+		<div class="egnitech-card-header">
+			<h2 class="egnitech-card-title"><?php esc_html_e( 'Product Gallery Options', 'egnitech-one' ); ?></h2>
+			<p class="egnitech-card-desc"><?php esc_html_e( 'Configure interactive gallery settings on product pages.', 'egnitech-one' ); ?></p>
+		</div>
+		<div class="egnitech-card-body">
+			<div class="egnitech-option-row">
+				<div class="egnitech-option-info">
+					<label><?php esc_html_e( 'Gallery Layout', 'egnitech-one' ); ?></label>
+					<p class="description"><?php esc_html_e( 'Choose which product gallery to display on product detail pages.', 'egnitech-one' ); ?></p>
+				</div>
+				<div class="egnitech-option-control">
+					<div class="egnitech-radio-group">
+						<label class="egnitech-radio-label">
+							<input type="radio" name="egnitech_one_woocommerce_gallery_layout" value="custom" <?php checked( 'custom', $gallery_layout ); ?> />
+							<span class="egnitech-radio-btn">
+								<?php esc_html_e( 'Custom Modern Gallery', 'egnitech-one' ); ?>
+							</span>
+						</label>
+						<label class="egnitech-radio-label">
+							<input type="radio" name="egnitech_one_woocommerce_gallery_layout" value="default" <?php checked( 'default', $gallery_layout ); ?> />
+							<span class="egnitech-radio-btn">
+								<?php esc_html_e( 'WooCommerce Default', 'egnitech-one' ); ?>
+							</span>
+						</label>
+					</div>
+				</div>
+			</div>
+
+			<?php
+			$thumbnail_style = get_option( 'egnitech_one_woocommerce_gallery_thumbnail_style', 'bottom-carousel' );
+			?>
+			<div class="egnitech-option-row" id="egnitech-gallery-thumbnail-style-row" style="<?php echo 'custom' === $gallery_layout ? '' : 'display:none;'; ?>">
+				<div class="egnitech-option-info">
+					<label><?php esc_html_e( 'Thumbnail Style', 'egnitech-one' ); ?></label>
+					<p class="description"><?php esc_html_e( 'Choose the style for custom product gallery thumbnail navigation.', 'egnitech-one' ); ?></p>
+				</div>
+				<div class="egnitech-option-control">
+					<select name="egnitech_one_woocommerce_gallery_thumbnail_style" class="egnitech-input">
+						<option value="bottom-carousel" <?php selected( 'bottom-carousel', $thumbnail_style ); ?>><?php esc_html_e( 'Bottom Horizontal Carousel', 'egnitech-one' ); ?></option>
+						<option value="bottom-grid" <?php selected( 'bottom-grid', $thumbnail_style ); ?>><?php esc_html_e( 'Bottom Wrapped Grid', 'egnitech-one' ); ?></option>
+						<option value="left-vertical" <?php selected( 'left-vertical', $thumbnail_style ); ?>><?php esc_html_e( 'Left Vertical Strip', 'egnitech-one' ); ?></option>
+						<option value="minimal-dots" <?php selected( 'minimal-dots', $thumbnail_style ); ?>><?php esc_html_e( 'Minimalist Dot Navigation', 'egnitech-one' ); ?></option>
+					</select>
+				</div>
+			</div>
+
+			<div class="egnitech-option-row">
+				<div class="egnitech-option-info">
+					<label><?php esc_html_e( 'Hover Zoom Effect', 'egnitech-one' ); ?></label>
+					<p class="description"><?php esc_html_e( 'Magnify the product image when users hover over it.', 'egnitech-one' ); ?></p>
+				</div>
+				<div class="egnitech-option-control">
+					<label class="egnitech-switch">
+						<input type="checkbox" name="egnitech_one_woocommerce_gallery_zoom" value="yes" <?php checked( 'yes', $gallery_zoom ); ?> />
+						<span class="egnitech-slider"></span>
+					</label>
+				</div>
+			</div>
+
+			<div class="egnitech-option-row">
+				<div class="egnitech-option-info">
+					<label><?php esc_html_e( 'Lightbox (Magnifying Glass / Click-to-Popup)', 'egnitech-one' ); ?></label>
+					<p class="description"><?php esc_html_e( 'Enable full-screen image popup lightbox when clicking the image or the magnifying glass icon.', 'egnitech-one' ); ?></p>
+				</div>
+				<div class="egnitech-option-control">
+					<label class="egnitech-switch">
+						<input type="checkbox" name="egnitech_one_woocommerce_gallery_lightbox" value="yes" <?php checked( 'yes', $gallery_lightbox ); ?> />
+						<span class="egnitech-slider"></span>
+					</label>
+				</div>
+			</div>
+
+			<div class="egnitech-option-row">
+				<div class="egnitech-option-info">
+					<label><?php esc_html_e( 'Lightbox Icon', 'egnitech-one' ); ?></label>
+					<p class="description"><?php esc_html_e( 'Show magnifying glass icon overlay on product images (lightbox must be enabled).', 'egnitech-one' ); ?></p>
+				</div>
+				<div class="egnitech-option-control">
+					<label class="egnitech-switch">
+						<input type="checkbox" name="egnitech_one_woocommerce_gallery_lightbox_icon" value="yes" <?php checked( 'yes', $gallery_lightbox_icon ); ?> />
+						<span class="egnitech-slider"></span>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+</div> <!-- end tab-woocommerce -->
+<?php endif; ?>
+
 <!-- ==================== ADVANCED TAB ==================== -->
 <div id="tab-advanced" class="egnitech-tab-panel">
 <div class="egnitech-card">
@@ -1332,6 +1491,160 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
         </div>
     </div>
 </div> <!-- end tab-smtp -->
+
+<?php if ( egnitech_one_is_nginx() ) : ?>
+<!-- ==================== FASTCGI CACHE TAB ==================== -->
+<div id="tab-fastcgi" class="egnitech-tab-panel">
+    <div class="egnitech-card">
+        <div class="egnitech-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 class="egnitech-card-title"><?php esc_html_e( 'FastCGI Cache Settings', 'egnitech-one' ); ?></h2>
+                <p class="egnitech-card-desc"><?php esc_html_e( 'Configure FastCGI caching parameters. This tab is visible because Nginx is detected as the web server.', 'egnitech-one' ); ?></p>
+            </div>
+            <div class="egnitech-card-actions">
+                <label class="egnitech-switch" title="<?php esc_attr_e( 'Enable FastCGI Cache Settings', 'egnitech-one' ); ?>">
+                    <input type="checkbox" name="egnitech_one_fastcgi_cache_enabled" id="egnitech_one_fastcgi_cache_enabled" value="yes" <?php checked( 'yes', $fastcgi_cache_enabled ); ?> data-toggle-target="#egnitech-fastcgi-details" />
+                    <span class="egnitech-slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="egnitech-card-body">
+            <!-- Server Status Information -->
+            <div class="egnitech-option-row">
+                <div class="egnitech-option-info">
+                    <label><?php esc_html_e( 'Environment Detection', 'egnitech-one' ); ?></label>
+                    <p class="description"><?php esc_html_e( 'Detected web server parameters.', 'egnitech-one' ); ?></p>
+                </div>
+                <div class="egnitech-option-control">
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <span class="egnitech-highlight-badge highlight-location" style="background: var(--egnitech-success); color: #fff; border: none; padding: 4px 10px; font-weight: 600;">
+                            <?php esc_html_e( 'Server: Nginx', 'egnitech-one' ); ?>
+                        </span>
+                        <?php if ( egnitech_one_is_fastcgi_active() ) : ?>
+                            <span class="egnitech-highlight-badge highlight-load" style="background: var(--egnitech-success); color: #fff; border: none; padding: 4px 10px; font-weight: 600;">
+                                <?php printf( esc_html__( 'FastCGI: Active (%s)', 'egnitech-one' ), esc_html( php_sapi_name() ) ); ?>
+                            </span>
+                        <?php else : ?>
+                            <span class="egnitech-highlight-badge highlight-load" style="background: var(--egnitech-danger); color: #fff; border: none; padding: 4px 10px; font-weight: 600;">
+                                <?php printf( esc_html__( 'FastCGI: Inactive (%s)', 'egnitech-one' ), esc_html( php_sapi_name() ) ); ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div id="egnitech-fastcgi-details" style="<?php echo 'yes' === $fastcgi_cache_enabled ? '' : 'display: none;'; ?>">
+                <!-- Purge Method -->
+                <div class="egnitech-option-row">
+                    <div class="egnitech-option-info">
+                        <label><?php esc_html_e( 'Purge Method', 'egnitech-one' ); ?></label>
+                        <p class="description"><?php esc_html_e( 'Choose how cache purging will occur when site updates are made.', 'egnitech-one' ); ?></p>
+                    </div>
+                    <div class="egnitech-option-control">
+                        <select name="egnitech_one_fastcgi_purge_method" id="egnitech_one_fastcgi_purge_method" class="egnitech-input">
+                            <option value="filesystem" <?php selected( 'filesystem', $fastcgi_purge_method ); ?>><?php esc_html_e( 'Direct Filesystem Deletion', 'egnitech-one' ); ?></option>
+                            <option value="http_purge" <?php selected( 'http_purge', $fastcgi_purge_method ); ?>><?php esc_html_e( 'HTTP PURGE Request', 'egnitech-one' ); ?></option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Cache Path -->
+                <div class="egnitech-option-row" id="egnitech-fastcgi-path-row" style="<?php echo 'filesystem' === $fastcgi_purge_method ? '' : 'display: none;'; ?>">
+                    <div class="egnitech-option-info">
+                        <label><?php esc_html_e( 'Cache Directory Path', 'egnitech-one' ); ?></label>
+                        <?php $domain_name = wp_parse_url( home_url(), PHP_URL_HOST ) ?: ( $_SERVER['HTTP_HOST'] ?? 'example.com' ); ?>
+                        <p class="description"><?php printf( esc_html__( 'The absolute path to the Nginx fastcgi_cache_path directory (e.g. /var/cache/nginx/%s). Must match your nginx.conf.', 'egnitech-one' ), esc_html( $domain_name ) ); ?></p>
+                    </div>
+                    <div class="egnitech-option-control">
+                        <input type="text" name="egnitech_one_fastcgi_cache_path" value="<?php echo esc_attr( $fastcgi_cache_path ); ?>" class="egnitech-input" placeholder="/var/cache/nginx/<?php echo esc_attr( $domain_name ); ?>" />
+                        <p class="description" style="margin-top: 6px; font-style: italic;">
+                            <?php printf( esc_html__( 'Tip: If the default path above doesn\'t work, try using: %s', 'egnitech-one' ), '<code>/var/cache/nginx-fastcgi/' . esc_html( $domain_name ) . '</code>' ); ?>
+                        </p>
+                        
+                        <!-- Real-time directory validation -->
+                        <div style="margin-top: 12px;">
+                            <?php
+                            if ( empty( $fastcgi_cache_path ) ) {
+                                echo '<span style="color: var(--egnitech-text-muted); font-size: 13px; font-weight: 500;">' . esc_html__( 'Please enter a path.', 'egnitech-one' ) . '</span>';
+                            } elseif ( ! is_dir( $fastcgi_cache_path ) ) {
+                                echo '<span style="color: var(--egnitech-danger); font-size: 13px; font-weight: 500;"><span class="dashicons dashicons-warning" style="font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom;"></span> ' . esc_html__( 'Directory does not exist.', 'egnitech-one' ) . '</span>';
+                            } elseif ( ! is_writable( $fastcgi_cache_path ) ) {
+                                echo '<span style="color: var(--egnitech-danger); font-size: 13px; font-weight: 500;"><span class="dashicons dashicons-lock" style="font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom;"></span> ' . esc_html__( 'Directory is not writable by the PHP process (permission denied).', 'egnitech-one' ) . '</span>';
+                            } else {
+                                echo '<span style="color: var(--egnitech-success); font-size: 13px; font-weight: 500;"><span class="dashicons dashicons-yes-alt" style="font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom; color: var(--egnitech-success);"></span> ' . esc_html__( 'Directory exists and is writable.', 'egnitech-one' ) . '</span>';
+                            }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HTTP Purge configuration helper warning -->
+                <div class="egnitech-option-row" id="egnitech-fastcgi-http-purge-row" style="<?php echo 'http_purge' === $fastcgi_purge_method ? '' : 'display: none;'; ?>">
+                    <div class="egnitech-option-info">
+                        <label><?php esc_html_e( 'Nginx PURGE Configuration Needed', 'egnitech-one' ); ?></label>
+                        <p class="description"><?php esc_html_e( 'Required Nginx settings for HTTP Purge.', 'egnitech-one' ); ?></p>
+                    </div>
+                    <div class="egnitech-option-control">
+                        <div style="background: rgba(0, 0, 0, 0.02); border: 1px solid var(--egnitech-border); border-radius: var(--egnitech-radius-md); padding: var(--egnitech-spacing-md); max-width: 500px;">
+                            <p style="font-size: 13px; margin-bottom: 8px; font-weight: 500; color: var(--egnitech-text-main);">
+                                <span class="dashicons dashicons-info" style="font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom; color: var(--egnitech-accent);"></span>
+                                <?php esc_html_e( 'Make sure Nginx supports PURGE requests. Your Nginx configuration should include a block similar to:', 'egnitech-one' ); ?>
+                            </p>
+                            <pre style="font-family: var(--egnitech-font-mono); font-size: 11px; background: #fff; padding: 10px; border-radius: var(--egnitech-radius-sm); border: 1px solid var(--egnitech-border); overflow-x: auto; margin: 0; color: #475569;">
+location ~ /purge(/.*) {
+    allow 127.0.0.1;
+    deny all;
+    fastcgi_cache_purge WORDPRESS "$scheme$request_method$host$1";
+}</pre>
+                            <p style="font-size: 12px; margin-top: 8px; color: var(--egnitech-text-muted); font-style: italic;">
+                                <?php esc_html_e( 'Note: If Nginx is not compiled with ngx_cache_purge module, HTTP PURGE requests will fail (return 404/405).', 'egnitech-one' ); ?>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cache Size -->
+                <div class="egnitech-option-row">
+                    <div class="egnitech-option-info">
+                        <label><?php esc_html_e( 'Cache Size', 'egnitech-one' ); ?></label>
+                        <p class="description"><?php esc_html_e( 'The total size of the FastCGI cache files belonging to this site.', 'egnitech-one' ); ?></p>
+                    </div>
+                    <div class="egnitech-option-control">
+                        <?php
+                        $size_info = egnitech_one_get_site_cache_size( false );
+                        $formatted_size = ( $size_info['bytes'] === -1 ) ? __( 'Not calculated', 'egnitech-one' ) : $size_info['formatted'];
+                        ?>
+                        <span style="font-size: 16px; font-weight: 600; margin-right: 12px;" id="egnitech-fastcgi-cache-size-val">
+                            <?php echo esc_html( $formatted_size ); ?>
+                        </span>
+                        <button type="button" id="egnitech-recalculate-fastcgi-cache-size-btn" class="egnitech-btn" style="background: rgba(0,0,0,0.05); color: var(--egnitech-text-main); border: 1px solid var(--egnitech-border);" data-nonce="<?php echo esc_attr( wp_create_nonce( 'egnitech_one_clear_cache_nonce' ) ); ?>">
+                            <span class="dashicons dashicons-update" style="vertical-align: text-bottom; margin-right: 4px;"></span>
+                            <?php esc_html_e( 'Calculate Cache Size', 'egnitech-one' ); ?>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Manual Cache Purge -->
+                <div class="egnitech-option-row">
+                    <div class="egnitech-option-info">
+                        <label><?php esc_html_e( 'Manual Purge', 'egnitech-one' ); ?></label>
+                        <p class="description"><?php esc_html_e( 'Purge the FastCGI cache manually. Only cache files matching this site\'s domain will be deleted.', 'egnitech-one' ); ?></p>
+                    </div>
+                    <div class="egnitech-option-control">
+                        <button type="button" id="egnitech-clear-fastcgi-cache-btn" class="egnitech-btn egnitech-btn-danger" data-nonce="<?php echo esc_attr( wp_create_nonce( 'egnitech_one_clear_cache_nonce' ) ); ?>">
+                            <span class="dashicons dashicons-trash" style="vertical-align: text-bottom; margin-right: 4px;"></span>
+                            <?php esc_html_e( 'Clear Entire FastCGI Cache', 'egnitech-one' ); ?>
+                        </button>
+                        <span id="egnitech-clear-cache-status" style="margin-left: 12px; font-weight: 500; font-size: 13px;"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div> <!-- end tab-fastcgi -->
+<?php endif; ?>
 
 <!-- Persistent Save Bar -->
 <div class="egnitech-options-footer">

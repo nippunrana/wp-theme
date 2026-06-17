@@ -32,8 +32,8 @@
 		</div>
 		<!-- /wp:group -->
 
-		<!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap","verticalAlignment":"center"}} -->
-		<div class="wp-block-group">
+		<!-- wp:group {"className":"egnitech-header-actions-container","layout":{"type":"flex","flexWrap":"nowrap","verticalAlignment":"center"}} -->
+		<div class="wp-block-group egnitech-header-actions-container">
 			<!-- wp:navigation {"layout":{"type":"flex","justifyContent":"right"},"style":{"spacing":{"blockGap":"24px"}}} /-->
 
 			<!-- wp:shortcode -->

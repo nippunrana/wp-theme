@@ -9,21 +9,195 @@
 (function () {
     'use strict';
 
-    document.addEventListener('DOMContentLoaded', function () {
+    function initAll() {
         initTabs();
         initMediaUploader();
         initReadingProgress();
         initScriptsManager();
-        initRecaptcha();
         initSmtpToggle();
-        initContactFormManager();
-    });
+        initWooCommerceLayoutToggle();
+        initFastCgiToggle();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAll);
+    } else {
+        initAll();
+    }
 
     /**
      * Initialize SMTP Toggle Logic
      */
     function initSmtpToggle() {
         setupToggleVisibility('egnitech_one_smtp_enabled', 'egnitech-smtp-details');
+    }
+
+    /**
+     * Initialize FastCGI Cache Toggle and Purge Method Logic
+     */
+    function initFastCgiToggle() {
+        setupToggleVisibility('egnitech_one_fastcgi_cache_enabled', 'egnitech-fastcgi-details');
+
+        var purgeMethod = document.getElementById('egnitech_one_fastcgi_purge_method');
+        var pathRow = document.getElementById('egnitech-fastcgi-path-row');
+        var httpRow = document.getElementById('egnitech-fastcgi-http-purge-row');
+
+        if (purgeMethod && pathRow && httpRow) {
+            purgeMethod.addEventListener('change', function () {
+                if (this.value === 'filesystem') {
+                    pathRow.style.display = '';
+                    pathRow.style.animation = 'fadeUp 0.3s ease forwards';
+                    httpRow.style.display = 'none';
+                } else if (this.value === 'http_purge') {
+                    pathRow.style.display = 'none';
+                    httpRow.style.display = '';
+                    httpRow.style.animation = 'fadeUp 0.3s ease forwards';
+                }
+            });
+        }
+
+        // Manual cache purge button handler
+        var clearBtn = document.getElementById('egnitech-clear-fastcgi-cache-btn');
+        var clearStatus = document.getElementById('egnitech-clear-cache-status');
+        var sizeValSpan = document.getElementById('egnitech-fastcgi-cache-size-val');
+
+        if (clearBtn && clearStatus) {
+            clearBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (clearBtn.disabled) return;
+
+                clearBtn.disabled = true;
+                clearStatus.style.color = 'var(--egnitech-text-muted)';
+                clearStatus.innerHTML = '<span class="dashicons dashicons-update spin" style="animation: spin 1s linear infinite; vertical-align: text-bottom; margin-right: 4px;"></span> ' + (egnitechAdmin.i18n.loading || 'Clearing…');
+
+                // Add dynamic styling for rotation if not already in style
+                if (!document.getElementById('egnitech-spin-style-admin')) {
+                    var style = document.createElement('style');
+                    style.id = 'egnitech-spin-style-admin';
+                    style.innerHTML = '@keyframes spin { 100% { transform: rotate(360deg); } }';
+                    document.head.appendChild(style);
+                }
+
+                var data = new URLSearchParams();
+                data.append('action', 'egnitech_one_clear_fastcgi_cache');
+                data.append('security', clearBtn.getAttribute('data-nonce'));
+
+                fetch(egnitechAdmin.ajaxUrl, {
+                    method: 'POST',
+                    body: data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then(function (response) { return response.json(); })
+                .then(function (res) {
+                    clearBtn.disabled = false;
+                    if (res.success) {
+                        clearStatus.style.color = 'var(--egnitech-success)';
+                        clearStatus.innerHTML = '<span class="dashicons dashicons-yes" style="vertical-align: text-bottom; color: var(--egnitech-success); margin-right: 4px;"></span> ' + res.data.message;
+                        
+                        // Update size display in page
+                        if (sizeValSpan) {
+                            sizeValSpan.textContent = res.data.formatted || '0 B';
+                        }
+
+                        // Update size display in Admin Bar if visible
+                        var abSizeDisplay = document.querySelector('#wp-admin-bar-egnitech-fastcgi-cache-size-display .egnitech-ab-size');
+                        if (abSizeDisplay) {
+                            abSizeDisplay.textContent = res.data.formatted || '0 B';
+                        }
+
+                        setTimeout(function () {
+                            clearStatus.innerHTML = '';
+                        }, 5000);
+                    } else {
+                        clearStatus.style.color = 'var(--egnitech-danger)';
+                        clearStatus.innerHTML = '<span class="dashicons dashicons-warning" style="vertical-align: text-bottom; color: var(--egnitech-danger); margin-right: 4px;"></span> ' + (res.data.message || 'Failed to clear cache.');
+                    }
+                })
+                .catch(function () {
+                    clearBtn.disabled = false;
+                    clearStatus.style.color = 'var(--egnitech-danger)';
+                    clearStatus.innerHTML = '<span class="dashicons dashicons-warning" style="vertical-align: text-bottom; color: var(--egnitech-danger); margin-right: 4px;"></span> Connection error.';
+                });
+            });
+        }
+
+        // Recalculate cache size button handler (in Theme Options page)
+        var recalcSizeBtn = document.getElementById('egnitech-recalculate-fastcgi-cache-size-btn');
+
+        if (recalcSizeBtn && sizeValSpan) {
+            recalcSizeBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (recalcSizeBtn.disabled) return;
+
+                recalcSizeBtn.disabled = true;
+                var originalHtml = recalcSizeBtn.innerHTML;
+                recalcSizeBtn.innerHTML = '<span class="dashicons dashicons-update spin" style="animation: spin 1s linear infinite; vertical-align: text-bottom; margin-right: 4px;"></span> ' + (egnitechAdmin.i18n.loading || 'Calculating…');
+
+                // Add dynamic styling for rotation if not already in style
+                if (!document.getElementById('egnitech-spin-style-admin')) {
+                    var style = document.createElement('style');
+                    style.id = 'egnitech-spin-style-admin';
+                    style.innerHTML = '@keyframes spin { 100% { transform: rotate(360deg); } }';
+                    document.head.appendChild(style);
+                }
+
+                var data = new URLSearchParams();
+                data.append('action', 'egnitech_one_recalculate_cache_size');
+                data.append('security', recalcSizeBtn.getAttribute('data-nonce'));
+
+                fetch(egnitechAdmin.ajaxUrl, {
+                    method: 'POST',
+                    body: data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then(function (response) { return response.json(); })
+                .then(function (res) {
+                    recalcSizeBtn.disabled = false;
+                    recalcSizeBtn.innerHTML = originalHtml;
+                    if (res.success) {
+                        // Update Options display
+                        sizeValSpan.textContent = res.data.formatted;
+
+                        // Update Admin Bar display if visible
+                        var abSizeDisplay = document.querySelector('#wp-admin-bar-egnitech-fastcgi-cache-size-display .egnitech-ab-size');
+                        if (abSizeDisplay) {
+                            abSizeDisplay.textContent = res.data.formatted;
+                        }
+                    } else {
+                        alert(res.data.message || 'Failed to recalculate size.');
+                    }
+                })
+                .catch(function () {
+                    recalcSizeBtn.disabled = false;
+                    recalcSizeBtn.innerHTML = originalHtml;
+                    alert('Connection error.');
+                });
+            });
+        }
+    }
+
+    /**
+     * Initialize WooCommerce Layout Toggle
+     */
+    function initWooCommerceLayoutToggle() {
+        var layoutRadios = document.querySelectorAll('input[name="egnitech_one_woocommerce_gallery_layout"]');
+        var thumbStyleRow = document.getElementById('egnitech-gallery-thumbnail-style-row');
+        if (!layoutRadios.length || !thumbStyleRow) return;
+
+        layoutRadios.forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                if (this.value === 'custom') {
+                    thumbStyleRow.style.display = '';
+                    thumbStyleRow.style.animation = 'fadeUp 0.3s ease forwards';
+                } else {
+                    thumbStyleRow.style.display = 'none';
+                }
+            });
+        });
     }
 
     /**
@@ -392,111 +566,6 @@
                 hiddenInput.value = JSON.stringify(scripts);
             });
         }
-    }
-
-    /**
-     * Initialize reCAPTCHA Toggle Logic
-     */
-    function initRecaptcha() {
-        setupToggleVisibility('egnitech_one_recaptcha_enabled', 'egnitech-recaptcha-keys-row');
-    }
-
-    /**
-     * Initialize Contact Form Field Manager (Contact Tab)
-     */
-    function initContactFormManager() {
-        const addBtn = document.getElementById('egnitech_add_contact_field_btn');
-        const fieldsList = document.getElementById('egnitech_contact_fields_list');
-        const hiddenInput = document.getElementById('egnitech_one_contact_form_fields');
-        const form = document.querySelector('.egnitech-options-form');
-
-        if (!addBtn || !fieldsList || !hiddenInput || !form) return;
-
-        // Initialize shared accordion & delete logic
-        initAccordionInteractions(fieldsList);
-        addBtn.addEventListener('click', function () {
-            const btn = this;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="dashicons dashicons-update egnitech-spin"></span> ' + (egnitechAdmin.i18n.loading || 'Loading...');
-            btn.disabled = true;
-
-            const formData = new FormData();
-            formData.append('action', 'egnitech_one_get_new_contact_field_html');
-            formData.append('nonce', egnitechAdmin.nonce);
-            formData.append('field_id', Date.now());
-
-            fetch(egnitechAdmin.ajaxUrl, {
-                method: 'POST',
-                body: formData
-            })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.success && res.data && res.data.html) {
-                        fieldsList.insertAdjacentHTML('beforeend', res.data.html);
-                        const newItem = fieldsList.lastElementChild;
-                        const labelInput = newItem.querySelector('.field-label-input');
-                        if (labelInput) labelInput.focus();
-                    } else {
-                        alert(egnitechAdmin.i18n.error || 'Failed to add field.');
-                    }
-                })
-                .catch(e => {
-                    console.error(e);
-                    alert('Error adding field.');
-                })
-                .finally(() => {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                });
-        });
-
-        // Dynamic updates for highlights and headers
-        fieldsList.addEventListener('input', function (e) {
-            const item = e.target.closest('.egnitech-contact-field-item');
-            if (!item) return;
-
-            if (e.target.matches('.field-label-input')) {
-                const nameEl = item.querySelector('.egnitech-script-name');
-                if (nameEl) nameEl.textContent = e.target.value.trim() || 'Unnamed Field';
-            }
-        });
-
-        fieldsList.addEventListener('change', function (e) {
-            const item = e.target.closest('.egnitech-contact-field-item');
-            if (!item) return;
-
-            if (e.target.matches('.field-type-select')) {
-                const badge = item.querySelector('.highlight-type');
-                if (badge) {
-                    badge.textContent = e.target.options[e.target.selectedIndex].text;
-                }
-            }
-        });
-
-        // Serialize fields on sumbit
-        form.addEventListener('submit', function () {
-            const fields = [];
-            const items = fieldsList.querySelectorAll('.egnitech-contact-field-item');
-
-            items.forEach(item => {
-                const labelInp = item.querySelector('.field-label-input');
-                const typeSel = item.querySelector('.field-type-select');
-                const placeholdersInp = item.querySelector('.field-placeholder-input');
-                const reqInp = item.querySelector('.field-required-toggle');
-
-                if (labelInp && typeSel && placeholdersInp) {
-                    fields.push({
-                        id: item.dataset.id || Date.now(),
-                        label: labelInp.value.trim(),
-                        type: typeSel.value,
-                        placeholder: placeholdersInp.value.trim(),
-                        required: reqInp ? reqInp.checked : false
-                    });
-                }
-            });
-
-            hiddenInput.value = JSON.stringify(fields);
-        });
     }
 
 })();
