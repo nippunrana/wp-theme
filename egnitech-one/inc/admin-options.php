@@ -282,7 +282,7 @@ register_setting( 'egnitech_one_options', 'egnitech_one_footer_copyright', [
 
 register_setting( 'egnitech_one_options', 'egnitech_one_footer_credits', [
 'type'              => 'string',
-'default'           => '<a href="https://egnitech.com" rel="nofollow">EgniTech</a> &middot; Built with <a href="https://wordpress.org" rel="nofollow">WordPress</a>',
+'default'           => 'Built by <a href="https://egnitech.com" rel="nofollow">EgniTech</a>',
 'sanitize_callback' => 'wp_kses_post',
 ] );
 
@@ -672,7 +672,7 @@ $light_logo_url       = $light_logo_url ? set_url_scheme( $light_logo_url, 'http
 // Phase 1 options.
 $scroll_to_top        = get_option( 'egnitech_one_scroll_to_top', 'yes' );
 $footer_copyright     = get_option( 'egnitech_one_footer_copyright', '' );
-$footer_credits       = get_option( 'egnitech_one_footer_credits', '<a href="https://egnitech.com" rel="nofollow">EgniTech</a> &middot; Built with <a href="https://wordpress.org" rel="nofollow">WordPress</a>' );
+$footer_credits       = get_option( 'egnitech_one_footer_credits', 'Built by <a href="https://egnitech.com" rel="nofollow">EgniTech</a>' );
 $custom_scripts_raw   = get_option( 'egnitech_one_custom_scripts', '[]' );
 $custom_scripts       = json_decode( $custom_scripts_raw, true );
 if ( ! is_array( $custom_scripts ) ) {
@@ -1254,12 +1254,12 @@ esc_html__( 'HTML allowed. Use %1$s for the current year and %2$s for the site n
 <label><?php esc_html_e( 'Footer Credits Text', 'egnitech-one' ); ?></label>
 <p class="description">
 <?php
-esc_html_e( 'Customize the "EgniTech · Built with WordPress" text. HTML allowed.', 'egnitech-one' );
+esc_html_e( 'Customize the "Built by EgniTech" text. HTML allowed.', 'egnitech-one' );
 ?>
 </p>
 </div>
 <div class="egnitech-option-control">
-<textarea name="egnitech_one_footer_credits" rows="2" class="egnitech-textarea" placeholder='<a href="https://egnitech.com" rel="nofollow">EgniTech</a> &middot; Built with <a href="https://wordpress.org" rel="nofollow">WordPress</a>'><?php echo esc_textarea( $footer_credits ); ?></textarea>
+<textarea name="egnitech_one_footer_credits" rows="2" class="egnitech-textarea" placeholder='Built by <a href="https://egnitech.com" rel="nofollow">EgniTech</a>'><?php echo esc_textarea( $footer_credits ); ?></textarea>
 </div>
 </div>
 </div>

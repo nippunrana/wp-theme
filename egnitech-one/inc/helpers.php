@@ -44,7 +44,7 @@ if ( ! function_exists( 'egnitech_one_get_footer_credits' ) ) {
 	function egnitech_one_get_footer_credits(): string {
 		return (string) egnitech_one_get_option(
 			'egnitech_one_footer_credits',
-			'<a href="https://egnitech.com" rel="nofollow">EgniTech</a> &middot; Built with <a href="https://wordpress.org" rel="nofollow">WordPress</a>'
+			'Built by <a href="https://egnitech.com" rel="nofollow">EgniTech</a>'
 		);
 	}
 }
