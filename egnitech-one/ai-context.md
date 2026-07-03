@@ -18,7 +18,7 @@ This file provides the **architectural foundation** and **design system rules** 
 - **IS_CHILD**: `false`
 
 ## Core Development Principles
-1. **Child Theme First**: Whenever possible, implement features, templates, or styles in the `egnitech-one-child` theme instead of modifying this core.
+1. **Child Theme First**: Whenever possible, implement features, templates, or styles in the active child theme instead of modifying this core.
 2. **Native-First**: Always prioritize native WordPress block capabilities and `theme.json` settings over custom CSS or PHP workarounds.
 3. **Vanilla JS Only**: Use ES6+ for performance and modern compatibility. jQuery is permitted only where required for WooCommerce event interop (e.g. `found_variation`, `added_to_cart`), and must always be guarded with `typeof jQuery !== 'undefined'` — never declared as a script dependency.
 

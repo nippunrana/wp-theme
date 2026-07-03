@@ -2,16 +2,17 @@
 
 > [!IMPORTANT]
 > **Context Selection Rule:**
-> If you are working within the parent theme core (e.g., inside `egnitech-one/` folder, and the objective is to modify the core foundation), you MUST ignore this file and use `ai-context.md` instead.
+> If you are working within the parent theme core (e.g., inside `egnitech-one/` folder, and the objective is to modify the core foundation), you MUST ignore this file and use the parent theme's `ai-context.md` (`egnitech-one/ai-context.md`) instead.
 
-This file provides the **environmental ground rules** and **project identity** for the EgniTech One Child theme. For technical implementation procedures (creating templates, patterns, or asset loading), refer to the local `wp-block-theme` skill located in the directory `egnitech-one/.agent/skills/wp-block-theme/`.
+This file provides the **environmental ground rules** and **project identity** for the child theme. For technical implementation procedures (creating templates, patterns, or asset loading), refer to the local `wp-block-theme` skill located in the directory `egnitech-one/.agent/skills/wp-block-theme/`.
 
 ## Project Identity
-- **Child Theme**: `EgniTech One Child` (Folder: `egnitech-one-child`)
+- **Child Theme**: `THEME_NAME` (Folder: `THEME_SLUG`)
 - **Parent Theme**: `EgniTech One` (Folder: `egnitech-one`)
 - **Architecture**: WordPress Full Site Editing (FSE) / Block Theme.
 
 ### Theme Metadata (Skill Variables)
+> Per-domain deployment: update only the values in this block; the rest of this file references them as `THEME_SLUG` / `THEME_NAME` / `TEXT_DOMAIN`.
 - **THEME_SLUG**: `egnitech-one-child`
 - **THEME_NAME**: `EgniTech One Child`
 - **TEXT_DOMAIN**: `egnitech-one-child`
@@ -24,6 +25,15 @@ This file provides the **environmental ground rules** and **project identity** f
    - This theme inherits all templates, parts, and functions from the parent. 
    - To override, mirror the file path from the parent into the child theme.
    - For components, use the **Pattern-First Asset Model**: Assets (`style.css`, `index.js`) must live inside the specific pattern directory (e.g., `patterns/contact-us/style.css`).
+
+## Deploying to a New Domain
+This child theme's folder/slug is renamed per site (e.g. `egnitech-one-child` → `truinterview` for truinterview.in). When cloning it for a new domain:
+1. Rename the theme folder to the domain slug (e.g. `truinterview`).
+2. Update the **Theme Metadata (Skill Variables)** block above (`THEME_SLUG`, `THEME_NAME`, `TEXT_DOMAIN`).
+3. Update the `style.css` header: `Theme Name`, `Text Domain`, `Theme URI`, `Description`.
+4. Update `functions.php`: the text-domain strings and the block pattern category slug/label.
+5. **Do NOT change**: `Template: egnitech-one` in `style.css`, any `egnitech_one_*` function names, the `egnitech-one-dark-mode` support flag, or the `egnitech-one` text domain used for parent-defined strings — these all point at the parent theme and must stay as-is.
+6. **Verify**: `grep -rn "egnitech-one-child"` inside the child theme folder should return no results once renamed.
 
 ## Implementation Workflow
 For all development tasks involving templates, patterns, `theme.json`, or asset enqueuing:
@@ -42,7 +52,7 @@ By default, the parent theme's native dark/light mode is **disabled** to avoid s
 
 ### Text Domains & Localization
 - Use `egnitech-one` only when translating existing strings defined by the parent theme's translation files.
-- Use `egnitech-one-child` for all new translatable strings unique to the child theme.
+- Use `TEXT_DOMAIN` for all new translatable strings unique to the child theme.
 
 ### Google reCAPTCHA v2 System
 Google reCAPTCHA v2 keys are managed globally under the parent theme's options page ("Integrations" tab).
@@ -55,13 +65,14 @@ Google reCAPTCHA v2 keys are managed globally under the parent theme's options p
       // Use $recaptcha['site_key'] and $recaptcha['secret_key']
   }
   ```
+- **Security**: Only `site_key` may be output client-side (e.g. in a `data-sitekey` attribute). `secret_key` is for server-side verification requests only and must never appear in markup or JS.
 
 ## Coding Standards
 1. **Vanilla JS Only**: No jQuery. Use ES6+. For complex interactions, use the **Interactivity API**.
 2. **CSS Scoping (MANDATORY)**: All custom CSS must be scoped to the block's variation class (e.g., `.is-style-{slug}`). NEVER use catch-all page wrappers (e.g., `.{slug}-wrapper`) as they cause style bleed.
 3. **Performance**: Maintain the lean, high-performance philosophy of the parent theme.
 4. **SVGs**: Provide explicit `width` and `height` attributes on inline `<svg>` tags to prevent layout shifts in the Site Editor.
-5. **PHP 8.3 & WP 7.0 Compliance (MANDATORY)**: All child theme PHP files (including `functions.php`, helper scripts, or template overrides) must include `declare(strict_types=1);` on line 2, and declare strict types for all parameters and return types. Any custom `theme.json` in the child theme must inherit from parent settings and use `"version": 3`.
+5. **PHP 8.3 & WP 7.0 Compliance (MANDATORY)**: All child theme PHP files (including `functions.php`, helper scripts, or template overrides) must include `declare(strict_types=1);` on line 2, and use native type hints for all parameters and return types. Any custom `theme.json` in the child theme must inherit from parent settings and use `"version": 3`.
 
 ## Technical References
 Refer to the following in the local `wp-block-theme` skill (under `egnitech-one/.agent/skills/wp-block-theme/`) for deep-dives:
