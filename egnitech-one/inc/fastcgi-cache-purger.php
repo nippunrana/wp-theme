@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FastCGI Cache Purger logic for EgniTech One theme.
  *
