@@ -13,10 +13,10 @@ A specialized skill for building, configuring, and optimizing human-like convers
 
 This skill uses specialized reference files. Read them on demand when executing relevant tasks:
 
-- **API Specifications**: Refer to [api_reference.md](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/skills/trugen-ai/references/api_reference.md) for endpoints, request schemas, BYO LLM constraints, and custom tools JSON formats.
-- **Prompting & Voice Rules**: Refer to [prompting_and_voice.md](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/skills/trugen-ai/references/prompting_and_voice.md) for TTS-safe formatting rules, supported languages, and ElevenLabs Voice IDs.
-- **Integrations & Event Logic**: Refer to [integrations.md](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/skills/trugen-ai/references/integrations.md) for LiveKit setups, webhook payload schemas, and conversational interruption triggers.
-- **Persona Blueprints**: Refer to [use_cases.md](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/skills/trugen-ai/references/use_cases.md) for pre-optimized system prompts for common roles (sales, support, health intake).
+- **API Specifications**: Refer to [api_reference.md](references/api_reference.md) for endpoints, request schemas, BYO LLM constraints, and custom tools JSON formats.
+- **Prompting & Voice Rules**: Refer to [prompting_and_voice.md](references/prompting_and_voice.md) for TTS-safe formatting rules, supported languages, and ElevenLabs Voice IDs.
+- **Integrations & Event Logic**: Refer to [integrations.md](references/integrations.md) for LiveKit setups, webhook payload schemas, and conversational interruption triggers.
+- **Persona Blueprints**: Refer to [use_cases.md](references/use_cases.md) for pre-optimized system prompts for common roles (sales, support, health intake).
 
 ---
 
@@ -26,13 +26,13 @@ Follow this systematic 4-phase workflow when building TruGen AI integrations:
 
 ### Phase 1: Architecture & Requirements Discovery
 Before writing code, clarify the following with the developer:
-1. **Agent Role & Persona**: What is the target behavior? (Consult [use_cases.md](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/skills/trugen-ai/references/use_cases.md) for templates).
-2. **LLM Provider**: Are they using default models (OpenAI/Groq) or bringing their own custom LLM (BYO LLM)? (Consult [api_reference.md](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/skills/trugen-ai/references/api_reference.md)).
-3. **Deployment Strategy**: iFrame embed, frontend widget, or a custom LiveKit Python WebRTC agent? (Consult [integrations.md](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/skills/trugen-ai/references/integrations.md)).
-4. **Data Grounding**: Do they need Agentic RAG or Traditional RAG? (Consult [api_reference.md](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/skills/trugen-ai/references/api_reference.md)).
+1. **Agent Role & Persona**: What is the target behavior? (Consult [use_cases.md](references/use_cases.md) for templates).
+2. **LLM Provider**: Are they using default models (OpenAI/Groq) or bringing their own custom LLM (BYO LLM)? (Consult [api_reference.md](references/api_reference.md)).
+3. **Deployment Strategy**: iFrame embed, frontend widget, or a custom LiveKit Python WebRTC agent? (Consult [integrations.md](references/integrations.md)).
+4. **Data Grounding**: Do they need Agentic RAG or Traditional RAG? (Consult [api_reference.md](references/api_reference.md)).
 
 ### Phase 2: System Prompt & Guardrails Engineering
-Write the agent's system prompt using the structured template in [prompting_and_voice.md](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/skills/trugen-ai/references/prompting_and_voice.md).
+Write the agent's system prompt using the structured template in [prompting_and_voice.md](references/prompting_and_voice.md).
 > [!IMPORTANT]
 > Keep the LLM's responses short and conversational (1-3 sentences).
 > You MUST enforce **TTS-Safe formatting rules**:

@@ -66,7 +66,7 @@ wp-theme/
 ## 🛠️ Architectural Deep Dives
 
 ### 1. Native Light/Dark Mode Engine
-Color variables are defined inside [theme.json](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one/theme.json) using the CSS `light-dark()` function:
+Color variables are defined inside [theme.json](egnitech-one/theme.json) using the CSS `light-dark()` function:
 ```json
 {
   "color": "light-dark(#ffffff, #0f0f0f)",
@@ -74,23 +74,23 @@ Color variables are defined inside [theme.json](file:///Users/nippunrana/Library
   "slug": "base"
 }
 ```
-*   **Prevention of FOUC:** The helper [egnitech_one_color_scheme_script()](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one/inc/enqueue-assets.php#L66-L102) binds to the `wp_head` action at priority `5`. It immediately reads local storage, the theme options default preference, or system-wide media preferences, assigning `data-scheme` and `color-scheme` to `<html>` before the DOM renders.
-*   **Theme Toggle:** Triggered by [egnitech-one/assets/js/dark-mode-toggle.js](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one/assets/js/dark-mode-toggle.js), updating local storage and root document attributes gracefully with transition layers.
+*   **Prevention of FOUC:** The helper [egnitech_one_color_scheme_script()](egnitech-one/inc/enqueue-assets.php) binds to the `wp_head` action at priority `5`. It immediately reads local storage, the theme options default preference, or system-wide media preferences, assigning `data-scheme` and `color-scheme` to `<html>` before the DOM renders.
+*   **Theme Toggle:** Triggered by [egnitech-one/assets/js/dark-mode-toggle.js](egnitech-one/assets/js/dark-mode-toggle.js), updating local storage and root document attributes gracefully with transition layers.
 
 ### 2. Performance Script Manager
-Managed via the [EgniTech_One_Custom_Scripts](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one/inc/custom-scripts.php#L15) class, scripts added inside the options panel are categorized, consolidated into 6 internal blocks, and dynamically handled:
+Managed via the [EgniTech_One_Custom_Scripts](egnitech-one/inc/custom-scripts.php) class, scripts added inside the options panel are categorized, consolidated into 6 internal blocks, and dynamically handled:
 1.  **Normal:** Rendered immediately on `wp_head` or `wp_footer`.
 2.  **After DOM:** Embedded as base64-encoded strings and decoded using a single vanilla JS worker dynamically appending nodes on `DOMContentLoaded` via `document.createRange().createContextualFragment()`.
 3.  **Delayed:** Injected exactly `3000ms` after page load to bypass render blocks and protect Core Web Vitals (LCP/INP).
 
 ### 3. SMTP Global Pipeline
-Bypasses default server mail relays by hooking directly into `phpmailer_init` inside [inc/smtp-config.php](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one/inc/smtp-config.php). If enabled:
+Bypasses default server mail relays by hooking directly into `phpmailer_init` inside [inc/smtp-config.php](egnitech-one/inc/smtp-config.php). If enabled:
 *   Standard PHPMailer variables are filtered dynamically with values specified under the **SMTP Settings** panel (Port, Host, Encryption, Username, Password).
 *   Enforces global sender name and email sanitization across all outbound notifications.
 
 ### 4. Layout Synchronization
 Modifying layout dimensions in the WordPress Admin Options automatically synchronizes with the Block Editor. 
-The helper [egnitech_one_sync_layout_to_global_styles()](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one/inc/admin-options.php#L511-L540) decodes the active theme's global styles custom post type (`wp_global_styles`), updates the `settings.layout.contentSize` or `wideSize` parameters, and updates the database entry to ensure layout widths mirror perfectly between front-end and editor styling.
+The helper [egnitech_one_sync_layout_to_global_styles()](egnitech-one/inc/admin-options.php) decodes the active theme's global styles custom post type (`wp_global_styles`), updates the `settings.layout.contentSize` or `wideSize` parameters, and updates the database entry to ensure layout widths mirror perfectly between front-end and editor styling.
 
 ---
 
