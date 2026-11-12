@@ -1,5 +1,5 @@
 # AI Context — EgniTech One (Parent Theme)
-
+-
 > [!IMPORTANT]
 > **Context Selection Rule:**
 > If you are working within a child theme (e.g., inside `egnitech-one-child/`, or if the user's objective is to extend/override the theme for the active site domain), you MUST ignore this file and use `ai-context.md` from child theme directory instead.
