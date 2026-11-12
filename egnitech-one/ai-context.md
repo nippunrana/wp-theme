@@ -61,18 +61,34 @@ The parent theme contains a built-in Integrations tab under Theme Options to con
   }
   ```
 
-## Module Map (`inc/`)
-Every option/setting read across these modules goes through the generic getter `egnitech_one_get_option( string $option, mixed $default = '' ): mixed` (`inc/helpers.php`) — use it instead of calling `get_option()` directly for theme settings.
-- **`inc/theme-setup.php`**: Theme supports, `register_block_style()` registrations, dark-mode `theme.json` CSS rewrite (forces light when dark mode is off).
-- **`inc/enqueue-assets.php`**: Global + conditional frontend asset loading (dark-mode bootstrap script, pattern-specific CSS/JS gated by context).
-- **`inc/admin-options.php`**: Theme Options admin page/framework (tabs including Integrations/reCAPTCHA).
-- **`inc/helpers.php`**: Shared getters — `egnitech_one_get_option()`, `egnitech_one_is_dark_mode_enabled()`, `egnitech_one_get_recaptcha_settings()`.
-- **`inc/font-manager.php`**: Custom font registration/management.
-- **`inc/custom-scripts.php`**: Admin-configurable custom header/footer script injection.
-- **`inc/smtp-config.php`**: SMTP mail delivery configuration.
-- **`inc/fastcgi-cache-purger.php`**: Nginx FastCGI cache purge on content changes, admin-bar controls, cache size reporting.
-- **`inc/woocommerce-cart-drawer.php`**: WooCommerce slide-out cart drawer.
-- **`inc/woocommerce-bulk-discount.php`**: WooCommerce bulk/quantity discount pricing logic (pairs with `patterns/single-product-details/bulk-discount.js`).
+## Built Systems vs Roadmap
+Each file in `docs/built-systems/` holds only what the code cannot say: bans, decisions and traps. Read the row's file before touching that system.
+
+| System | Status | Pointer | Notes |
+| :--- | :--- | :--- | :--- |
+| Theme Options | Built | [docs/built-systems/theme-options.md](docs/built-systems/theme-options.md) | One form rewrites every setting on each save. Read before adding a setting, hiding a field, or saving options from code or WP-CLI |
+| Page cache & purging | Built | [docs/built-systems/page-cache.md](docs/built-systems/page-cache.md) | nginx keeps whole pages; the theme only deletes them, and only some. First stop when a change "is not showing" |
+| Assets & cache-busting | Built | [docs/built-systems/assets-and-versioning.md](docs/built-systems/assets-and-versioning.md) | No build step. Read before editing any CSS or JS: most files need a `Version` bump to reach returning visitors |
+| Dark / light mode | Built | [docs/built-systems/dark-mode.md](docs/built-systems/dark-mode.md) | Traps only; the bans are in the section above |
+| Header, footer, sidebar & templates | Built | [docs/built-systems/templates-and-patterns.md](docs/built-systems/templates-and-patterns.md) | A Site Editor save freezes a template and the PHP inside its pattern |
+| WooCommerce product page | Built | [docs/built-systems/woocommerce-product-page.md](docs/built-systems/woocommerce-product-page.md) | Template, custom gallery, trust badges, add-to-cart and the cart drawer |
+| Bulk discounts | Built | [docs/built-systems/bulk-discounts.md](docs/built-systems/bulk-discounts.md) | Changes what customers are charged. The same sum lives in three places |
+| Custom scripts | Built | [docs/built-systems/custom-scripts.md](docs/built-systems/custom-scripts.md) | Header and footer code from Theme Options, printed unescaped |
+| SMTP mail | Built | [docs/built-systems/smtp.md](docs/built-systems/smtp.md) | Also sets the sender of every email, SMTP on or off |
+| reCAPTCHA keys | Built | `inc/helpers.php` | Stores the keys and hands them out (section above). Nothing in this theme draws a challenge or checks an answer |
+| Font overview | Built | `inc/font-manager.php` | Read-only list in Theme Options. Fonts are changed in the Site Editor; this file installs nothing, whatever its header says |
+| Scroll-to-top, reading progress, breadcrumbs | Built | `inc/enqueue-assets.php`, `inc/theme-setup.php` | Switches under Theme Options > General. Their output is part of the cached page |
+| Child themes | Built | [docs/child-theme/README.md](docs/child-theme/README.md) | None ships here. Several parent behaviours change under a child: see the assets and dark-mode files |
+
+No `Roadmap` rows yet: nothing planned is recorded in this repo. Add one before describing planned work anywhere.
+
+**Reading a setting:** new code uses `egnitech_one_get_option()` (`inc/helpers.php`) instead of `get_option()`. Most existing modules still call `get_option()` directly.
+
+## Environment & Deployment Constraints
+- **On the homegears.in server this repo is cloned straight into `wp-content/themes/`, so that working copy is the live site.** A saved file is in production at once. There is no build step and no staging copy. Another site's copy of the theme changes only when that copy is updated.
+- **Two caches sit outside WordPress.** nginx keeps whole pages for logged-out visitors, and tells browsers to keep CSS and JS indefinitely. A change that "does not show" is nearly always one of them: see the page-cache and assets files above.
+- **WP-CLI on the server runs as `ubuntu` and outside wp-admin**, which changes what a command does. Read the page-cache and theme-options files before changing content or settings from the command line.
+- **Nothing stops a browser downloading the non-PHP files in this folder**, these documents included (checked on homegears.in). **Never** write a password, key, token or server credential into any file here.
 
 ## Coding Standards
 1. **Text Domain**: Always use `egnitech-one` for core localization.

@@ -1,0 +1,15 @@
+# Assets and cache-busting
+
+Code: `inc/enqueue-assets.php` (what loads where), the `register_block_style()` calls in `inc/theme-setup.php`, `inc/woocommerce-cart-drawer.php`. How pattern assets are meant to be wired is in `ai-context.md` (Implementation Workflow).
+
+- **There is no build step.** No bundler, no minifier, no generated files. The file you edit is the file the browser receives, and on a server where the theme folder is live, saving it is deploying it.
+
+## Traps
+
+- **A file's address changes only when its version string changes, and browsers are told to keep theme CSS and JS indefinitely** (the servers' nginx sends static files with a far-future expiry). Most assets carry the theme `Version` from `style.css`; a few carry the file's modification time. **After editing a `Version`-stamped file, bump `Version` in `style.css`**, or returning visitors keep the old file. Then clear the page cache, because cached pages still point at the old address (`page-cache.md`).
+- **The product-page stylesheet looks time-stamped and is not.** `inc/enqueue-assets.php` enqueues `patterns/single-product-details/style.css` with a modification-time version, but `inc/theme-setup.php` has already registered the same handle on `init` with the theme `Version`, and WordPress keeps the first registration. Edits to that file reach returning visitors only after a `Version` bump. The same holds for any handle registered in both files.
+- **With a child theme active, `Version` is the child's.** Every enqueue asks `wp_get_theme()`, which is the active theme. Bumping the parent's `Version` busts nothing on a child-theme site. Bump the child's.
+- **With a child theme active, the handle `egnitech-one-style` is the child's `style.css`.** `get_theme_file_uri( 'style.css' )` prefers the child's copy, and every child theme has one. Nothing in this repo then loads the parent's `style.css`, which holds the header, logo-switch, sticky-header, sidebar and blog-grid rules. A child theme must load that file itself or do without those rules.
+- **Two address helpers are mixed, and they differ under a child theme.** `get_theme_file_uri()` serves the child's copy of a file when one exists. `get_template_directory_uri()` always serves the parent's. The product-page handles registered in `inc/theme-setup.php` and the cart-drawer script use the second, so a child theme cannot replace those files by copying them.
+- **Pattern CSS has two loaders.** A stylesheet tied to a block style through `style_handle` loads wherever a block with that style is rendered. The two product-page stylesheets are also enqueued on every single-product page by `inc/enqueue-assets.php`. Removing one loader does not take the file off the page.
+- **jQuery loads on every front-end page.** `inc/woocommerce-cart-drawer.php` enqueues its script site-wide, WooCommerce or not, with `jquery` as a dependency, and the bulk-discount script declares it too. This conflicts with the jQuery rule in `ai-context.md` and is unresolved. Until the owner settles it, **never** add another `jquery` dependency.
