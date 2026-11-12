@@ -1,37 +1,21 @@
 ---
 trigger: always_on
-description: Ensure correct file ownership for Nginx/PHP-FPM compatibility
+description: File ownership and permissions for theme files on the VPS
 ---
 
-# File Ownership Rule (DYNAMIC)
+# File Ownership Rule
 
-This server runs **Nginx + PHP-FPM**, both operating under the `www-data:www-data` user/group.
+The agent logs in over SSH as `ubuntu` (with passwordless sudo), **not** `root`. Nginx and PHP-FPM run as `www-data`. Both users must be able to write theme files: `ubuntu` for edits and git, `www-data` for the WordPress dashboard and file-manager plugins (deleting a theme, editing files).
 
-Since the agent connects via **root SSH**, any files created or modified will default to `root:root` ownership. This **breaks WordPress functionality** (e.g., updates, media uploads, plugin settings) and may cause 403 Forbidden or 500 Internal Server Errors.
+## Target state
+- The EgniTech theme folders and the repo files beside them: owner `ubuntu`, group `www-data`, group-writable, setgid on every folder.
+- New files from a normal edit or `git pull` land correctly on their own (setgid gives the group, `ubuntu`'s umask `002` gives group write). Nothing to run afterwards.
 
-## Mandatory Steps
+## Bans
+- **Never** `chown -R www-data:www-data` theme files. That was the old root-login rule; it locks `ubuntu` and git out.
+- **Never** leave an `ubuntu`-owned theme folder without group write. `www-data` can then no longer delete or replace files inside it, and the dashboard fails silently ("Theme could not be deleted").
+- **Never** give `www-data` write access to the repo's `.git` folder. A hook or config entry planted there by a compromised plugin would run as `ubuntu` — and so with sudo — on the next git command.
+- **Never** create or edit theme files through `sudo`; they end up owned by `root`.
 
-**After creating, modifying, or moving ANY file or directory**, you MUST immediately restore correct ownership.
-
-Run this command for the affected path(s):
-
-```bash
-chown -R www-data:www-data <absolute-path-to-affected-item>
-```
-
-### Permissions Reference
-- **Directories**: `755` (`drwxr-xr-x`)
-- **Files**: `644` (`-rw-r--r--`)
-
-If you suspect permissions are incorrect (e.g., a new file is not world-readable), also run:
-```bash
-# For directories
-find <path> -type d -exec chmod 755 {} \;
-# For files
-find <path> -type f -exec chmod 644 {} \;
-```
-
-## Environment Specs
-- **Web User/Group**: `www-data:www-data`
-- **Target Ownership**: Always `www-data:www-data` for all files in web roots (`/var/www/`).
-- **Context**: This rule applies to any WordPress site or web application on this server.
+## Trap
+Files and folders created from the WordPress dashboard or a file-manager plugin are owned by `www-data:www-data` without group write. `ubuntu` cannot edit them, and `git pull` fails inside such folders. Repair with the `fix-ownership` workflow (`.agent/workflows/fix-ownership.md`).

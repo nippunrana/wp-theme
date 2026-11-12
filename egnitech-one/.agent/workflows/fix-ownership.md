@@ -4,28 +4,18 @@ description: Fix file ownership and permissions for the WordPress themes directo
 
 # Fix File Ownership & Permissions
 
-Run these commands to fix ownership and permissions for all theme files so that Nginx and PHP-FPM (`www-data`) can properly serve and manage them.
+Restores the target state in `.agent/rules/file-ownership.md`: owner `ubuntu`, group `www-data`, group-writable, setgid folders. Never touches `.git`. Replace `<domain>` with the site you are working on.
 
 ## Steps
 
 // turbo-all
 
-1. Fix ownership of the entire themes directory:
+1. Fix ownership, group write, and setgid on the EgniTech folders and repo files that exist:
 ```bash
-chown -R www-data:www-data /var/www/dosiqai.com/html/wp-content/themes/
+cd /var/www/<domain>/html/wp-content/themes && P=$(ls -d egnitech-one egnitech-one-child .gitignore CLAUDE.md README.md 2>/dev/null) && sudo chown -R ubuntu:www-data $P && sudo chmod -R g+w $P && sudo find $P -type d -exec chmod g+s {} + && sudo chmod g+s .
 ```
 
-2. Fix directory permissions (755):
+2. Verify — this must print only `locked`:
 ```bash
-find /var/www/dosiqai.com/html/wp-content/themes/ -type d -exec chmod 755 {} \;
-```
-
-3. Fix file permissions (644):
-```bash
-find /var/www/dosiqai.com/html/wp-content/themes/ -type f -exec chmod 644 {} \;
-```
-
-4. Verify the fix:
-```bash
-ls -la /var/www/dosiqai.com/html/wp-content/themes/
+cd /var/www/<domain>/html/wp-content/themes && P=$(ls -d egnitech-one egnitech-one-child .gitignore CLAUDE.md README.md 2>/dev/null); sudo -u www-data find $P ! -writable; sudo -u www-data test -w .git && echo "WARNING: .git is writable by www-data" || echo locked
 ```
