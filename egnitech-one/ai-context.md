@@ -41,10 +41,12 @@ EgniTech One handles color schemes via a foundational system:
 - **Mechanics**: Controls the `:root` pseudo-class using `color-scheme: light dark` and a persistent `data-scheme` attribute on the `<html>` root.
 - **Implementation**: DO NOT use media queries for dark modes. Use the native modern CSS `light-dark()` function.
 - **Example**: `color: light-dark(var(--wp--preset--color--base), var(--wp--preset--color--contrast));`
-- **Child Theme Behavior**: Disabled by default for active child themes to prevent visual regressions.
-  - To check support programmatically, use `egnitech_one_is_dark_mode_enabled()`.
-  - Child themes can opt-in via PHP (`add_theme_support('egnitech-one-dark-mode')`) or via `theme.json` (`"settings": { "custom": { "darkMode": true } }`).
+- **Off by default — light only**: Dark mode (and the visitor toggle) exists only after the **Dark Mode** switch in **Theme Options > General > Appearance** is turned on and saved. This applies to the parent and to any child theme alike. Light only is the owner's decision; **never** make dark mode the default.
+  - To check it programmatically, use `egnitech_one_is_dark_mode_enabled()`. It reads only that setting.
+  - **Never** add another way to switch dark mode on (`add_theme_support`, a `theme.json` flag, a constant), and **never** define `egnitech_one_is_dark_mode_enabled()` in a child theme — it would replace the parent's and ignore the Theme Options switch.
+  - **Never** make that function read `theme.json` settings (`wp_get_global_settings()`): `egnitech_one_filter_theme_json()` calls it while those settings are being built, which loops forever.
   - When disabled, `:root` color-scheme is forced to `light` to natively resolve all `light-dark()` colors to their light mode values with zero runtime overhead.
+  - Saving the switch with a new value clears the whole FastCGI page cache (`inc/fastcgi-cache-purger.php`), so cached pages don't keep the old scheme.
 
 ## Google reCAPTCHA v2 System
 The parent theme contains a built-in Integrations tab under Theme Options to configure Google reCAPTCHA v2.
@@ -61,7 +63,7 @@ The parent theme contains a built-in Integrations tab under Theme Options to con
 
 ## Module Map (`inc/`)
 Every option/setting read across these modules goes through the generic getter `egnitech_one_get_option( string $option, mixed $default = '' ): mixed` (`inc/helpers.php`) — use it instead of calling `get_option()` directly for theme settings.
-- **`inc/theme-setup.php`**: Theme supports, `register_block_style()` registrations, dark-mode `theme.json` CSS rewrite for child themes.
+- **`inc/theme-setup.php`**: Theme supports, `register_block_style()` registrations, dark-mode `theme.json` CSS rewrite (forces light when dark mode is off).
 - **`inc/enqueue-assets.php`**: Global + conditional frontend asset loading (dark-mode bootstrap script, pattern-specific CSS/JS gated by context).
 - **`inc/admin-options.php`**: Theme Options admin page/framework (tabs including Integrations/reCAPTCHA).
 - **`inc/helpers.php`**: Shared getters — `egnitech_one_get_option()`, `egnitech_one_is_dark_mode_enabled()`, `egnitech_one_get_recaptcha_settings()`.

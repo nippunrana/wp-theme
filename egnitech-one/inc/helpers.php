@@ -51,30 +51,13 @@ if ( ! function_exists( 'egnitech_one_get_footer_credits' ) ) {
 
 /**
  * Check if native dark/light mode is enabled.
- * If the parent theme is active, it is enabled by default.
- * If a child theme is active, it is disabled by default unless explicitly opted in.
+ * Off (light only) until the "Dark Mode" switch in Theme Options is turned on and saved.
  *
  * @return bool True if dark mode is enabled, false otherwise.
  */
 if ( ! function_exists( 'egnitech_one_is_dark_mode_enabled' ) ) {
 	function egnitech_one_is_dark_mode_enabled(): bool {
-		// If parent theme is active, dark mode is always enabled.
-		if ( ! is_child_theme() ) {
-			return true;
-		}
-
-		// Check PHP theme support declaration.
-		if ( current_theme_supports( 'egnitech-one-dark-mode' ) ) {
-			return true;
-		}
-
-		// Check JSON declaration in theme.json's settings.custom.darkMode.
-		$custom_settings = wp_get_global_settings( array( 'custom' ) );
-		if ( is_array( $custom_settings ) && ! empty( $custom_settings['darkMode'] ) ) {
-			return true;
-		}
-
-		return false;
+		return 'yes' === egnitech_one_get_option( 'egnitech_one_dark_mode_enabled', 'no' );
 	}
 }
 

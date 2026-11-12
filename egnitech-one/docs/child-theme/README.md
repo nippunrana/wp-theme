@@ -32,26 +32,9 @@ The `wp-block-theme` skill (`egnitech-one/.agent/skills/wp-block-theme/`) has th
 
 ## Dark mode
 
-Dark mode is **off by default** in a child theme, so customised sections don't break in dark colours. When it is off, the theme forces `color-scheme: light`, and every `light-dark()` value shows its light colour.
+Dark mode works the same with or without a child theme: every site is **light only** until **Dark Mode** is switched on under **Appearance > Theme Options > General** and saved. When it is off, the theme forces `color-scheme: light`, and every `light-dark()` value shows its light colour.
 
-Turn it on in either of two ways:
-
-* **PHP**, in the child's `functions.php`:
-    ```php
-    add_action( 'after_setup_theme', function(): void {
-        add_theme_support( 'egnitech-one-dark-mode' );
-    } );
-    ```
-* **JSON**, in the child's `theme.json`:
-    ```json
-    {
-      "settings": {
-        "custom": {
-          "darkMode": true
-        }
-      }
-    }
-    ```
+There is no code switch. Don't use `add_theme_support()` or a `theme.json` flag for it, and **never** define `egnitech_one_is_dark_mode_enabled()` in the child theme: the child's version would replace the parent's and ignore the Theme Options switch.
 
 Once it is on, write colours with `light-dark()`, for example `color: light-dark(var(--wp--preset--color--base), var(--wp--preset--color--contrast));`. Never use dark-mode media queries.
 
@@ -67,6 +50,6 @@ Once it is on, write colours with `light-dark()`, for example `color: light-dark
 ## Rules
 
 * **Never** edit files in `egnitech-one/` while working on a child theme. Changes there reach every site.
-* **Never** change `Template: egnitech-one` in the child's `style.css`, any `egnitech_one_*` function name, or the `egnitech-one-dark-mode` support flag. They point at the parent.
-* **Never** remove the guarded `egnitech_one_is_dark_mode_enabled()` override from the child's `functions.php`. Without it, looking up the site's settings calls itself in a loop that never ends. [create-child-theme.md](create-child-theme.md) explains why.
+* **Never** change `Template: egnitech-one` in the child's `style.css` or any `egnitech_one_*` function name. They point at the parent.
+* **Never** define `egnitech_one_is_dark_mode_enabled()` in the child theme. Dark mode is switched only in Theme Options.
 * The coding standards (strict types, scoped CSS, no jQuery, sized SVGs) are the parent's. See `egnitech-one/ai-context.md`.

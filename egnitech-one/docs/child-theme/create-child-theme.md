@@ -52,9 +52,7 @@ Tags: full-site-editing, block-patterns
 
 ### `functions.php`
 
-The guarded `egnitech_one_is_dark_mode_enabled()` override is **mandatory**. Keep it exactly as it is.
-
-**Why:** the parent's version of this function (`egnitech-one/inc/helpers.php`) reads the site's `theme.json` settings through `wp_get_global_settings()`. The parent also filters `theme.json` data through `egnitech_one_filter_theme_json()` (`egnitech-one/inc/theme-setup.php`), and that filter calls the same function. In a child theme the lookup therefore triggers itself while the settings are still being built, in a loop that never ends. The `$is_resolving` guard breaks the loop. The child's `functions.php` loads before the parent's, so this definition replaces the parent's.
+**Never** add an `egnitech_one_is_dark_mode_enabled()` function here. Dark mode is switched on only in **Theme Options**, and a child theme's version of that function would replace the parent's and ignore the switch. (Older starters carried such an override; remove it from any child theme that still has one.)
 
 ```php
 <?php
@@ -69,42 +67,6 @@ declare(strict_types=1);
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
-}
-
-/**
- * Override the parent theme's dark mode helper to prevent infinite recursion
- * when resolving global settings in the child theme.
- *
- * @return bool True if dark mode is enabled, false otherwise.
- */
-if ( ! function_exists( 'egnitech_one_is_dark_mode_enabled' ) ) {
-	function egnitech_one_is_dark_mode_enabled(): bool {
-		static $is_resolving = false;
-		if ( $is_resolving ) {
-			return false;
-		}
-
-		// If parent theme is active, dark mode is always enabled.
-		if ( ! is_child_theme() ) {
-			return true;
-		}
-
-		// Check PHP theme support declaration.
-		if ( current_theme_supports( 'egnitech-one-dark-mode' ) ) {
-			return true;
-		}
-
-		// Check JSON declaration in theme.json's settings.custom.darkMode.
-		$is_resolving = true;
-		$custom_settings = wp_get_global_settings( array( 'custom' ) );
-		$is_resolving = false;
-
-		if ( is_array( $custom_settings ) && ! empty( $custom_settings['darkMode'] ) ) {
-			return true;
-		}
-
-		return false;
-	}
 }
 
 add_action( 'after_setup_theme', function (): void {
@@ -176,7 +138,7 @@ This child theme's folder/slug is renamed per site (e.g. `egnitech-one-child` �
 2. Update the **Theme Metadata (Skill Variables)** block above (`THEME_SLUG`, `THEME_NAME`, `TEXT_DOMAIN`).
 3. Update the `style.css` header: `Theme Name`, `Text Domain`, `Theme URI`, `Description`.
 4. Update `functions.php`: the text-domain strings and the block pattern category slug/label.
-5. **Do NOT change**: `Template: egnitech-one` in `style.css`, any `egnitech_one_*` function names, the `egnitech-one-dark-mode` support flag, or the `egnitech-one` text domain used for parent-defined strings — these all point at the parent theme and must stay as-is.
+5. **Do NOT change**: `Template: egnitech-one` in `style.css`, any `egnitech_one_*` function names, or the `egnitech-one` text domain used for parent-defined strings — these all point at the parent theme and must stay as-is.
 6. **Verify**: `grep -rn "egnitech-one-child"` inside the child theme folder should return no results once renamed.
 
 ## Implementation Workflow
@@ -187,10 +149,8 @@ For all development tasks involving templates, patterns, `theme.json`, or asset 
 ## Project-Specific Systems
 
 ### Dark/Light Mode System
-By default, the parent theme's native dark/light mode is **disabled** to avoid style conflicts and regressions.
-- **Opt-In Mechanisms**:
-  1. **PHP**: Call `add_theme_support( 'egnitech-one-dark-mode' );` inside an `after_setup_theme` action hook in `functions.php`.
-  2. **JSON**: Set `"custom": { "darkMode": true }` under `"settings"` in the child theme's `theme.json`.
+The site is **light only** by default. Dark/light mode and the visitor toggle exist only after the **Dark Mode** switch under **Appearance > Theme Options > General** is turned on and saved.
+- **Never** add a code switch for dark mode (`add_theme_support`, a `theme.json` flag), and **never** define `egnitech_one_is_dark_mode_enabled()` in this child theme: it would replace the parent's and ignore the Theme Options switch.
 - **Writing Styles**: When enabled, write scoped styles using the `light-dark()` CSS function to dynamically support the scheme toggle. When disabled, the browser will natively resolve all `light-dark()` properties to their light mode values automatically.
 - **Example**: `color: light-dark(var(--wp--preset--color--base), var(--wp--preset--color--contrast));`
 
@@ -235,7 +195,7 @@ Refer to the following in the local `wp-block-theme` skill (under `egnitech-one/
 1. **`ai-context.md`:** in the **Theme Metadata (Skill Variables)** block, set `THEME_SLUG` and `TEXT_DOMAIN` to `<slug>` and `THEME_NAME` to `<Site Name>`.
 2. **`style.css`:** update `Theme Name`, `Theme URI`, `Description` and `Text Domain`.
 3. **`functions.php`:** update the header comment (`EgniTech One Child Theme`) and its `@package` tag (`EgniTech_One_Child`), the block pattern category slug (`'egnitech-one-child'`), its label (`'EgniTech One Child'`) and the text domain beside it.
-4. **Do NOT change:** `Template: egnitech-one` in `style.css`, any `egnitech_one_*` function name, the `egnitech-one-dark-mode` support flag, or the `egnitech-one` text domain used for parent-defined strings. These all point at the parent theme.
+4. **Do NOT change:** `Template: egnitech-one` in `style.css`, any `egnitech_one_*` function name, or the `egnitech-one` text domain used for parent-defined strings. These all point at the parent theme.
 
 ---
 
@@ -254,4 +214,4 @@ Refer to the following in the local `wp-block-theme` skill (under `egnitech-one/
     T=/var/www/<domain>/html/wp-content/themes/<slug>; sudo chown -R ubuntu:www-data "$T" && sudo chmod -R g+w "$T" && sudo find "$T" -type d -exec chmod g+s {} +
     ```
 3. **Activate it** in **Appearance > Themes**. Then load the home page and one inner page; both must render normally.
-4. **Dark mode** stays off until you turn it on (see [README.md](README.md)).
+4. **Dark mode** stays off (light only) until it is switched on in **Appearance > Theme Options > General** (see [README.md](README.md)).

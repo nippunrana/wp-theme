@@ -21,7 +21,7 @@
 * [Installation & Requirements](#%EF%B8%8F-installation--requirements)
 * [Developer Guidelines & Child Themes](#-developer-guidelines--child-themes)
   * [Coding Standards](#coding-standards)
-  * [Activating Dark Mode in Child Themes](#activating-dark-mode-in-child-themes)
+  * [Activating Dark Mode](#activating-dark-mode)
 
 ---
 
@@ -74,6 +74,7 @@ Color variables are defined inside [theme.json](egnitech-one/theme.json) using t
   "slug": "base"
 }
 ```
+*   **Off by default:** Sites are light only until **Dark Mode** is switched on under **Appearance > Theme Options > General** and saved (see [Activating Dark Mode](#activating-dark-mode)).
 *   **Prevention of FOUC:** The helper [egnitech_one_color_scheme_script()](egnitech-one/inc/enqueue-assets.php) binds to the `wp_head` action at priority `5`. It immediately reads local storage, the theme options default preference, or system-wide media preferences, assigning `data-scheme` and `color-scheme` to `<html>` before the DOM renders.
 *   **Theme Toggle:** Triggered by [egnitech-one/assets/js/dark-mode-toggle.js](egnitech-one/assets/js/dark-mode-toggle.js), updating local storage and root document attributes gracefully with transition layers.
 
@@ -103,7 +104,8 @@ These settings are managed under **Appearance > Theme Options** in the WordPress
 | **General** | `egnitech_one_content_width` | `int` | `900` | Syncs content width constraints to Global Styles (`wp_global_styles` post). |
 | | `egnitech_one_wide_width` | `int` | `1280` | Syncs wide-alignment constraints to Global Styles. |
 | | `egnitech_one_scroll_to_top` | `string` | `yes` | Loads a smooth scroll-to-top layout helper element. |
-| | `egnitech_one_dark_mode_default` | `string` | `system` | Initial mode choice: `system`, `light`, or `dark`. |
+| | `egnitech_one_dark_mode_enabled` | `string` | `no` | Turns on light/dark mode and the visitor toggle; off means light only. Saving a new value clears the page cache. |
+| | `egnitech_one_dark_mode_default` | `string` | `system` | Initial mode choice when dark mode is on: `system`, `light`, or `dark`. |
 | | `egnitech_one_reading_progress` | `string` | `yes` | Toggles progress bar tracking reading percentage on posts. |
 | | `egnitech_one_breadcrumbs` | `string` | `no` | Conditionally outputs standard post path navigation. |
 | **Header** | `egnitech_one_sticky_header` | `string` | `yes` | Forces first block navigation to remain sticky on top. |
@@ -150,26 +152,15 @@ For developers building templates, custom block styles, or patterns inside child
 4.  **Inline SVGs:** Always define explicit `width` and `height` properties on inline SVGs to avoid Layout Shifts (CLS) in the site editor.
 5.  **Layouts:** Use `core/group` for columns/grid wrapping to avoid layout validator warnings in the block editor.
 
-### Activating Dark Mode in Child Themes
-By default, child themes disable the dark mode toggle to avoid visual regressions on customized components. 
+### Activating Dark Mode
+Every site is **light only** by default, with or without a child theme. To give visitors light and dark mode with a toggle:
 
-To enable dark mode support in your child theme:
-*   **PHP Approach:** Register theme support in your child theme's `functions.php` (see [egnitech-one/docs/child-theme/README.md](egnitech-one/docs/child-theme/README.md)):
-    ```php
-    add_action( 'after_setup_theme', function(): void {
-        add_theme_support( 'egnitech-one-dark-mode' );
-    } );
-    ```
-*   **JSON Approach:** Declare dark mode settings inside the child's `theme.json` file:
-    ```json
-    {
-      "settings": {
-        "custom": {
-          "darkMode": true
-        }
-      }
-    }
-    ```
+1.  Go to **Appearance > Theme Options > General**.
+2.  In the **Appearance** card, switch **Dark Mode** on and click **Save All Changes**.
+3.  After saving, **Dark Mode Default** appears, where you pick the scheme new visitors see first.
+
+Saving the switch with a new value clears the page cache, so visitors see the change straight away. There is no code switch: don't use `add_theme_support()` or a `theme.json` flag, and never define `egnitech_one_is_dark_mode_enabled()` in a child theme (see [egnitech-one/docs/child-theme/README.md](egnitech-one/docs/child-theme/README.md)).
+
 When disabled, the theme forces the document `color-scheme` to `light`, natively rendering all `light-dark()` values to their fallback mode with zero parsing delay.
 
 

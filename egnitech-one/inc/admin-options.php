@@ -338,6 +338,12 @@ register_setting( 'egnitech_one_options', 'egnitech_one_logo_width_mobile', [
 ] );
 
 /* ----- General: Phase 3 ----- */
+register_setting( 'egnitech_one_options', 'egnitech_one_dark_mode_enabled', [
+'type'              => 'string',
+'default'           => 'no',
+'sanitize_callback' => 'sanitize_text_field',
+] );
+
 register_setting( 'egnitech_one_options', 'egnitech_one_dark_mode_default', [
 'type'              => 'string',
 'default'           => 'system',
@@ -690,6 +696,7 @@ $logo_width_desktop   = get_option( 'egnitech_one_logo_width_desktop', 0 );
 $logo_width_mobile    = get_option( 'egnitech_one_logo_width_mobile', 0 );
 
 // Phase 3 options.
+$dark_mode_enabled    = get_option( 'egnitech_one_dark_mode_enabled', 'no' );
 $dark_mode_default    = get_option( 'egnitech_one_dark_mode_default', 'system' );
 $reading_progress     = get_option( 'egnitech_one_reading_progress', 'yes' );
 $reading_progress_height = get_option( 'egnitech_one_reading_progress_height', 2 );
@@ -882,6 +889,19 @@ if ( ! empty( $color_palette ) && is_array( $color_palette ) ) {
 </div>
 </div>
 
+<div class="egnitech-option-row">
+<div class="egnitech-option-info">
+<label><?php esc_html_e( 'Dark Mode', 'egnitech-one' ); ?></label>
+<p class="description"><?php esc_html_e( 'Let visitors switch between light and dark mode. When off, the site shows light mode only. Save changes to apply.', 'egnitech-one' ); ?></p>
+</div>
+<div class="egnitech-option-control">
+<label class="egnitech-switch">
+<input type="checkbox" name="egnitech_one_dark_mode_enabled" value="yes" <?php checked( 'yes', $dark_mode_enabled ); ?> />
+<span class="egnitech-slider"></span>
+</label>
+</div>
+</div>
+
 <?php if ( egnitech_one_is_dark_mode_enabled() ) : ?>
 <div class="egnitech-option-row">
 <div class="egnitech-option-info">
@@ -894,16 +914,6 @@ if ( ! empty( $color_palette ) && is_array( $color_palette ) ) {
 <option value="light" <?php selected( 'light', $dark_mode_default ); ?>><?php esc_html_e( 'Always Light', 'egnitech-one' ); ?></option>
 <option value="dark" <?php selected( 'dark', $dark_mode_default ); ?>><?php esc_html_e( 'Always Dark', 'egnitech-one' ); ?></option>
 </select>
-</div>
-</div>
-<?php else : ?>
-<div class="egnitech-option-row">
-<div class="egnitech-option-info">
-<label><?php esc_html_e( 'Dark Mode Default', 'egnitech-one' ); ?></label>
-<p class="description"><?php esc_html_e( 'Initial color scheme options are unavailable because dark mode is disabled.', 'egnitech-one' ); ?></p>
-</div>
-<div class="egnitech-option-control">
-<span class="description" style="color: #d63638; font-weight: 500;"><?php esc_html_e( 'Disabled by Child Theme.', 'egnitech-one' ); ?></span>
 </div>
 </div>
 <?php endif; ?>

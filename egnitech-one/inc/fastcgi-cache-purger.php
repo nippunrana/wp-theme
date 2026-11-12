@@ -269,6 +269,17 @@ function egnitech_one_purge_post_on_transition( string $new_status, string $old_
 add_action( 'transition_post_status', 'egnitech_one_purge_post_on_transition', 10, 3 );
 
 /**
+ * Clear the whole site's cache when the Dark Mode switch is saved with a new value,
+ * so cached pages stop showing the old color scheme.
+ * The add_option hook covers the first time the switch is ever saved.
+ */
+function egnitech_one_purge_cache_on_dark_mode_change(): void {
+	egnitech_one_purge_all_site_cache();
+}
+add_action( 'update_option_egnitech_one_dark_mode_enabled', 'egnitech_one_purge_cache_on_dark_mode_change' );
+add_action( 'add_option_egnitech_one_dark_mode_enabled', 'egnitech_one_purge_cache_on_dark_mode_change' );
+
+/**
  * Format bytes into human readable size.
  *
  * @param float $bytes     Number of bytes.
