@@ -234,7 +234,7 @@ Refer to the following in the local `wp-block-theme` skill (under `egnitech-one/
 
 1. **`ai-context.md`:** in the **Theme Metadata (Skill Variables)** block, set `THEME_SLUG` and `TEXT_DOMAIN` to `<slug>` and `THEME_NAME` to `<Site Name>`.
 2. **`style.css`:** update `Theme Name`, `Theme URI`, `Description` and `Text Domain`.
-3. **`functions.php`:** update the block pattern category slug (`'egnitech-one-child'`), its label (`'EgniTech One Child'`) and the text domain beside it.
+3. **`functions.php`:** update the header comment (`EgniTech One Child Theme`) and its `@package` tag (`EgniTech_One_Child`), the block pattern category slug (`'egnitech-one-child'`), its label (`'EgniTech One Child'`) and the text domain beside it.
 4. **Do NOT change:** `Template: egnitech-one` in `style.css`, any `egnitech_one_*` function name, the `egnitech-one-dark-mode` support flag, or the `egnitech-one` text domain used for parent-defined strings. These all point at the parent theme.
 
 ---
@@ -243,7 +243,7 @@ Refer to the following in the local `wp-block-theme` skill (under `egnitech-one/
 
 1. **Nothing still carries the starter name.** This must print nothing. `ai-context.md` is skipped because its own deployment notes mention the starter name on purpose:
     ```bash
-    grep -rniE "egnitech-one-child|egnitech one child" --exclude=ai-context.md /var/www/<domain>/html/wp-content/themes/<slug>/
+    grep -rniE "egnitech[-_ ]one[-_ ]child" --exclude=ai-context.md /var/www/<domain>/html/wp-content/themes/<slug>/
     ```
 2. **The web user can manage the files.** This must print nothing:
     ```bash
