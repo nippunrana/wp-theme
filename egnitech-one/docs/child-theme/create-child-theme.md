@@ -1,3 +1,147 @@
+# Creating a Child Theme for EgniTech One
+
+Step-by-step guide to creating a child theme for one site. For what a child theme can do once it exists, read [README.md](README.md).
+
+The repository no longer ships a child theme, so **this file is the only copy of the starter files**. Change them here when the starter itself should change.
+
+## Before you start
+
+* **Only create a child theme when the user asks for one.** A site can run `egnitech-one` directly.
+* Pick the site's slug: lowercase and hyphenated, usually the domain without its ending (e.g. `truinterview` for truinterview.in). Below, `<slug>` is that slug, `<Site Name>` is the display name, and `<domain>` is the site's folder in `/var/www/`.
+
+---
+
+## 1. Create the folder
+
+Create `wp-content/themes/<slug>/` next to `egnitech-one/`. Do it while logged in as `ubuntu`, not through `sudo` (see `.agent/rules/file-ownership.md`).
+
+If `wp-content/themes/` is a git repo on that server (as on homegears.in), keep the child theme out of it. Add it to that server's local exclude file, which is never committed or pushed:
+
+```bash
+echo "/<slug>/" >> /var/www/<domain>/html/wp-content/themes/.git/info/exclude
+```
+
+---
+
+## 2. Add the five starter files
+
+Create these files in the new folder with exactly this content. Step 3 renames them for the site.
+
+### `style.css`
+
+The `Template: egnitech-one` line is what makes WordPress treat this as a child of EgniTech One.
+
+```css
+/*
+Theme Name: EgniTech One Child
+Theme URI: https://egnitech.com/themes/egnitech-one-child
+Author: Nippun Rana
+Author URI: https://egnitech.com
+Description: Child theme for EgniTech One. Extend or override the parent theme for a specific site without touching the core.
+Template: egnitech-one
+Requires at least: 7.0
+Tested up to: 7.0
+Requires PHP: 8.3
+Version: 1.0.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: egnitech-one-child
+Tags: full-site-editing, block-patterns
+*/
+```
+
+### `functions.php`
+
+The guarded `egnitech_one_is_dark_mode_enabled()` override is **mandatory**. Keep it exactly as it is.
+
+**Why:** the parent's version of this function (`egnitech-one/inc/helpers.php`) reads the site's `theme.json` settings through `wp_get_global_settings()`. The parent also filters `theme.json` data through `egnitech_one_filter_theme_json()` (`egnitech-one/inc/theme-setup.php`), and that filter calls the same function. In a child theme the lookup therefore triggers itself while the settings are still being built, in a loop that never ends. The `$is_resolving` guard breaks the loop. The child's `functions.php` loads before the parent's, so this definition replaces the parent's.
+
+```php
+<?php
+declare(strict_types=1);
+
+/**
+ * EgniTech One Child Theme — functions and definitions.
+ *
+ * @package EgniTech_One_Child
+ * @since 1.0.0
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Override the parent theme's dark mode helper to prevent infinite recursion
+ * when resolving global settings in the child theme.
+ *
+ * @return bool True if dark mode is enabled, false otherwise.
+ */
+if ( ! function_exists( 'egnitech_one_is_dark_mode_enabled' ) ) {
+	function egnitech_one_is_dark_mode_enabled(): bool {
+		static $is_resolving = false;
+		if ( $is_resolving ) {
+			return false;
+		}
+
+		// If parent theme is active, dark mode is always enabled.
+		if ( ! is_child_theme() ) {
+			return true;
+		}
+
+		// Check PHP theme support declaration.
+		if ( current_theme_supports( 'egnitech-one-dark-mode' ) ) {
+			return true;
+		}
+
+		// Check JSON declaration in theme.json's settings.custom.darkMode.
+		$is_resolving = true;
+		$custom_settings = wp_get_global_settings( array( 'custom' ) );
+		$is_resolving = false;
+
+		if ( is_array( $custom_settings ) && ! empty( $custom_settings['darkMode'] ) ) {
+			return true;
+		}
+
+		return false;
+	}
+}
+
+add_action( 'after_setup_theme', function (): void {
+	register_block_pattern_category(
+		'egnitech-one-child',
+		[ 'label' => __( 'EgniTech One Child', 'egnitech-one-child' ) ]
+	);
+} );
+```
+
+### `theme.json`
+
+Add only what this site changes; everything else comes from the parent. Arrays such as `palette` replace the parent's array completely (see [README.md](README.md)).
+
+```json
+{
+    "$schema": "https://schemas.wp.org/wp/7.0/theme.json",
+    "version": 3,
+    "settings": {},
+    "styles": {}
+}
+```
+
+### `index.php`
+
+```php
+<?php
+declare(strict_types=1);
+
+// Silence is golden.
+```
+
+### `ai-context.md`
+
+Agents working in the child theme read this file instead of the parent's; `egnitech-one/ai-context.md` sends them here.
+
+````markdown
 # AI Context — EgniTech One Child Theme
 
 > [!IMPORTANT]
@@ -82,3 +226,32 @@ Refer to the following in the local `wp-block-theme` skill (under `egnitech-one/
 
 ---
 *Final AI Reminder*: You are extending a production site. Always verify changes in the child theme and never touch the parent core.
+````
+
+---
+
+## 3. Rename for the site
+
+1. **`ai-context.md`:** in the **Theme Metadata (Skill Variables)** block, set `THEME_SLUG` and `TEXT_DOMAIN` to `<slug>` and `THEME_NAME` to `<Site Name>`.
+2. **`style.css`:** update `Theme Name`, `Theme URI`, `Description` and `Text Domain`.
+3. **`functions.php`:** update the block pattern category slug (`'egnitech-one-child'`), its label (`'EgniTech One Child'`) and the text domain beside it.
+4. **Do NOT change:** `Template: egnitech-one` in `style.css`, any `egnitech_one_*` function name, the `egnitech-one-dark-mode` support flag, or the `egnitech-one` text domain used for parent-defined strings. These all point at the parent theme.
+
+---
+
+## 4. Check and activate
+
+1. **Nothing still carries the starter name.** This must print nothing. `ai-context.md` is skipped because its own deployment notes mention the starter name on purpose:
+    ```bash
+    grep -rniE "egnitech-one-child|egnitech one child" --exclude=ai-context.md /var/www/<domain>/html/wp-content/themes/<slug>/
+    ```
+2. **The web user can manage the files.** This must print nothing:
+    ```bash
+    sudo -u www-data find /var/www/<domain>/html/wp-content/themes/<slug> ! -writable
+    ```
+    If it prints anything, repair the folder:
+    ```bash
+    T=/var/www/<domain>/html/wp-content/themes/<slug>; sudo chown -R ubuntu:www-data "$T" && sudo chmod -R g+w "$T" && sudo find "$T" -type d -exec chmod g+s {} +
+    ```
+3. **Activate it** in **Appearance > Themes**. Then load the home page and one inner page; both must render normally.
+4. **Dark mode** stays off until you turn it on (see [README.md](README.md)).

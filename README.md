@@ -39,29 +39,26 @@
 
 ```text
 wp-theme/
-├── egnitech-one/                   # Parent Theme Root Directory
-│   ├── assets/                     # Scoped CSS, JS, and font resources
-│   │   ├── css/                    # Component stylesheets (admin, dark-mode-toggle, scroll-top, etc.)
-│   │   ├── fonts/                  # Local typography assets (Inter Variable)
-│   │   └── js/                     # Modular vanilla scripts (toggle, scroll, progress-bar)
-│   ├── inc/                        # Core PHP helper files and configuration modules
-│   │   ├── admin-options.php       # Theme Options panel structure, callbacks, and validation
-│   │   ├── custom-scripts.php      # Custom Script loader and base64 worker injector
-│   │   ├── enqueue-assets.php      # Global and contextual style/script enqueuing
-│   │   ├── font-manager.php        # Font library cataloging and Global Styles parser
-│   │   ├── helpers.php             # Core utility APIs and option getters
-│   │   ├── smtp-config.php         # SMTP mailer hooks filtering PHPMailer
-│   │   └── theme-setup.php         # Theme capability registration and bloat removal
-│   ├── parts/                      # FSE HTML template parts (header, footer, sidebar)
-│   ├── patterns/                   # Dynamic block patterns (header, footer, query, sidebar)
-│   ├── templates/                  # Block template layouts (404, page, single, archive, index, etc.)
-│   ├── functions.php               # Theme bootstrapping entrypoint
-│   ├── style.css                   # Critical base styles & WordPress Theme Metadata
-│   └── theme.json                  # Global design tokens, layout sizes, and spacing definitions
-└── egnitech-one-child/             # Recommended Developer Extension Theme
-    ├── functions.php               # Child theme customization and override overrides
-    ├── style.css                   # Custom child styles (inheriting parent definitions)
-    └── theme.json                  # Child-specific overrides (version 3)
+└── egnitech-one/                   # Parent Theme Root Directory
+    ├── assets/                     # Scoped CSS, JS, and font resources
+    │   ├── css/                    # Component stylesheets (admin, dark-mode-toggle, scroll-top, etc.)
+    │   ├── fonts/                  # Local typography assets (Inter Variable)
+    │   └── js/                     # Modular vanilla scripts (toggle, scroll, progress-bar)
+    ├── docs/child-theme/           # How to use and create a child theme (none ships in this repo)
+    ├── inc/                        # Core PHP helper files and configuration modules
+    │   ├── admin-options.php       # Theme Options panel structure, callbacks, and validation
+    │   ├── custom-scripts.php      # Custom Script loader and base64 worker injector
+    │   ├── enqueue-assets.php      # Global and contextual style/script enqueuing
+    │   ├── font-manager.php        # Font library cataloging and Global Styles parser
+    │   ├── helpers.php             # Core utility APIs and option getters
+    │   ├── smtp-config.php         # SMTP mailer hooks filtering PHPMailer
+    │   └── theme-setup.php         # Theme capability registration and bloat removal
+    ├── parts/                      # FSE HTML template parts (header, footer, sidebar)
+    ├── patterns/                   # Dynamic block patterns (header, footer, query, sidebar)
+    ├── templates/                  # Block template layouts (404, page, single, archive, index, etc.)
+    ├── functions.php               # Theme bootstrapping entrypoint
+    ├── style.css                   # Critical base styles & WordPress Theme Metadata
+    └── theme.json                  # Global design tokens, layout sizes, and spacing definitions
 ```
 
 ---
@@ -133,11 +130,13 @@ These settings are managed under **Appearance > Theme Options** in the WordPress
 *   **WordPress:** Version 7.0 or higher
 *   **PHP:** Version 8.0 or higher (PHP 8.3 recommended)
 
-1.  Download or clone the `egnitech-one` parent theme and the `egnitech-one-child` theme folders.
-2.  Upload them to `/wp-content/themes/` inside your WordPress installation directory.
+1.  Download or clone the `egnitech-one` theme folder.
+2.  Upload it to `/wp-content/themes/` inside your WordPress installation directory.
 3.  Log in to the WordPress Admin dashboard.
-4.  Navigate to **Appearance > Themes** and activate **EgniTech One Child**.
+4.  Navigate to **Appearance > Themes** and activate **EgniTech One**.
 5.  Configure global options via **Appearance > Theme Options**.
+
+This repository ships no child theme. If a site needs one, create it with [egnitech-one/docs/child-theme/create-child-theme.md](egnitech-one/docs/child-theme/create-child-theme.md).
 
 ---
 
@@ -155,7 +154,7 @@ For developers building templates, custom block styles, or patterns inside child
 By default, child themes disable the dark mode toggle to avoid visual regressions on customized components. 
 
 To enable dark mode support in your child theme:
-*   **PHP Approach:** Register theme support in [egnitech-one-child/functions.php](file:///Users/nippunrana/Library/CloudStorage/Dropbox/office/Projects/wp-theme/egnitech-one-child/functions.php):
+*   **PHP Approach:** Register theme support in your child theme's `functions.php` (see [egnitech-one/docs/child-theme/README.md](egnitech-one/docs/child-theme/README.md)):
     ```php
     add_action( 'after_setup_theme', function(): void {
         add_theme_support( 'egnitech-one-dark-mode' );

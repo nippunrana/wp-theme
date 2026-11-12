@@ -2,7 +2,7 @@
 -
 > [!IMPORTANT]
 > **Context Selection Rule:**
-> If you are working within a child theme (e.g., inside `egnitech-one-child/`, or if the user's objective is to extend/override the theme for the active site domain), you MUST ignore this file and use `ai-context.md` from child theme directory instead.
+> If you are working within an active child theme, you MUST ignore this file and use the `ai-context.md` in that child theme's directory instead.
 
 This file provides the **architectural foundation** and **design system rules** for the EgniTech One parent theme. This is the core engine; for technical implementation procedures (creating templates, patterns, or asset loading), refer to the local `wp-block-theme` skill located in the directory `egnitech-one/.agent/skills/wp-block-theme/`.
 
@@ -18,7 +18,7 @@ This file provides the **architectural foundation** and **design system rules** 
 - **IS_CHILD**: `false`
 
 ## Core Development Principles
-1. **Child Theme First**: Whenever possible, implement features, templates, or styles in the active child theme instead of modifying this core.
+1. **Child Theme First — only when one is active**: If the site runs a child theme, implement site-specific features, templates, or styles there instead of modifying this core. This repo ships no child theme, and homegears.in runs this theme directly. **Never** create a child theme unless the user asks, and **never** commit one to this repo. To create one, follow `docs/child-theme/create-child-theme.md`.
 2. **Native-First**: Always prioritize native WordPress block capabilities and `theme.json` settings over custom CSS or PHP workarounds.
 3. **Vanilla JS Only**: Use ES6+ for performance and modern compatibility. jQuery is permitted only where required for WooCommerce event interop (e.g. `found_variation`, `added_to_cart`), and must always be guarded with `typeof jQuery !== 'undefined'` — never declared as a script dependency.
 
