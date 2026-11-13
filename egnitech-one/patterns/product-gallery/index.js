@@ -72,8 +72,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	var lightboxPrev = lightbox ? lightbox.querySelector('.egnitech-lightbox-arrow--prev') : null;
 	var lightboxNext = lightbox ? lightbox.querySelector('.egnitech-lightbox-arrow--next') : null;
 
-	// Helper function to switch images in the gallery
-	function showImage(index) {
+	// Helper function to switch images in the gallery.
+	// quiet: don't scroll the active thumbnail into view (used when the page, not the visitor, asks).
+	function showImage(index, quiet) {
 		if (index < 0) {
 			index = images.length - 1;
 		} else if (index >= images.length) {
@@ -105,18 +106,20 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		}
 
-		updateUI();
+		updateUI(quiet);
 	}
 
 	// Update the UI state (thumbnails, fraction count, lightbox)
-	function updateUI() {
+	function updateUI(quiet) {
 		// Update thumbnails active state
 		thumbBtns.forEach(function(btn, i) {
 			if (i === currentIndex) {
 				btn.classList.add('is-active');
 				btn.setAttribute('aria-selected', 'true');
 				// Smooth scroll active thumbnail into view
-				btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+				if (!quiet) {
+					btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+				}
 			} else {
 				btn.classList.remove('is-active');
 				btn.setAttribute('aria-selected', 'false');
@@ -357,5 +360,83 @@ document.addEventListener('DOMContentLoaded', function() {
 				thumbsContainer.scrollBy({ left: 160, behavior: 'smooth' });
 			});
 		}
+	}
+
+	// Variable products: show the chosen variation's picture, as WooCommerce's own gallery does.
+	// WooCommerce announces the choice with jQuery events, so jQuery is needed here; it is already
+	// on the page whenever a variations form is.
+	var variationsForm = document.querySelector('form.variations_form');
+	if (variationsForm && typeof jQuery !== 'undefined') {
+		var firstSlideImg = slider ? slider.querySelector('.egnitech-gallery-slide img') : null;
+		var firstThumbBtn = thumbBtns.length ? thumbBtns[0] : null;
+		var firstThumbImg = firstThumbBtn ? firstThumbBtn.querySelector('img') : null;
+		var originalFirst = images[0];
+		var firstIsSwapped = false;
+
+		// Put a picture into the first slide, its thumbnail and its lightbox entry.
+		function setFirstImage(img) {
+			images[0] = img;
+			firstIsSwapped = img !== originalFirst;
+
+			if (firstSlideImg) {
+				firstSlideImg.src = img.large;
+				firstSlideImg.alt = img.alt;
+				firstSlideImg.setAttribute('data-full', img.full);
+				if (img.width && img.height) {
+					firstSlideImg.setAttribute('width', img.width);
+					firstSlideImg.setAttribute('height', img.height);
+				}
+			}
+			if (firstThumbImg) {
+				firstThumbImg.src = img.thumbnail;
+				firstThumbImg.alt = img.alt;
+			}
+			if (firstThumbBtn) {
+				firstThumbBtn.style.setProperty('--thumb-img', "url('" + img.thumbnail + "')");
+			}
+		}
+
+		jQuery(variationsForm).on('found_variation', function(event, variation) {
+			if (!variation || !variation.image || !variation.image.src) {
+				return;
+			}
+
+			// Look the picture up in the gallery as it was printed: the first slide may be holding
+			// an earlier variation's picture.
+			var index = -1;
+			for (var i = 0; i < images.length; i++) {
+				var id = i === 0 ? originalFirst.id : images[i].id;
+				if (String(id) === String(variation.image_id)) {
+					index = i;
+					break;
+				}
+			}
+
+			if (index === -1) {
+				// Not a gallery picture: it takes the first slide until the choice is cleared.
+				setFirstImage({
+					id: variation.image_id,
+					large: variation.image.src,
+					full: variation.image.full_src || variation.image.src,
+					thumbnail: variation.image.gallery_thumbnail_src || variation.image.src,
+					alt: variation.image.alt || originalFirst.alt,
+					width: variation.image.src_w,
+					height: variation.image.src_h
+				});
+				index = 0;
+			} else if (firstIsSwapped) {
+				setFirstImage(originalFirst);
+			}
+
+			showImage(index, true);
+		});
+
+		// Choice cleared: give the first slide its own picture back.
+		jQuery(variationsForm).on('reset_data', function() {
+			if (firstIsSwapped) {
+				setFirstImage(originalFirst);
+				showImage(0, true);
+			}
+		});
 	}
 });

@@ -73,6 +73,15 @@ if ( ! function_exists( 'egnitech_one_enqueue_styles' ) ) {
 			// Registered, with its address and version, in inc/theme-setup.php.
 			wp_enqueue_style( 'egnitech-one-single-product-details' );
 
+			// Makes the + and − buttons beside the quantity box work, on every product.
+			$stepper_path = 'patterns/single-product-details/quantity-stepper.js';
+			wp_enqueue_script_module(
+				'egnitech-one-quantity-stepper',
+				get_theme_file_uri( $stepper_path ),
+				array(),
+				egnitech_one_asset_version( get_theme_file_path( $stepper_path ) )
+			);
+
 			// Enqueue bulk discount script if product has active discount tiers.
 			$product_id = get_the_ID();
 			$has_tiers  = false;

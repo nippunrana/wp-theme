@@ -309,6 +309,10 @@ add_filter( 'woocommerce_quantity_input_classes', 'egnitech_one_quantity_input_c
  * Output minus button before quantity input field.
  */
 function egnitech_one_before_quantity_input_field(): void {
+	// The buttons' script and styles load on product pages only (inc/enqueue-assets.php).
+	if ( ! is_product() ) {
+		return;
+	}
 	echo '<button type="button" class="egnitech-qty-btn minus">&minus;</button>';
 }
 add_action( 'woocommerce_before_quantity_input_field', 'egnitech_one_before_quantity_input_field' );
@@ -317,6 +321,10 @@ add_action( 'woocommerce_before_quantity_input_field', 'egnitech_one_before_quan
  * Output plus button after quantity input field.
  */
 function egnitech_one_after_quantity_input_field(): void {
+	// The buttons' script and styles load on product pages only (inc/enqueue-assets.php).
+	if ( ! is_product() ) {
+		return;
+	}
 	echo '<button type="button" class="egnitech-qty-btn plus">+</button>';
 }
 add_action( 'woocommerce_after_quantity_input_field', 'egnitech_one_after_quantity_input_field' );

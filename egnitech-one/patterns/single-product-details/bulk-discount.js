@@ -13,43 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const qtyInput = cartForm.querySelector('.qty, input[name="quantity"]');
 	if (!qtyInput) return;
 
-	// Setup custom quantity stepper buttons listeners
-	const qtyParent = qtyInput.parentElement;
-	if (qtyParent) {
-		const minusBtn = qtyParent.querySelector('.egnitech-qty-btn.minus');
-		const plusBtn = qtyParent.querySelector('.egnitech-qty-btn.plus');
-
-		if (minusBtn) {
-			minusBtn.addEventListener('click', (e) => {
-				e.preventDefault();
-				let val = parseInt(qtyInput.value, 10);
-				if (isNaN(val)) val = 1;
-				const min = parseInt(qtyInput.getAttribute('min'), 10) || 1;
-				const step = parseInt(qtyInput.getAttribute('step'), 10) || 1;
-				if (val > min) {
-					qtyInput.value = val - step;
-					qtyInput.dispatchEvent(new Event('change', { bubbles: true }));
-					qtyInput.dispatchEvent(new Event('input', { bubbles: true }));
-				}
-			});
-		}
-
-		if (plusBtn) {
-			plusBtn.addEventListener('click', (e) => {
-				e.preventDefault();
-				let val = parseInt(qtyInput.value, 10);
-				if (isNaN(val)) val = 1;
-				const max = parseInt(qtyInput.getAttribute('max'), 10) || Infinity;
-				const step = parseInt(qtyInput.getAttribute('step'), 10) || 1;
-				if (val < max) {
-					qtyInput.value = val + step;
-					qtyInput.dispatchEvent(new Event('change', { bubbles: true }));
-					qtyInput.dispatchEvent(new Event('input', { bubbles: true }));
-				}
-			});
-		}
-	}
-
 	const cards = container.querySelectorAll('.egnitech-bulk-discount-card');
 	const summaryTotal = container.querySelector('.egnitech-summary-total');
 	const summarySavings = container.querySelector('.egnitech-summary-savings');
