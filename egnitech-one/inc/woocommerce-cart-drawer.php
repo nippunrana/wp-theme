@@ -66,7 +66,7 @@ function egnitech_one_enqueue_mini_cart_script(): void {
 		'egnitech-one-mini-cart-open',
 		get_template_directory_uri() . '/assets/js/woocommerce-mini-cart-auto-open.js',
 		array( 'jquery' ),
-		(string) wp_get_theme()->get( 'Version' ),
+		egnitech_one_asset_version( get_template_directory() . '/assets/js/woocommerce-mini-cart-auto-open.js' ),
 		array(
 			'strategy'  => 'defer',
 			'in_footer' => true,

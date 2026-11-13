@@ -167,9 +167,13 @@ if ( ! function_exists( 'egnitech_one_filter_theme_json' ) ) {
 	function egnitech_one_filter_theme_json( WP_Theme_JSON_Data $theme_json_data ): WP_Theme_JSON_Data {
 		if ( ! egnitech_one_is_dark_mode_enabled() ) {
 			$data = $theme_json_data->get_data();
-			if ( isset( $data['styles']['css'] ) ) {
-				$data['styles']['css'] = str_replace( 'color-scheme: light dark;', 'color-scheme: light;', $data['styles']['css'] );
-			}
+			$css  = (string) ( $data['styles']['css'] ?? '' );
+
+			// Where the line is missing (a child theme's theme.json is all this filter sees, or the line
+			// was reworded), add a light-only rule instead: it comes last, so it wins.
+			$data['styles']['css'] = str_contains( $css, 'color-scheme: light dark;' )
+				? str_replace( 'color-scheme: light dark;', 'color-scheme: light;', $css )
+				: $css . ' :root { color-scheme: light; }';
 			return new WP_Theme_JSON_Data( $data );
 		}
 		return $theme_json_data;
@@ -234,7 +238,7 @@ if ( ! function_exists( 'egnitech_one_register_block_styles' ) ) {
 			'egnitech-one-single-product-details',
 			get_template_directory_uri() . '/patterns/single-product-details/style.css',
 			array(),
-			(string) wp_get_theme()->get( 'Version' )
+			egnitech_one_asset_version( get_template_directory() . '/patterns/single-product-details/style.css' )
 		);
 
 		register_block_style(
@@ -250,7 +254,7 @@ if ( ! function_exists( 'egnitech_one_register_block_styles' ) ) {
 			'egnitech-one-product-gallery',
 			get_template_directory_uri() . '/patterns/product-gallery/style.css',
 			array(),
-			(string) wp_get_theme()->get( 'Version' )
+			egnitech_one_asset_version( get_template_directory() . '/patterns/product-gallery/style.css' )
 		);
 
 		register_block_style(

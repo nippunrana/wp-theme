@@ -16,12 +16,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 if ( ! function_exists( 'egnitech_one_enqueue_styles' ) ) {
 	function egnitech_one_enqueue_styles(): void {
+		// Always the parent's own stylesheet: get_theme_file_uri() would hand back a child theme's.
 		wp_enqueue_style(
 			'egnitech-one-style',
-			get_theme_file_uri( 'style.css' ),
+			get_parent_theme_file_uri( 'style.css' ),
 			array(),
-			(string) wp_get_theme()->get( 'Version' )
+			egnitech_one_asset_version( get_parent_theme_file_path( 'style.css' ) )
 		);
+
+		// A child theme's style.css loads after it, so the child's rules win.
+		if ( is_child_theme() ) {
+			wp_enqueue_style(
+				'egnitech-one-child-style',
+				get_stylesheet_uri(),
+				array( 'egnitech-one-style' ),
+				egnitech_one_asset_version( get_stylesheet_directory() . '/style.css' )
+			);
+		}
 
 		// Dynamic Header Padding Implementation
 		$desktop_top = get_option( 'egnitech_one_header_padding_desktop_top', '8' );
@@ -59,14 +70,8 @@ if ( ! function_exists( 'egnitech_one_enqueue_styles' ) ) {
 
 		// Enqueue WooCommerce product page custom style if on single product page.
 		if ( function_exists( 'is_product' ) && is_product() ) {
-			$product_style_path = 'patterns/single-product-details/style.css';
-			$product_style_ver  = file_exists( get_theme_file_path( $product_style_path ) ) ? (string) filemtime( get_theme_file_path( $product_style_path ) ) : (string) wp_get_theme()->get( 'Version' );
-			wp_enqueue_style(
-				'egnitech-one-single-product-details',
-				get_theme_file_uri( $product_style_path ),
-				array(),
-				$product_style_ver
-			);
+			// Registered, with its address and version, in inc/theme-setup.php.
+			wp_enqueue_style( 'egnitech-one-single-product-details' );
 
 			// Enqueue bulk discount script if product has active discount tiers.
 			$product_id = get_the_ID();
@@ -84,7 +89,7 @@ if ( ! function_exists( 'egnitech_one_enqueue_styles' ) ) {
 
 			if ( $has_tiers ) {
 				$bulk_js_path = 'patterns/single-product-details/bulk-discount.js';
-				$bulk_js_ver  = file_exists( get_theme_file_path( $bulk_js_path ) ) ? (string) filemtime( get_theme_file_path( $bulk_js_path ) ) : (string) wp_get_theme()->get( 'Version' );
+				$bulk_js_ver  = egnitech_one_asset_version( get_theme_file_path( $bulk_js_path ) );
 				wp_enqueue_script(
 					'egnitech-one-bulk-discount',
 					get_theme_file_uri( $bulk_js_path ),
@@ -99,18 +104,14 @@ if ( ! function_exists( 'egnitech_one_enqueue_styles' ) ) {
 
 			$gallery_layout = get_option( 'egnitech_one_woocommerce_gallery_layout', 'custom' );
 			if ( 'custom' === $gallery_layout ) {
-				wp_enqueue_style(
-					'egnitech-one-product-gallery',
-					get_theme_file_uri( 'patterns/product-gallery/style.css' ),
-					array(),
-					(string) wp_get_theme()->get( 'Version' )
-				);
+				// Registered, with its address and version, in inc/theme-setup.php.
+				wp_enqueue_style( 'egnitech-one-product-gallery' );
 
 				wp_enqueue_script(
 					'egnitech-one-product-gallery',
 					get_theme_file_uri( 'patterns/product-gallery/index.js' ),
 					array(),
-					(string) wp_get_theme()->get( 'Version' ),
+					egnitech_one_asset_version( get_theme_file_path( 'patterns/product-gallery/index.js' ) ),
 					array(
 						'strategy'  => 'defer',
 						'in_footer' => true,
@@ -182,14 +183,14 @@ if ( ! function_exists( 'egnitech_one_enqueue_dark_mode' ) ) {
 			'egnitech-one-dark-mode',
 			get_theme_file_uri( 'assets/css/dark-mode-toggle.css' ),
 			array(),
-			(string) wp_get_theme()->get( 'Version' )
+			egnitech_one_asset_version( get_theme_file_path( 'assets/css/dark-mode-toggle.css' ) )
 		);
 
 		wp_enqueue_script(
 			'egnitech-one-dark-mode',
 			get_theme_file_uri( 'assets/js/dark-mode-toggle.js' ),
 			array(),
-			(string) wp_get_theme()->get( 'Version' ),
+			egnitech_one_asset_version( get_theme_file_path( 'assets/js/dark-mode-toggle.js' ) ),
 			array(
 				'strategy' => 'defer',
 				'in_footer' => true,
@@ -212,14 +213,14 @@ if ( ! function_exists( 'egnitech_one_enqueue_scroll_to_top' ) ) {
 			'egnitech-one-scroll-top',
 			get_theme_file_uri( 'assets/css/scroll-to-top.css' ),
 			array(),
-			(string) wp_get_theme()->get( 'Version' )
+			egnitech_one_asset_version( get_theme_file_path( 'assets/css/scroll-to-top.css' ) )
 		);
 
 		wp_enqueue_script(
 			'egnitech-one-scroll-top',
 			get_theme_file_uri( 'assets/js/scroll-to-top.js' ),
 			array(),
-			(string) wp_get_theme()->get( 'Version' ),
+			egnitech_one_asset_version( get_theme_file_path( 'assets/js/scroll-to-top.js' ) ),
 			array(
 				'strategy' => 'defer',
 				'in_footer' => true,
@@ -242,7 +243,7 @@ if ( ! function_exists( 'egnitech_one_admin_scripts' ) ) {
 
 		wp_enqueue_media();
 
-		$admin_css_ver = file_exists( get_theme_file_path( 'assets/css/admin-options.css' ) ) ? (string) filemtime( get_theme_file_path( 'assets/css/admin-options.css' ) ) : (string) wp_get_theme()->get( 'Version' );
+		$admin_css_ver = egnitech_one_asset_version( get_theme_file_path( 'assets/css/admin-options.css' ) );
 		wp_enqueue_style(
 			'egnitech-one-admin',
 			get_theme_file_uri( 'assets/css/admin-options.css' ),
@@ -250,7 +251,7 @@ if ( ! function_exists( 'egnitech_one_admin_scripts' ) ) {
 			$admin_css_ver
 		);
 
-		$admin_js_ver = file_exists( get_theme_file_path( 'assets/js/admin-options.js' ) ) ? (string) filemtime( get_theme_file_path( 'assets/js/admin-options.js' ) ) : (string) wp_get_theme()->get( 'Version' );
+		$admin_js_ver = egnitech_one_asset_version( get_theme_file_path( 'assets/js/admin-options.js' ) );
 		wp_enqueue_script(
 			'egnitech-one-admin',
 			get_theme_file_uri( 'assets/js/admin-options.js' ),
@@ -286,7 +287,7 @@ if ( ! function_exists( 'egnitech_one_enqueue_reading_progress' ) ) {
 			'egnitech-one-reading-progress',
 			get_theme_file_uri( 'assets/css/reading-progress.css' ),
 			array(),
-			(string) wp_get_theme()->get( 'Version' )
+			egnitech_one_asset_version( get_theme_file_path( 'assets/css/reading-progress.css' ) )
 		);
 
 		// Dynamic Reading Progress Height Implementation
@@ -298,7 +299,7 @@ if ( ! function_exists( 'egnitech_one_enqueue_reading_progress' ) ) {
 			'egnitech-one-reading-progress',
 			get_theme_file_uri( 'assets/js/reading-progress.js' ),
 			array(),
-			(string) wp_get_theme()->get( 'Version' ),
+			egnitech_one_asset_version( get_theme_file_path( 'assets/js/reading-progress.js' ) ),
 			array(
 				'strategy'  => 'defer',
 				'in_footer' => true,

@@ -25,6 +25,19 @@ if ( ! function_exists( 'egnitech_one_get_option' ) ) {
 }
 
 /**
+ * Version string for a theme stylesheet or script: the file's modification time.
+ * Its address then changes whenever the file does, so no browser keeps a stale copy.
+ *
+ * @param string $file Absolute path of the file the address points at.
+ * @return string      Modification time, or the theme version if the file is missing.
+ */
+if ( ! function_exists( 'egnitech_one_asset_version' ) ) {
+	function egnitech_one_asset_version( string $file ): string {
+		return is_file( $file ) ? (string) filemtime( $file ) : (string) wp_get_theme()->get( 'Version' );
+	}
+}
+
+/**
  * Get the footer copyright text from theme options.
  *
  * @return string Copyright text.
