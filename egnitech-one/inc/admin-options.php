@@ -199,7 +199,7 @@ function egnitech_one_add_theme_page(): void {
 add_theme_page(
 __( 'Theme Options', 'egnitech-one' ),
 __( 'Theme Options', 'egnitech-one' ),
-'edit_theme_options',
+'manage_options',
 'egnitech-one-options',
 'egnitech_one_options_page_html'
 );
@@ -320,7 +320,7 @@ register_setting( 'egnitech_one_options', 'egnitech_one_meta_categories', [
 
 register_setting( 'egnitech_one_options', 'egnitech_one_meta_tags', [
 'type'              => 'string',
-'default'           => '',
+'default'           => 'yes',
 'sanitize_callback' => 'sanitize_text_field',
 ] );
 
@@ -391,7 +391,7 @@ register_setting( 'egnitech_one_options', 'egnitech_one_recaptcha_site_key', [
 register_setting( 'egnitech_one_options', 'egnitech_one_recaptcha_secret_key', [
 	'type'              => 'string',
 	'default'           => '',
-	'sanitize_callback' => 'sanitize_text_field',
+	'sanitize_callback' => static fn( mixed $input ): string => egnitech_one_sanitize_secret( $input, 'egnitech_one_recaptcha_secret_key' ),
 ] );
 
 /* ----- SMTP Settings ----- */
@@ -434,7 +434,7 @@ register_setting( 'egnitech_one_options', 'egnitech_one_smtp_username', [
 register_setting( 'egnitech_one_options', 'egnitech_one_smtp_password', [
 'type'              => 'string',
 'default'           => '',
-'sanitize_callback' => 'sanitize_text_field',
+'sanitize_callback' => static fn( mixed $input ): string => egnitech_one_sanitize_secret( $input, 'egnitech_one_smtp_password' ),
 ] );
 
 register_setting( 'egnitech_one_options', 'egnitech_one_smtp_from_email', [
@@ -450,6 +450,9 @@ register_setting( 'egnitech_one_options', 'egnitech_one_smtp_from_name', [
 ] );
 
 /* ----- WooCommerce ----- */
+// Registered only while WooCommerce is active, which is also when their tab is printed:
+// options.php blanks every registered setting whose field the form did not send.
+if ( class_exists( 'WooCommerce' ) ) {
 register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_gallery_zoom', [
 'type'              => 'string',
 'default'           => 'yes',
@@ -479,6 +482,7 @@ register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_gallery_thum
 'default'           => 'bottom-carousel',
 'sanitize_callback' => 'sanitize_text_field',
 ] );
+}
 
 register_setting( 'egnitech_one_options', 'egnitech_one_fastcgi_cache_enabled', [
 'type'              => 'string',
@@ -511,6 +515,18 @@ if ( ! current_user_can( 'unfiltered_html' ) ) {
 return '';
 }
 return is_string( $input ) ? $input : '';
+}
+
+/**
+ * Sanitize a stored secret (SMTP password, reCAPTCHA secret key).
+ * The form never prints the saved value, so an empty field means "keep what is saved".
+ * A new value is stored exactly as typed: any character is valid in a password.
+ */
+function egnitech_one_sanitize_secret( mixed $input, string $option ): string {
+if ( ! is_string( $input ) || '' === $input ) {
+return (string) get_option( $option, '' );
+}
+return $input;
 }
 
 /**
@@ -608,9 +624,10 @@ $content['settings']['layout'] = array();
 
 $content['settings']['layout'][ $property ] = $value;
 
+// wp_update_post() strips slashes, so the JSON is slashed first or its escapes (\", \n) are lost.
 wp_update_post( array(
 'ID'           => $global_styles_id,
-'post_content' => wp_json_encode( $content ),
+'post_content' => wp_slash( wp_json_encode( $content ) ),
 ) );
 }
 
@@ -659,7 +676,7 @@ return array(
  * Render the Theme Options page with tabbed navigation.
  */
 function egnitech_one_options_page_html(): void {
-if ( ! current_user_can( 'edit_theme_options' ) ) {
+if ( ! current_user_can( 'manage_options' ) ) {
 return;
 }
 
@@ -691,7 +708,7 @@ $sidebar_position     = get_option( 'egnitech_one_sidebar_position', 'none' );
 $meta_author          = get_option( 'egnitech_one_meta_author', 'yes' );
 $meta_date            = get_option( 'egnitech_one_meta_date', 'yes' );
 $meta_categories      = get_option( 'egnitech_one_meta_categories', 'yes' );
-$meta_tags            = get_option( 'egnitech_one_meta_tags', '' );
+$meta_tags            = get_option( 'egnitech_one_meta_tags', 'yes' );
 $logo_width_desktop   = get_option( 'egnitech_one_logo_width_desktop', 0 );
 $logo_width_mobile    = get_option( 'egnitech_one_logo_width_mobile', 0 );
 
@@ -1456,7 +1473,7 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
                         <p class="description"><?php esc_html_e( 'Your Google reCAPTCHA v2 "I\'m not a robot" Secret Key.', 'egnitech-one' ); ?></p>
                     </div>
                     <div class="egnitech-option-control">
-                        <input type="password" name="egnitech_one_recaptcha_secret_key" value="<?php echo esc_attr( $recaptcha_secret_key ); ?>" class="egnitech-input" />
+                        <input type="password" name="egnitech_one_recaptcha_secret_key" value="" autocomplete="new-password" placeholder="<?php echo esc_attr( $recaptcha_secret_key ? __( 'Saved. Leave blank to keep it.', 'egnitech-one' ) : '' ); ?>" class="egnitech-input" />
                     </div>
                 </div>
             </div>
@@ -1539,7 +1556,7 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
                     <label><?php esc_html_e( 'SMTP Password', 'egnitech-one' ); ?></label>
                 </div>
                 <div class="egnitech-option-control">
-                    <input type="password" name="egnitech_one_smtp_password" value="<?php echo esc_attr( $smtp_password ); ?>" class="egnitech-input" />
+                    <input type="password" name="egnitech_one_smtp_password" value="" autocomplete="new-password" placeholder="<?php echo esc_attr( $smtp_password ? __( 'Saved. Leave blank to keep it.', 'egnitech-one' ) : '' ); ?>" class="egnitech-input" />
                 </div>
             </div>
         </div>
@@ -1746,7 +1763,7 @@ location ~ /purge(/.*) {
 function egnitech_one_ajax_get_new_script_html(): void {
     check_ajax_referer( 'egnitech_scripts_nonce', 'nonce' );
 
-    if ( ! current_user_can( 'edit_theme_options' ) ) {
+    if ( ! current_user_can( 'manage_options' ) ) {
         wp_send_json_error( array( 'message' => __( 'Permission denied.', 'egnitech-one' ) ) );
     }
 
