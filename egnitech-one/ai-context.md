@@ -28,6 +28,7 @@ For all development tasks involving templates, patterns, or `theme.json`:
 2. **Modular Assets**: Follow the "Pattern-First" asset model. Section-specific CSS/JS lives alongside its pattern in `patterns/{slug}/` (e.g. `style.css`, `index.js`). Never `wp_enqueue_style()`/`wp_enqueue_script()` directly inside a pattern's PHP file. Instead:
    - CSS is registered via `register_block_style()` with a `style_handle` in `inc/theme-setup.php`, so it loads only when that block style is used.
    - JS/CSS that must load conditionally (e.g. only on product pages) is registered and enqueued from `inc/enqueue-assets.php`, gated on the relevant condition.
+   - **Version every stylesheet and script with `egnitech_one_asset_version()`** (`inc/helpers.php`), which stamps it with the file's own modification time. **Never** pass the theme `Version` or a literal such as `'1.0.0'`, whatever the skill's examples show: browsers are told to keep theme files indefinitely, so an address that does not change means returning visitors never see the edit. After editing CSS or JS on a live site, clear the page cache (`docs/built-systems/assets-and-versioning.md`).
 
 ## Design System & `theme.json`
 The foundation uses a modern `theme.json` (v3) approach:
@@ -68,7 +69,7 @@ Each file in `docs/built-systems/` holds only what the code cannot say: bans, de
 | :--- | :--- | :--- | :--- |
 | Theme Options | Built | [docs/built-systems/theme-options.md](docs/built-systems/theme-options.md) | One form rewrites every setting on each save. Read before adding a setting, hiding a field, or saving options from code or WP-CLI |
 | Page cache & purging | Built | [docs/built-systems/page-cache.md](docs/built-systems/page-cache.md) | nginx keeps whole pages; the theme only deletes them, and only some. First stop when a change "is not showing" |
-| Assets & cache-busting | Built | [docs/built-systems/assets-and-versioning.md](docs/built-systems/assets-and-versioning.md) | No build step. Read before editing any CSS or JS: most files need a `Version` bump to reach returning visitors |
+| Assets & cache-busting | Built | [docs/built-systems/assets-and-versioning.md](docs/built-systems/assets-and-versioning.md) | No build step. Every file is versioned by its own modification time. Read before adding or editing any CSS or JS |
 | Dark / light mode | Built | [docs/built-systems/dark-mode.md](docs/built-systems/dark-mode.md) | Traps only; the bans are in the section above |
 | Header, footer, sidebar & templates | Built | [docs/built-systems/templates-and-patterns.md](docs/built-systems/templates-and-patterns.md) | A Site Editor save freezes a template and the PHP inside its pattern |
 | WooCommerce product page | Built | [docs/built-systems/woocommerce-product-page.md](docs/built-systems/woocommerce-product-page.md) | Template, custom gallery, trust badges, add-to-cart and the cart drawer |
@@ -86,16 +87,16 @@ No `Roadmap` rows yet: nothing planned is recorded in this repo. Add one before 
 
 ## Environment & Deployment Constraints
 - **On the homegears.in server this repo is cloned straight into `wp-content/themes/`, so that working copy is the live site.** A saved file is in production at once. There is no build step and no staging copy. Another site's copy of the theme changes only when that copy is updated.
-- **Two caches sit outside WordPress.** nginx keeps whole pages for logged-out visitors, and tells browsers to keep CSS and JS indefinitely. A change that "does not show" is nearly always one of them: see the page-cache and assets files above.
+- **Two caches sit outside WordPress.** nginx keeps whole pages for logged-out visitors, and tells browsers to keep CSS and JS indefinitely. A change that "does not show" is nearly always the first: see the page-cache and assets files above.
 - **WP-CLI on the server runs as `ubuntu` and outside wp-admin**, which changes what a command does. Read the page-cache and theme-options files before changing content or settings from the command line.
-- **Nothing stops a browser downloading the non-PHP files in this folder**, these documents included (checked on homegears.in). **Never** write a password, key, token or server credential into any file here.
+- **Markdown files and dot-folders here are kept off the web by a rule in the site's nginx config, not by anything in this repo**, and the repo itself is public. A site whose server lacks that rule serves these documents to anyone. **Never** write a password, key, token or server credential into any file here.
 
 ## Coding Standards
 1. **Text Domain**: Always use `egnitech-one` for core localization.
 2. **CSS Scoping (MANDATORY)**: Scope all custom CSS strictly to the block's specific class or variation class (e.g., `.is-style-{slug}`). Avoid global rules or catch-all page wrappers to prevent style bleed.
 3. **Safe Containers**: Use `core/group` for complex layouts instead of `core/columns` to avoid Site Editor validation errors.
 4. **SVGs**: Provide explicit `width` and `height` attributes on inline `<svg>` tags to prevent layout shifts in the Site Editor.
-5. **PHP 8.0–8.3 & WP 7.0 Compliance**: Minimum supported version is PHP 8.0 (per the `Requires PHP` header in `style.css`); write code compatible across PHP 8.0–8.3. All core PHP files (such as `functions.php`, files in `inc/`) must include `declare(strict_types=1);` on line 2, and declare strict types for all parameters and return types. Any `theme.json` must use `"version": 3`.
+5. **PHP 8.4+ & WP 7.0 Compliance**: Minimum supported version is PHP 8.4 (per the `Requires PHP` header in `style.css`; owner's decision, 12 Nov 2026). PHP 8.4 features may be used; syntax that needs PHP 8.5 may not. All core PHP files (such as `functions.php`, files in `inc/`) must include `declare(strict_types=1);` on line 2, and declare strict types for all parameters and return types. Any `theme.json` must use `"version": 3`.
 
 ---
 *Final AI Reminder*: This is the CORE theme. Changes here affect all child-theme instances. Maintain stability and extreme performance.

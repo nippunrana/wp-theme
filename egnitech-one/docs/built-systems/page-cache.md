@@ -24,4 +24,4 @@ Code: `inc/fastcgi-cache-purger.php` (purging, the admin-bar menu, cache size) a
 
 1. Check it logged out. On the EgniTech servers nginx skips the cache for logged-in users and for POST requests, so an editor always sees fresh pages.
 2. Read the response header nginx adds there: `curl -sI <url>` shows `X-FastCGI-Cache` as `HIT`, `MISS` or `BYPASS`.
-3. If the page is fresh and a stylesheet or script is old, it is the other cache: `assets-and-versioning.md`.
+3. A stylesheet or script edit that is not showing is this same cache: the stored page still links to the file's old address (`assets-and-versioning.md`).

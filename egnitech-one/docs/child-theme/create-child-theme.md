@@ -41,7 +41,7 @@ Description: Child theme for EgniTech One. Extend or override the parent theme f
 Template: egnitech-one
 Requires at least: 7.0
 Tested up to: 7.0
-Requires PHP: 8.3
+Requires PHP: 8.4
 Version: 1.0.0
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -151,6 +151,7 @@ For all development tasks involving templates, patterns, `theme.json`, or asset 
 ### Dark/Light Mode System
 The site is **light only** by default. Dark/light mode and the visitor toggle exist only after the **Dark Mode** switch under **Appearance > Theme Options > General** is turned on and saved.
 - **Never** add a code switch for dark mode (`add_theme_support`, a `theme.json` flag), and **never** define `egnitech_one_is_dark_mode_enabled()` in this child theme: it would replace the parent's and ignore the Theme Options switch.
+- **Never** enqueue the parent's `style.css` from this child theme. The parent loads its own `style.css` and then this theme's `style.css` after it, so overrides belong in this theme's file. (The child template in the `wp-block-theme` skill still enqueues the parent stylesheet; leave that block out, or it loads twice.)
 - **Writing Styles**: When enabled, write scoped styles using the `light-dark()` CSS function to dynamically support the scheme toggle. When disabled, the browser will natively resolve all `light-dark()` properties to their light mode values automatically.
 - **Example**: `color: light-dark(var(--wp--preset--color--base), var(--wp--preset--color--contrast));`
 
@@ -176,7 +177,7 @@ Google reCAPTCHA v2 keys are managed globally under the parent theme's options p
 2. **CSS Scoping (MANDATORY)**: All custom CSS must be scoped to the block's variation class (e.g., `.is-style-{slug}`). NEVER use catch-all page wrappers (e.g., `.{slug}-wrapper`) as they cause style bleed.
 3. **Performance**: Maintain the lean, high-performance philosophy of the parent theme.
 4. **SVGs**: Provide explicit `width` and `height` attributes on inline `<svg>` tags to prevent layout shifts in the Site Editor.
-5. **PHP 8.3 & WP 7.0 Compliance (MANDATORY)**: All child theme PHP files (including `functions.php`, helper scripts, or template overrides) must include `declare(strict_types=1);` on line 2, and use native type hints for all parameters and return types. Any custom `theme.json` in the child theme must inherit from parent settings and use `"version": 3`.
+5. **PHP 8.4 & WP 7.0 Compliance (MANDATORY)**: All child theme PHP files (including `functions.php`, helper scripts, or template overrides) must include `declare(strict_types=1);` on line 2, and use native type hints for all parameters and return types. Any custom `theme.json` in the child theme must inherit from parent settings and use `"version": 3`.
 
 ## Technical References
 Refer to the following in the local `wp-block-theme` skill (under `egnitech-one/.agent/skills/wp-block-theme/`) for deep-dives:

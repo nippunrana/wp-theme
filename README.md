@@ -1,7 +1,7 @@
 # EgniTech One
 
 [![WordPress](https://img.shields.io/badge/WordPress-v7.0%2B-blue.svg?style=flat-square&logo=wordpress)](https://wordpress.org)
-[![PHP](https://img.shields.io/badge/PHP-v8.0%2B-purple.svg?style=flat-square&logo=php)](https://php.net)
+[![PHP](https://img.shields.io/badge/PHP-v8.4%2B-purple.svg?style=flat-square&logo=php)](https://php.net)
 [![License](https://img.shields.io/badge/License-GPL--2.0-green.svg?style=flat-square)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![Aesthetics](https://img.shields.io/badge/Performance-%3C%2050KB-brightgreen.svg?style=flat-square)](#)
 
@@ -130,7 +130,7 @@ These settings are managed under **Appearance > Theme Options** in the WordPress
 ## 🛠️ Installation & Requirements
 
 *   **WordPress:** Version 7.0 or higher
-*   **PHP:** Version 8.0 or higher (PHP 8.3 recommended)
+*   **PHP:** Version 8.4 or higher
 
 1.  Download or clone the `egnitech-one` theme folder.
 2.  Upload it to `/wp-content/themes/` inside your WordPress installation directory.

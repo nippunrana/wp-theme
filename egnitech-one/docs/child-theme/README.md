@@ -23,6 +23,7 @@ A child theme holds the changes one site needs (its own patterns, templates, sty
 | :--- | :--- |
 | A template or template part | Copy the file from the parent to the same path in the child (e.g. `templates/page.html`, `parts/header.html`) and edit the copy. The child's file wins. |
 | Design tokens (`theme.json`) | Add only what differs. Settings merge with the parent key by key, **but arrays such as `palette`, `fontSizes` and `spacingSizes` replace the parent's array completely**. Copy the parent entries first, then add yours. |
+| Styles | The parent loads its own `style.css`, then the child's `style.css` after it, so the child's rules win. **Never** enqueue the parent's `style.css` from the child: it would load twice. |
 | A section or pattern | Add it under `patterns/`, with its CSS/JS beside it (`patterns/<slug>/style.css`, `index.js`), registered through `register_block_style()`. Prefix pattern slugs and categories with the child's slug. |
 | PHP behaviour | Add it to the child's `functions.php`. The child's `functions.php` loads **before** the parent's, so any parent function wrapped in `if ( ! function_exists() )` can be replaced by defining it first. |
 
