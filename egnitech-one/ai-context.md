@@ -87,6 +87,7 @@ No `Roadmap` rows yet: nothing planned is recorded in this repo. Add one before 
 
 ## Environment & Deployment Constraints
 - **On the homegears.in server this repo is cloned straight into `wp-content/themes/`, so that working copy is the live site.** A saved file is in production at once. There is no build step and no staging copy. Another site's copy of the theme changes only when that copy is updated.
+- **GitHub `main` is the only source of truth, and it is built from that clone** (owner's decision, 13 Nov 2026). Another site's copy of the theme is an export of a pushed commit. **Never** edit such a copy in place: make the change here, push, then export that commit over the copy again.
 - **Two caches sit outside WordPress.** nginx keeps whole pages for logged-out visitors, and tells browsers to keep CSS and JS indefinitely. A change that "does not show" is nearly always the first: see the page-cache and assets files above.
 - **WP-CLI on the server runs as `ubuntu` and outside wp-admin**, which changes what a command does. Read the page-cache and theme-options files before changing content or settings from the command line.
 - **Markdown files and dot-folders here are kept off the web by a rule in the site's nginx config, not by anything in this repo**, and the repo itself is public. A site whose server lacks that rule serves these documents to anyone. **Never** write a password, key, token or server credential into any file here.
