@@ -88,3 +88,49 @@ if ( ! function_exists( 'egnitech_one_get_recaptcha_settings' ) ) {
 		);
 	}
 }
+
+/**
+ * Fetch every setting a front-end page reads with one database query.
+ * A setting that was never saved has no database row, and WordPress would otherwise
+ * look for each of those with a query of its own on every page not served from cache.
+ *
+ * @return void
+ */
+if ( ! function_exists( 'egnitech_one_prime_options' ) ) {
+	function egnitech_one_prime_options(): void {
+		wp_prime_option_caches(
+			array(
+				'egnitech_one_sticky_header',
+				'egnitech_one_header_padding_desktop_top',
+				'egnitech_one_header_padding_desktop_bottom',
+				'egnitech_one_header_padding_mobile_top',
+				'egnitech_one_header_padding_mobile_bottom',
+				'egnitech_one_logo_width_desktop',
+				'egnitech_one_logo_width_mobile',
+				'egnitech_one_dark_logo_url',
+				'egnitech_one_scroll_to_top',
+				'egnitech_one_reading_progress',
+				'egnitech_one_reading_progress_height',
+				'egnitech_one_breadcrumbs',
+				'egnitech_one_dark_mode_enabled',
+				'egnitech_one_dark_mode_default',
+				'egnitech_one_footer_copyright',
+				'egnitech_one_footer_credits',
+				'egnitech_one_blog_layout',
+				'egnitech_one_sidebar_position',
+				'egnitech_one_meta_author',
+				'egnitech_one_meta_date',
+				'egnitech_one_meta_categories',
+				'egnitech_one_meta_tags',
+				'egnitech_one_custom_scripts',
+				'egnitech_one_woocommerce_gallery_layout',
+				'egnitech_one_woocommerce_gallery_zoom',
+				'egnitech_one_woocommerce_gallery_lightbox',
+				'egnitech_one_woocommerce_gallery_lightbox_icon',
+				'egnitech_one_woocommerce_gallery_thumbnail_style',
+			)
+		);
+	}
+}
+// Page views only: on REST, AJAX and admin requests this would add a query, not save any.
+add_action( 'template_redirect', 'egnitech_one_prime_options', 0 );
