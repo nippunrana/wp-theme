@@ -659,6 +659,10 @@ if ( ! function_exists( 'egnitech_one_product_gallery_shortcode' ) ) {
 									width="<?php echo esc_attr( (string) $img['width'] ); ?>" 
 									height="<?php echo esc_attr( (string) $img['height'] ); ?>" 
 									data-full="<?php echo esc_url( $img['full'] ); ?>"
+									<?php
+									// Only the first picture shows when the page opens: it loads first, the others when they are needed.
+									echo 0 === $index ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"';
+									?>
 								/>
 							</button>
 						</div>
