@@ -384,8 +384,8 @@
         "elements": {
             "button": {
                 "color": {
-                    "background": "var:preset|color|contrast",
-                    "text": "var:preset|color|base"
+                    "background": "var:preset|color|accent",
+                    "text": "var(--egnitech-on-accent, var(--wp--preset--color--base))"
                 },
                 ":focus": {
                     "outline": {
@@ -395,7 +395,7 @@
                 },
                 ":hover": {
                     "color": {
-                        "background": "var:preset|color|accent",
+                        "background": "var:preset|color|contrast",
                         "text": "var:preset|color|base"
                     }
                 },

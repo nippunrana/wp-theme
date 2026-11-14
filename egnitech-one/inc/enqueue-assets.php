@@ -139,6 +139,42 @@ if ( ! function_exists( 'egnitech_one_enqueue_styles' ) ) {
 add_action( 'wp_enqueue_scripts', 'egnitech_one_enqueue_styles' );
 
 /**
+ * Text colour for anything drawn on the Accent colour (buttons, text selection): white or
+ * black, whichever reads better (one of the two always reaches 4.5:1) on the accent in each mode. It is worked out from the palette
+ * in use on every page, so it follows Theme Options palettes and Site Editor edits alike.
+ * theme.json falls back to Base where this variable is missing.
+ */
+if ( ! function_exists( 'egnitech_one_enqueue_on_accent_color' ) ) {
+	function egnitech_one_enqueue_on_accent_color(): void {
+		$accent = '';
+		foreach ( (array) wp_get_global_settings( array( 'color', 'palette', 'theme' ) ) as $entry ) {
+			if ( 'accent' === ( $entry['slug'] ?? '' ) ) {
+				$accent = (string) $entry['color'];
+			}
+		}
+
+		if ( preg_match( '/^light-dark\(\s*(#[0-9a-f]{6})\s*,\s*(#[0-9a-f]{6})\s*\)$/i', $accent, $m ) ) {
+			$modes = array( $m[1], $m[2] );
+		} elseif ( preg_match( '/^#[0-9a-f]{6}$/i', $accent ) ) {
+			$modes = array( $accent, $accent );
+		} else {
+			return; // A CSS variable or rgb() value can't be measured here; the Base fallback applies.
+		}
+
+		$on = array_map(
+			static fn( string $bg ): string => egnitech_one_contrast_ratio( $bg, '#ffffff' ) >= egnitech_one_contrast_ratio( $bg, '#000000' ) ? '#ffffff' : '#000000',
+			$modes
+		);
+
+		wp_register_style( 'egnitech-one-on-accent', false, array(), null );
+		wp_enqueue_style( 'egnitech-one-on-accent' );
+		wp_add_inline_style( 'egnitech-one-on-accent', sprintf( ':root{--egnitech-on-accent:light-dark(%s, %s);}', $on[0], $on[1] ) );
+	}
+}
+// Front end and the block editor alike.
+add_action( 'enqueue_block_assets', 'egnitech_one_enqueue_on_accent_color' );
+
+/**
  * Prevent FOUC by instantly applying dark mode before body renders.
  */
 if ( ! function_exists( 'egnitech_one_color_scheme_script' ) ) {

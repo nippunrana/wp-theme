@@ -482,6 +482,11 @@ register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_gallery_thum
 'default'           => 'bottom-carousel',
 'sanitize_callback' => 'sanitize_text_field',
 ] );
+register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_buy_now', [
+'type'              => 'string',
+'default'           => '',
+'sanitize_callback' => 'sanitize_text_field',
+] );
 }
 
 register_setting( 'egnitech_one_options', 'egnitech_one_fastcgi_cache_enabled', [
@@ -724,6 +729,7 @@ $gallery_zoom          = get_option( 'egnitech_one_woocommerce_gallery_zoom', 'y
 $gallery_lightbox      = get_option( 'egnitech_one_woocommerce_gallery_lightbox', 'yes' );
 $gallery_lightbox_icon = get_option( 'egnitech_one_woocommerce_gallery_lightbox_icon', 'yes' );
 $gallery_layout        = get_option( 'egnitech_one_woocommerce_gallery_layout', 'custom' );
+$buy_now               = get_option( 'egnitech_one_woocommerce_buy_now', '' );
 
 
 // SMTP options.
@@ -889,7 +895,7 @@ if ( ! empty( $color_palette ) && is_array( $color_palette ) ) {
             $bg_css = "background: {$color['color']};";
         }
         ?>
-        <div class="egnitech-palette-swatch" title="<?php echo esc_attr( $color['name'] ); ?>">
+        <div class="egnitech-palette-swatch" data-slug="<?php echo esc_attr( $color['slug'] ); ?>" title="<?php echo esc_attr( $color['name'] ); ?>">
             <div class="egnitech-palette-color" style="<?php echo esc_attr( $bg_css ); ?>"></div>
             <span class="egnitech-palette-label"><?php echo esc_html( $color['name'] ); ?></span>
         </div>
@@ -903,6 +909,25 @@ if ( ! empty( $color_palette ) && is_array( $color_palette ) ) {
 <span class="dashicons dashicons-admin-appearance"></span> <?php esc_html_e( 'Modify Colors in Site Editor', 'egnitech-one' ); ?>
 </a>
 </div>
+</div>
+</div>
+
+<div class="egnitech-option-row egnitech-option-row-vertical">
+<div class="egnitech-option-info">
+<label><?php esc_html_e( 'Palette Suggestions', 'egnitech-one' ); ?></label>
+<p class="description"><?php esc_html_e( 'Palettes made from your logo\'s colours, three ready-made palettes, and the last three palettes you used. Applying one changes the site\'s colours straight away, without Save Changes.', 'egnitech-one' ); ?></p>
+</div>
+<div class="egnitech-option-control">
+<?php /* No name attribute: this switch is read by the palette script only and must never be posted with the options form. */ ?>
+<label class="egnitech-palette-replace">
+<span class="egnitech-switch">
+<input type="checkbox" id="egnitech-palette-replace" />
+<span class="egnitech-slider"></span>
+</span>
+<?php esc_html_e( 'Also replace colours changed in the Site Editor', 'egnitech-one' ); ?>
+</label>
+<p id="egnitech-palette-notice" class="egnitech-palette-notice" role="status" hidden></p>
+<div id="egnitech-palette-suggestions"></div>
 </div>
 </div>
 
@@ -1377,6 +1402,27 @@ esc_html_e( 'Customize the "Built by EgniTech" text. HTML allowed.', 'egnitech-o
 				<div class="egnitech-option-control">
 					<label class="egnitech-switch">
 						<input type="checkbox" name="egnitech_one_woocommerce_gallery_lightbox_icon" value="yes" <?php checked( 'yes', $gallery_lightbox_icon ); ?> />
+						<span class="egnitech-slider"></span>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="egnitech-card">
+		<div class="egnitech-card-header">
+			<h2 class="egnitech-card-title"><?php esc_html_e( 'Product Page Button', 'egnitech-one' ); ?></h2>
+			<p class="egnitech-card-desc"><?php esc_html_e( 'How the main button on product pages behaves.', 'egnitech-one' ); ?></p>
+		</div>
+		<div class="egnitech-card-body">
+			<div class="egnitech-option-row">
+				<div class="egnitech-option-info">
+					<label><?php esc_html_e( 'Buy Now', 'egnitech-one' ); ?></label>
+					<p class="description"><?php esc_html_e( 'Label the button "Buy Now" instead of "Add to cart", and take shoppers straight to checkout after the item is added, without opening the cart drawer. Saving a change clears the page cache, so visitors see the new label straight away.', 'egnitech-one' ); ?></p>
+				</div>
+				<div class="egnitech-option-control">
+					<label class="egnitech-switch">
+						<input type="checkbox" name="egnitech_one_woocommerce_buy_now" value="yes" <?php checked( 'yes', $buy_now ); ?> />
 						<span class="egnitech-slider"></span>
 					</label>
 				</div>

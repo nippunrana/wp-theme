@@ -360,6 +360,7 @@
                     }
                 }
                 if (removeBtn) removeBtn.style.display = '';
+                inputVal.dispatchEvent(new Event('change'));
             });
 
             frame.open();
@@ -377,6 +378,7 @@
                     }
                 }
                 if (removeBtn) removeBtn.style.display = 'none';
+                inputVal.dispatchEvent(new Event('change'));
             });
         }
     }

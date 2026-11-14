@@ -35,6 +35,7 @@
 
 .egnitech-scroll-top:hover {
     background: var(--wp--preset--color--accent, #00D4AA);
+    color: var(--egnitech-on-accent, var(--wp--preset--color--base, #fff));
 }
 
 .egnitech-scroll-top:focus-visible {

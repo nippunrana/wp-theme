@@ -135,7 +135,7 @@
 .egnitech-product-info-column .wc-block-components-button,
 .egnitech-product-info-column button.wp-block-woocommerce-add-to-cart-form {
 	background-color: var(--wp--preset--color--accent, #00D4AA);
-	color: #000000;
+	color: var(--egnitech-on-accent, #000000);
 	font-weight: 600;
 	font-size: 1rem;
 	padding: 14px 28px;
@@ -158,6 +158,28 @@
 	box-shadow: 0 6px 20px rgba(0, 212, 170, 0.35);
 	background-color: var(--wp--preset--color--accent, #00D4AA);
 	filter: brightness(0.95);
+}
+
+/* Quantity and buy button: one row, as wide as the bulk-discount box above, the button taking the rest.
+   WooCommerce lays the form out as a column-flow grid that pins the button to the start and leaves an
+   empty third column (plus its gap) at the end; row flow with two columns removes both. */
+.egnitech-product-info-column .wp-block-woocommerce-add-to-cart-form form.cart,
+.egnitech-product-info-column .wp-block-woocommerce-add-to-cart-form .variations_button {
+	grid-template-columns: min-content 1fr;
+	grid-auto-flow: row;
+	column-gap: 12px;
+	padding-inline: 0;
+}
+
+.egnitech-product-info-column .wp-block-woocommerce-add-to-cart-form form.cart > .single_add_to_cart_button,
+.egnitech-product-info-column .wp-block-woocommerce-add-to-cart-form .variations_button > .single_add_to_cart_button {
+	justify-self: stretch;
+	min-height: 48px; /* Same height as the quantity stepper. */
+	padding-block: 0;
+	margin: 0;
+	border-radius: 8px;
+	font-size: 1rem;
+	font-weight: 600;
 }
 
 .egnitech-product-info-column .wc-block-components-button:active,
@@ -680,26 +702,34 @@
 }
 
 /* Custom Quantity Stepper styling overrides */
-.quantity.egnitech-quantity-stepper {
+/* WooCommerce adds the class to the input, never to the .quantity wrapper, hence :has().
+   Only a visible number input gets the stepper box: with a fixed quantity (sold individually, last in
+   stock) the input is hidden, and the − and + buttons printed around it are hidden too. */
+.quantity:has(> input.egnitech-quantity-stepper[type="hidden"]) .egnitech-qty-btn {
+	display: none !important;
+}
+
+.quantity:has(> input.egnitech-quantity-stepper[type="number"]) {
 	display: inline-flex !important;
 	align-items: center !important;
 	border: 2px solid var(--wp--preset--color--border, #ccc) !important;
-	border-radius: 6px !important;
+	border-radius: 8px !important;
 	overflow: hidden !important;
 	background: var(--wp--preset--color--base, #fff) !important;
-	height: 44px !important;
+	height: 48px !important;
+	box-sizing: border-box !important;
 	vertical-align: middle !important;
-	margin: 0 12px 0 0 !important;
+	margin: 0 !important;
 	padding: 0 !important;
 }
 
 /* Hide native number input arrows */
-.quantity.egnitech-quantity-stepper input[type="number"]::-webkit-outer-spin-button,
-.quantity.egnitech-quantity-stepper input[type="number"]::-webkit-inner-spin-button {
+.quantity input.egnitech-quantity-stepper[type="number"]::-webkit-outer-spin-button,
+.quantity input.egnitech-quantity-stepper[type="number"]::-webkit-inner-spin-button {
 	-webkit-appearance: none !important;
 	margin: 0 !important;
 }
-.quantity.egnitech-quantity-stepper input[type="number"] {
+.quantity input.egnitech-quantity-stepper[type="number"] {
 	-moz-appearance: textfield !important;
 	appearance: textfield !important;
 	border: none !important;

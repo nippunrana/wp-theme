@@ -150,6 +150,13 @@
 					return;
 				}
 
+				// Buy Now (Theme Options): straight to checkout. Before the cart events below,
+				// because the mini-cart opens its drawer on those.
+				if (window.egnitechCart && window.egnitechCart.checkoutUrl) {
+					window.location.href = window.egnitechCart.checkoutUrl;
+					return;
+				}
+
 				// Success! Trigger WooCommerce cart updates
 				const wcEvent = new CustomEvent('wc-blocks_added_to_cart');
 				document.dispatchEvent(wcEvent);

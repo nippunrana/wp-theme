@@ -63,7 +63,7 @@ html {
 /* Selection highlight */
 ::selection {
 	background-color: var(--wp--preset--color--accent);
-	color: var(--wp--preset--color--base);
+	color: var(--egnitech-on-accent, var(--wp--preset--color--base));
 }
 
 /* ─── Header Logo Toggle ─── */

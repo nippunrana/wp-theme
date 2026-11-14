@@ -37,6 +37,8 @@ The foundation uses a modern `theme.json` (v3) approach:
   - Inside `theme.json`, reference them using `var:preset|spacing|[slug]` tokens.
   - Inside CSS files, reference them using standard CSS variables e.g., `var(--wp--preset--spacing--[slug])`.
 
+- **Text on an Accent background**: always `var(--egnitech-on-accent, …)`, never Base or a fixed colour. It is computed per page from the Accent in use (`docs/built-systems/logo-palettes.md`).
+
 ## Dark/Light Mode System (CRITICAL)
 EgniTech One handles color schemes via a foundational system:
 - **Mechanics**: Controls the `:root` pseudo-class using `color-scheme: light dark` and a persistent `data-scheme` attribute on the `<html>` root.
@@ -70,6 +72,7 @@ Each file in `docs/built-systems/` holds only what the code cannot say: bans, de
 | Theme Options | Built | [docs/built-systems/theme-options.md](docs/built-systems/theme-options.md) | One form rewrites every setting on each save. Read before adding a setting, hiding a field, or saving options from code or WP-CLI |
 | Page cache & purging | Built | [docs/built-systems/page-cache.md](docs/built-systems/page-cache.md) | nginx keeps whole pages; the theme only deletes them, and only some. First stop when a change "is not showing" |
 | Assets & cache-busting | Built | [docs/built-systems/assets-and-versioning.md](docs/built-systems/assets-and-versioning.md) | No build step. Every file is versioned by its own modification time. Read before adding or editing any CSS or JS |
+| Logo palettes | Built | [docs/built-systems/logo-palettes.md](docs/built-systems/logo-palettes.md) | Palettes from the logo's colours, applied to Global Styles from Theme Options. Never apply from the options form |
 | Dark / light mode | Built | [docs/built-systems/dark-mode.md](docs/built-systems/dark-mode.md) | Traps only; the bans are in the section above |
 | Header, footer, sidebar & templates | Built | [docs/built-systems/templates-and-patterns.md](docs/built-systems/templates-and-patterns.md) | A Site Editor save freezes a template and the PHP inside its pattern |
 | WooCommerce product page | Built | [docs/built-systems/woocommerce-product-page.md](docs/built-systems/woocommerce-product-page.md) | Template, custom gallery, trust badges, add-to-cart and the cart drawer |

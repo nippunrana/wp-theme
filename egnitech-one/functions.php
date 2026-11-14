@@ -17,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 // 0. Shared Helpers (Utility functions)
 require_once get_theme_file_path( 'inc/helpers.php' );
 
+// 1. Colour maths (contrast checks for button text; also used by the admin palette tools)
+require_once get_theme_file_path( 'inc/palette/color-math.php' );
+
 // 2. Theme Setup (Support, block patterns, removing bloat)
 require_once get_theme_file_path( 'inc/theme-setup.php' );
 
@@ -30,6 +33,7 @@ require_once get_theme_file_path( 'inc/custom-scripts.php' );
 if ( is_admin() ) {
 	require_once get_theme_file_path( 'inc/font-manager.php' );
 	require_once get_theme_file_path( 'inc/admin-options.php' );
+	require_once get_theme_file_path( 'inc/palette/palette-admin.php' );
 }
 
 // 6. SMTP Configuration (PHPMailer hook)

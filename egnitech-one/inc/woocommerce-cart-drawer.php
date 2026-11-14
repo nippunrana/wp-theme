@@ -12,6 +12,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Whether the product page button is "Buy Now" (Theme Options > WooCommerce > Product Page Button).
+ */
+function egnitech_one_is_buy_now(): bool {
+	return 'yes' === egnitech_one_get_option( 'egnitech_one_woocommerce_buy_now', '' );
+}
+
+/**
+ * "Buy Now" label on the single product page button. External products keep their own text:
+ * their button links to another shop and never reaches checkout here.
+ */
+function egnitech_one_buy_now_button_text( string $text, mixed $product = null ): string {
+	if ( ! egnitech_one_is_buy_now() || ( $product instanceof WC_Product && $product->is_type( 'external' ) ) ) {
+		return $text;
+	}
+	return __( 'Buy Now', 'egnitech-one' );
+}
+add_filter( 'woocommerce_product_single_add_to_cart_text', 'egnitech_one_buy_now_button_text', 10, 2 );
+
+/**
+ * Buy Now, full-page path (variable products, or when the no-reload add fails): go to checkout.
+ * The no-reload path redirects in assets/js/woocommerce-mini-cart-auto-open.js.
+ */
+function egnitech_one_buy_now_redirect( mixed $url ): mixed {
+	return egnitech_one_is_buy_now() && function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url() : $url;
+}
+add_filter( 'woocommerce_add_to_cart_redirect', 'egnitech_one_buy_now_redirect' );
+
+/**
+ * Cached pages carry the button label, so clear them when the setting changes.
+ */
+function egnitech_one_purge_cache_on_buy_now_change(): void {
+	if ( function_exists( 'egnitech_one_purge_all_site_cache' ) ) {
+		egnitech_one_purge_all_site_cache();
+	}
+}
+add_action( 'update_option_egnitech_one_woocommerce_buy_now', 'egnitech_one_purge_cache_on_buy_now_change' );
+add_action( 'add_option_egnitech_one_woocommerce_buy_now', 'egnitech_one_purge_cache_on_buy_now_change' );
+
+/**
  * Set a cookie when a product is added to the cart to open the drawer on page load as a fallback.
  *
  * @param mixed $cart_item_key The cart item key.
@@ -30,6 +69,10 @@ function egnitech_one_set_add_to_cart_cookie(
 	mixed $variation,
 	mixed $cart_item_data
 ): void {
+	// Buy Now sends the shopper to checkout, where a drawer popping open would be in the way.
+	if ( egnitech_one_is_buy_now() ) {
+		return;
+	}
 	setcookie( 'egnitech_just_added_to_cart', '1', time() + 20, '/' );
 }
 add_action( 'woocommerce_add_to_cart', 'egnitech_one_set_add_to_cart_cookie', 10, 6 );
@@ -71,6 +114,12 @@ function egnitech_one_enqueue_mini_cart_script(): void {
 			'strategy'  => 'defer',
 			'in_footer' => true,
 		)
+	);
+
+	wp_localize_script(
+		'egnitech-one-mini-cart-open',
+		'egnitechCart',
+		array( 'checkoutUrl' => egnitech_one_is_buy_now() && function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url() : '' )
 	);
 }
 add_action( 'wp_enqueue_scripts', 'egnitech_one_enqueue_mini_cart_script', 20 );
