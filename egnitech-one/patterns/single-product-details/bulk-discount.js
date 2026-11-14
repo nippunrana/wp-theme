@@ -94,13 +94,14 @@ document.addEventListener('DOMContentLoaded', () => {
 			summaryTotal.textContent = formatPrice(totalPrice);
 		}
 
-		// Update savings text callout
+		// Update savings text callout. Never hide it: on phones it sits on its own line and the page would jump.
 		if (summarySavings) {
 			if (savedAmount > 0) {
-				summarySavings.style.display = 'inline-block';
+				summarySavings.classList.remove('is-hint');
 				summarySavings.textContent = `(Saved ${formatPrice(savedAmount)} - ${discountPct}% off)`;
 			} else {
-				summarySavings.style.display = 'none';
+				summarySavings.classList.add('is-hint');
+				summarySavings.textContent = summarySavings.dataset.hint;
 			}
 		}
 

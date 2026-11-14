@@ -631,6 +631,7 @@
 }
 
 .egnitech-summary-savings {
+	display: inline-block;
 	font-family: var(--wp--preset--font-family--inter), sans-serif;
 	font-size: 0.95rem;
 	font-weight: 600;
@@ -639,6 +640,12 @@
 	padding: 6px 14px;
 	border-radius: 30px;
 	border: 1px solid light-dark(rgba(0, 212, 170, 0.15), rgba(0, 212, 170, 0.25));
+}
+
+/* Buy 1: an upsell hint, softer than an actual saving */
+.egnitech-summary-savings.is-hint {
+	border-style: dashed;
+	font-weight: 500;
 }
 
 /* Mobile responsive fixes */

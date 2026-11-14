@@ -284,8 +284,16 @@ function egnitech_one_render_bulk_discount_selector(): void {
 				<?php esc_html_e( 'Total Cost:', 'egnitech-one' ); ?> 
 				<span class="egnitech-summary-total"><?php echo esc_html( $format_price( $base_price ) ); ?></span>
 			</div>
+			<?php
+			$savings_hint = sprintf(
+				/* translators: 1: smallest tier quantity, 2: largest tier percentage */
+				__( 'Buy %1$d+ and save up to %2$g%%', 'egnitech-one' ),
+				$active_tiers[0]['qty'],
+				max( array_column( $active_tiers, 'pct' ) )
+			);
+			?>
 			<div class="egnitech-summary-savings-wrapper">
-				<span class="egnitech-summary-savings" style="display: none;"></span>
+				<span class="egnitech-summary-savings is-hint" data-hint="<?php echo esc_attr( $savings_hint ); ?>"><?php echo esc_html( $savings_hint ); ?></span>
 			</div>
 		</div>
 	</div>
