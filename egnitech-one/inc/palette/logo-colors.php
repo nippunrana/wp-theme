@@ -76,43 +76,47 @@ function egnitech_one_read_logo_pixels( string $file, string $mime ): array|stri
 	$max = 128;
 
 	// Decode with GD only when this GD build reads the file's real type, so nothing is
-	// suppressed: imagecreatefromstring() warns on data it cannot read.
-	$gd_types = array(
-		'image/png'  => IMG_PNG,
-		'image/jpeg' => IMG_JPG,
-		'image/gif'  => IMG_GIF,
-		'image/webp' => IMG_WEBP,
-		'image/bmp'  => IMG_BMP,
-		'image/avif' => IMG_AVIF,
-	);
-	$real_mime = (string) wp_get_image_mime( $file );
-
-	if ( $has_gd && isset( $gd_types[ $real_mime ] ) && ( imagetypes() & $gd_types[ $real_mime ] ) ) {
-		$src = imagecreatefromstring( (string) file_get_contents( $file ) );
-		if ( $src ) {
-			$w     = imagesx( $src );
-			$h     = imagesy( $src );
-			$scale = min( 1, $max / max( $w, $h ) );
-			$nw    = max( 1, (int) round( $w * $scale ) );
-			$nh    = max( 1, (int) round( $h * $scale ) );
-
-			// Copying into a true-colour canvas also turns palette PNGs/GIFs into real RGB values:
-			// imagecolorat() on a palette image returns an index, which reads as near-black.
-			$img = imagecreatetruecolor( $nw, $nh );
-			imagealphablending( $img, false );
-			imagesavealpha( $img, true );
-			imagefill( $img, 0, 0, imagecolorallocatealpha( $img, 0, 0, 0, 127 ) );
-			imagecopyresampled( $img, $src, 0, 0, 0, 0, $nw, $nh, $w, $h );
-
-			$grid = array();
-			for ( $y = 0; $y < $nh; $y++ ) {
-				for ( $x = 0; $x < $nw; $x++ ) {
-					$c      = imagecolorat( $img, $x, $y );
-					$grid[] = array( ( $c >> 16 ) & 255, ( $c >> 8 ) & 255, $c & 255, 1 - ( ( $c >> 24 ) & 127 ) / 127 );
-				}
-			}
-			return array( 'grid' => $grid, 'width' => $nw, 'height' => $nh );
+	// suppressed: imagecreatefromstring() warns on data it cannot read. The IMG_* constants
+	// exist only while GD is loaded, so the map is built inside this check.
+	$src = false;
+	if ( $has_gd ) {
+		$gd_types  = array(
+			'image/png'  => IMG_PNG,
+			'image/jpeg' => IMG_JPG,
+			'image/gif'  => IMG_GIF,
+			'image/webp' => IMG_WEBP,
+			'image/bmp'  => IMG_BMP,
+			'image/avif' => IMG_AVIF,
+		);
+		$real_mime = (string) wp_get_image_mime( $file );
+		if ( isset( $gd_types[ $real_mime ] ) && ( imagetypes() & $gd_types[ $real_mime ] ) ) {
+			$src = imagecreatefromstring( (string) file_get_contents( $file ) );
 		}
+	}
+
+	if ( $src ) {
+		$w     = imagesx( $src );
+		$h     = imagesy( $src );
+		$scale = min( 1, $max / max( $w, $h ) );
+		$nw    = max( 1, (int) round( $w * $scale ) );
+		$nh    = max( 1, (int) round( $h * $scale ) );
+
+		// Copying into a true-colour canvas also turns palette PNGs/GIFs into real RGB values:
+		// imagecolorat() on a palette image returns an index, which reads as near-black.
+		$img = imagecreatetruecolor( $nw, $nh );
+		imagealphablending( $img, false );
+		imagesavealpha( $img, true );
+		imagefill( $img, 0, 0, imagecolorallocatealpha( $img, 0, 0, 0, 127 ) );
+		imagecopyresampled( $img, $src, 0, 0, 0, 0, $nw, $nh, $w, $h );
+
+		$grid = array();
+		for ( $y = 0; $y < $nh; $y++ ) {
+			for ( $x = 0; $x < $nw; $x++ ) {
+				$c      = imagecolorat( $img, $x, $y );
+				$grid[] = array( ( $c >> 16 ) & 255, ( $c >> 8 ) & 255, $c & 255, 1 - ( ( $c >> 24 ) & 127 ) / 127 );
+			}
+		}
+		return array( 'grid' => $grid, 'width' => $nw, 'height' => $nh );
 	}
 
 	// GD is missing or can't read this format (e.g. AVIF on some builds): try Imagick.

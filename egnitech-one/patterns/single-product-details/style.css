@@ -182,6 +182,19 @@
 	font-size: 1rem;
 }
 
+/* The form itself: WooCommerce's column flow adds an implicit column there too, which stops a variable
+   product's variation area short; and it shrinks a grouped form to its table. Five classes outrank
+   WooCommerce's grouped-form rule. */
+.is-style-single-product-details .egnitech-product-info-column .wc-block-add-to-cart-form.wp-block-woocommerce-add-to-cart-form > form {
+	grid-auto-flow: row;
+	width: auto;
+}
+
+/* No stepper beside the button (sold individually, last in stock, grouped): the button takes the whole row. */
+.is-style-single-product-details .wc-block-add-to-cart-form :has(> .wp-element-button):not(:has(> .wc-block-components-quantity-selector)) > .wp-element-button {
+	grid-column: 1 / -1;
+}
+
 /* WooCommerce's stepper (quantitySelectorStyle "stepper" in patterns/single-product-details.php). */
 .is-style-single-product-details .wc-block-add-to-cart-form .wc-block-components-quantity-selector {
 	border: 2px solid var(--wp--preset--color--border);
