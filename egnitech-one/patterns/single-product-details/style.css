@@ -643,6 +643,11 @@
 
 /* Mobile responsive fixes */
 @media (max-width: 480px) {
+	/* Room for the badges overhanging each card, so taps don't land on the wrong option */
+	.egnitech-bulk-discount-grid {
+		gap: var(--wp--preset--spacing--40);
+	}
+
 	.egnitech-bulk-discount-card {
 		padding: var(--wp--preset--spacing--20);
 		gap: 12px;
@@ -652,9 +657,14 @@
 		font-size: 1rem;
 	}
 	
+	/* Phones: the benefit text was cut off here, so the save line takes its place */
 	.egnitech-card-desc {
-		font-size: 0.78rem;
-		max-width: 140px;
+		display: none;
+	}
+
+	.egnitech-card-save {
+		display: block;
+		margin: 4px 0 0;
 	}
 	
 	.egnitech-price-amount {
