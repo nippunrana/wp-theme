@@ -75,8 +75,20 @@ function egnitech_one_read_logo_pixels( string $file, string $mime ): array|stri
 	wp_raise_memory_limit( 'image' );
 	$max = 128;
 
-	if ( $has_gd ) {
-		$src = @imagecreatefromstring( (string) file_get_contents( $file ) ); // phpcs:ignore WordPress.PHP.NoSilencedErrors -- false is handled.
+	// Decode with GD only when this GD build reads the file's real type, so nothing is
+	// suppressed: imagecreatefromstring() warns on data it cannot read.
+	$gd_types = array(
+		'image/png'  => IMG_PNG,
+		'image/jpeg' => IMG_JPG,
+		'image/gif'  => IMG_GIF,
+		'image/webp' => IMG_WEBP,
+		'image/bmp'  => IMG_BMP,
+		'image/avif' => IMG_AVIF,
+	);
+	$real_mime = (string) wp_get_image_mime( $file );
+
+	if ( $has_gd && isset( $gd_types[ $real_mime ] ) && ( imagetypes() & $gd_types[ $real_mime ] ) ) {
+		$src = imagecreatefromstring( (string) file_get_contents( $file ) );
 		if ( $src ) {
 			$w     = imagesx( $src );
 			$h     = imagesy( $src );

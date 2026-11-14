@@ -30,7 +30,7 @@ $gallery_layout = get_option( 'egnitech_one_woocommerce_gallery_layout', 'custom
 
 		<!-- wp:post-excerpt {"__woocommerceNamespace":"woocommerce/product-query/product-summary"} /-->
 
-		<!-- wp:woocommerce/add-to-cart-form /-->
+		<!-- wp:woocommerce/add-to-cart-form {"quantitySelectorStyle":"stepper"} /-->
 
 		<!-- wp:shortcode -->
 		[egnitech_product_trust_badges]

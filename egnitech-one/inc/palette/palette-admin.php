@@ -60,6 +60,33 @@ function egnitech_one_logo_palette_data( int $attachment_id ): array {
 }
 
 /**
+ * The site's Global Styles record for the active theme, created the way WordPress creates it when the
+ * site has none yet. Uses public functions only: WordPress marks WP_Theme_JSON_Resolver as internal.
+ *
+ * @return int Post ID, or 0 when it could not be created.
+ */
+function egnitech_one_palette_global_styles_id(): int {
+	$id = egnitech_one_get_global_styles_post_id(); // inc/admin-options.php
+	if ( $id ) {
+		return $id;
+	}
+
+	$stylesheet = get_stylesheet();
+	$created    = wp_insert_post(
+		array(
+			'post_content' => wp_slash( wp_json_encode( array( 'version' => 3, 'isGlobalStylesUserThemeJSON' => true ) ) ),
+			'post_status'  => 'publish',
+			'post_title'   => 'Custom Styles',
+			'post_type'    => 'wp_global_styles',
+			'post_name'    => sprintf( 'wp-global-styles-%s', urlencode( $stylesheet ) ),
+			'tax_input'    => array( 'wp_theme' => array( $stylesheet ) ),
+		),
+		true
+	);
+	return is_wp_error( $created ) ? 0 : (int) $created;
+}
+
+/**
  * Write a palette into the site's Global Styles record.
  *
  * A slot someone changed in the Site Editor (it differs from both theme.json and the palette this
@@ -77,13 +104,13 @@ function egnitech_one_apply_palette( array $colors, bool $replace_custom, string
 	}
 
 	// Creates the record when the site has none yet, which the layout-width sync does not.
-	$record = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( wp_get_theme(), true );
-	$id     = (int) ( $record['ID'] ?? 0 );
+	$id = egnitech_one_palette_global_styles_id();
 	if ( ! $id ) {
 		return new WP_Error( 'no_global_styles', __( 'Could not find or create the site\'s Global Styles record.', 'egnitech-one' ) );
 	}
 
-	$content = json_decode( (string) $record['post_content'], true );
+	$original = (string) get_post_field( 'post_content', $id, 'raw' );
+	$content  = json_decode( $original, true );
 	if ( ! is_array( $content ) ) {
 		$content = array( 'version' => 3, 'isGlobalStylesUserThemeJSON' => true );
 	}
@@ -97,7 +124,7 @@ function egnitech_one_apply_palette( array $colors, bool $replace_custom, string
 	$applied = (array) get_option( EGNITECH_ONE_PALETTE_APPLIED, array() );
 	$written = (array) ( $applied['written'] ?? $applied['colors'] ?? array() );
 	$before  = egnitech_one_current_palette();
-	$theme   = WP_Theme_JSON_Resolver::get_theme_data()->get_settings()['color']['palette']['theme'] ?? array();
+	$theme   = egnitech_one_theme_json_palette();
 	$entries = array();
 	$skipped = array();
 
@@ -148,7 +175,7 @@ function egnitech_one_apply_palette( array $colors, bool $replace_custom, string
 	// leave half a palette.
 	foreach ( $entries as $entry ) {
 		if ( ( $after[ $entry['slug'] ] ?? null ) !== $entry['color'] ) {
-			wp_update_post( array( 'ID' => $id, 'post_content' => wp_slash( (string) $record['post_content'] ) ) );
+			wp_update_post( array( 'ID' => $id, 'post_content' => wp_slash( $original ) ) );
 			wp_clean_theme_json_cache();
 			return new WP_Error( 'palette_filtered', __( 'Something on this site changed the colours while saving them, so the palette was not applied. The previous colours are back.', 'egnitech-one' ) );
 		}

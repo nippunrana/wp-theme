@@ -27,7 +27,7 @@ A child theme holds the changes one site needs (its own patterns, templates, sty
 | A section or pattern | Add it under `patterns/`, with its CSS/JS beside it (`patterns/<slug>/style.css`, `index.js`), registered through `register_block_style()`. Prefix pattern slugs and categories with the child's slug. |
 | PHP behaviour | Add it to the child's `functions.php`. The child's `functions.php` loads **before** the parent's, so any parent function wrapped in `if ( ! function_exists() )` can be replaced by defining it first. |
 
-The `wp-block-theme` skill (`egnitech-one/.agent/skills/wp-block-theme/`) has the full procedures for templates, patterns, and the asset pipeline.
+The `wp-block-theme` skill (`OSR/skills/wp-block-theme/`, outside this repo) has the full procedures for templates, patterns, and the asset pipeline.
 
 ---
 

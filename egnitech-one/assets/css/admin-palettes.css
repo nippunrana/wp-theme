@@ -3,80 +3,80 @@
  */
 
 .egnitech-palette-replace {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 13px;
-    color: var(--egnitech-text-main);
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	color: var(--egnitech-text-main);
+	font-size: 13px;
 }
 
 .egnitech-palette-notice {
-    margin: 12px 0 0;
-    padding: 10px 14px;
-    border-radius: var(--egnitech-radius-sm);
-    background: #ecfdf5;
-    color: #065f46;
-    font-size: 13px;
+	margin: 12px 0 0;
+	padding: 10px 14px;
+	border-radius: var(--egnitech-radius-sm);
+	background: #ecfdf5;
+	color: #065f46;
+	font-size: 13px;
 }
 
 .egnitech-palette-notice.is-error {
-    background: #fef2f2;
-    color: var(--egnitech-danger-hover);
+	background: #fef2f2;
+	color: var(--egnitech-danger-hover);
 }
 
 .egnitech-palette-section {
-    margin-top: 20px;
+	margin-top: 20px;
 }
 
 .egnitech-palette-section-title {
-    margin: 0 0 10px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--egnitech-text-main);
+	margin: 0 0 10px;
+	color: var(--egnitech-text-main);
+	font-weight: 600;
+	font-size: 13px;
 }
 
 .egnitech-palette-message {
-    margin: 0 0 10px;
-    font-size: 13px;
-    color: var(--egnitech-text-muted);
+	margin: 0 0 10px;
+	color: var(--egnitech-text-muted);
+	font-size: 13px;
 }
 
 .egnitech-palette-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-    gap: 12px;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+	gap: 12px;
 }
 
 .egnitech-palette-card {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 12px;
-    border: 1px solid var(--egnitech-border);
-    border-radius: var(--egnitech-radius-md);
-    background: #fff;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 12px;
+	border: 1px solid var(--egnitech-border);
+	border-radius: var(--egnitech-radius-md);
+	background: #fff;
 }
 
 .egnitech-palette-card-swatches {
-    display: flex;
+	display: flex;
 }
 
 .egnitech-palette-card-dot {
-    width: 26px;
-    height: 26px;
-    margin-right: -4px;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+	width: 26px;
+	height: 26px;
+	margin-right: -4px;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
 .egnitech-palette-card-label {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--egnitech-text-main);
+	color: var(--egnitech-text-main);
+	font-weight: 500;
+	font-size: 13px;
 }
 
 .egnitech-palette-card .egnitech-btn:disabled {
-    opacity: 0.6;
-    cursor: default;
+	opacity: 0.6;
+	cursor: default;
 }

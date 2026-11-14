@@ -4,7 +4,7 @@
 > **Context Selection Rule:**
 > If you are working within an active child theme, you MUST ignore this file and use the `ai-context.md` in that child theme's directory instead.
 
-This file provides the **architectural foundation** and **design system rules** for the EgniTech One parent theme. This is the core engine; for technical implementation procedures (creating templates, patterns, or asset loading), refer to the local `wp-block-theme` skill located in the directory `egnitech-one/.agent/skills/wp-block-theme/`.
+This file provides the **architectural foundation** and **design system rules** for the EgniTech One parent theme. This is the core engine; for technical implementation procedures (creating templates, patterns, or asset loading), refer to the `wp-block-theme` skill. It is kept outside this repo, in the owner's `OSR/skills/wp-block-theme/` folder (`SKILL.md` and `references/`), not in `.agent/`.
 
 ## Project Identity
 - **Theme Name**: `EgniTech One` (Folder: `egnitech-one`)
@@ -24,7 +24,7 @@ This file provides the **architectural foundation** and **design system rules** 
 
 ## Implementation Workflow
 For all development tasks involving templates, patterns, or `theme.json`:
-1. **Use the `wp-block-theme` skill** located in `egnitech-one/.agent/skills/wp-block-theme/`. It contains the expert logic for HTML conversion, CSS scoping, and the atomic asset pipeline.
+1. **Use the `wp-block-theme` skill** (`OSR/skills/wp-block-theme/SKILL.md`, outside this repo). It contains the expert logic for HTML conversion, CSS scoping, and the atomic asset pipeline.
 2. **Modular Assets**: Follow the "Pattern-First" asset model. Section-specific CSS/JS lives alongside its pattern in `patterns/{slug}/` (e.g. `style.css`, `index.js`). Never `wp_enqueue_style()`/`wp_enqueue_script()` directly inside a pattern's PHP file. Instead:
    - CSS is registered via `register_block_style()` with a `style_handle` in `inc/theme-setup.php`, so it loads only when that block style is used.
    - JS/CSS that must load conditionally (e.g. only on product pages) is registered and enqueued from `inc/enqueue-assets.php`, gated on the relevant condition.
@@ -82,13 +82,16 @@ Each file in `docs/built-systems/` holds only what the code cannot say: bans, de
 | reCAPTCHA keys | Built | `inc/helpers.php` | Stores the keys and hands them out (section above). Nothing in this theme draws a challenge or checks an answer |
 | Font overview | Built | `inc/font-manager.php` | Read-only list in Theme Options. Fonts are changed in the Site Editor; this file installs nothing, whatever its header says |
 | Scroll-to-top, reading progress, breadcrumbs | Built | `inc/enqueue-assets.php`, `inc/theme-setup.php` | Switches under Theme Options > General. Their output is part of the cached page |
+| Add to Cart + Options migration | Roadmap | [docs/plans/2026-11-15-add-to-cart-options-migration.md](docs/plans/2026-11-15-add-to-cart-options-migration.md) | Waiting for WooCommerce to drop the block's Beta label. Read before touching the product page's add-to-cart form |
 | Child themes | Built | [docs/child-theme/README.md](docs/child-theme/README.md) | None ships here. Several parent behaviours change under a child: see the assets and dark-mode files |
 
-No `Roadmap` rows yet: nothing planned is recorded in this repo. Add one before describing planned work anywhere.
+**Plans live in `docs/plans/`**, one file per plan named `YYYY-MM-DD-topic.md` (the day it was written), with a **Last reviewed** date and a status inside. Before starting work in an area, check that folder for a plan that touches it. When you act on a plan, update its **Last reviewed** line and status. Every plan has a `Roadmap` row above.
 
 **Reading a setting:** new code uses `egnitech_one_get_option()` (`inc/helpers.php`) instead of `get_option()`. Most existing modules still call `get_option()` directly.
 
 ## Environment & Deployment Constraints
+- **PHP version:** the theme targets 8.4. homegears.in runs 8.5.4 (checked 15 Nov 2026), so 8.5-only syntax works there and breaks elsewhere: **never** use it.
+- **WordPress version:** the theme targets 7.0. homegears.in runs 7.1.4 with WooCommerce 11.3.0 (checked 15 Nov 2026). **Never** use 7.1-only features.
 - **On the homegears.in server this repo is cloned straight into `wp-content/themes/`, so that working copy is the live site.** A saved file is in production at once. There is no build step and no staging copy. Another site's copy of the theme changes only when that copy is updated.
 - **GitHub `main` is the only source of truth, and it is built from that clone** (owner's decision, 13 Nov 2026). Another site's copy of the theme is an export of a pushed commit. **Never** edit such a copy in place: make the change here, push, then export that commit over the copy again.
 - **Two caches sit outside WordPress.** nginx keeps whole pages for logged-out visitors, and tells browsers to keep CSS and JS indefinitely. A change that "does not show" is nearly always the first: see the page-cache and assets files above.

@@ -160,14 +160,23 @@ function egnitech_one_logo_palettes( array $seeds ): array {
 }
 
 /**
+ * The theme's own palette entries (theme.json, before any Site Editor change).
+ * Origin 'base' is core + theme without the user's Global Styles, through the public API.
+ *
+ * @return list<array{slug: string, color: string, name: string}>
+ */
+function egnitech_one_theme_json_palette(): array {
+	return array_values( (array) wp_get_global_settings( array( 'color', 'palette', 'theme' ), array( 'origin' => 'base' ) ) );
+}
+
+/**
  * The three ready-made palettes: the theme's own (read from theme.json), plus two common ones.
  *
  * @return list<array{label: string, colors: array<string, string>}>
  */
 function egnitech_one_preset_palettes(): array {
-	$theme    = WP_Theme_JSON_Resolver::get_theme_data()->get_settings()['color']['palette']['theme'] ?? array();
 	$defaults = array();
-	foreach ( $theme as $entry ) {
+	foreach ( egnitech_one_theme_json_palette() as $entry ) {
 		$defaults[ $entry['slug'] ] = $entry['color'];
 	}
 

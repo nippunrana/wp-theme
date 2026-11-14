@@ -1418,7 +1418,7 @@ esc_html_e( 'Customize the "Built by EgniTech" text. HTML allowed.', 'egnitech-o
 			<div class="egnitech-option-row">
 				<div class="egnitech-option-info">
 					<label><?php esc_html_e( 'Buy Now', 'egnitech-one' ); ?></label>
-					<p class="description"><?php esc_html_e( 'Label the button "Buy Now" instead of "Add to cart", and take shoppers straight to checkout after the item is added, without opening the cart drawer. Saving a change clears the page cache, so visitors see the new label straight away.', 'egnitech-one' ); ?></p>
+					<p class="description"><?php esc_html_e( 'Label the button "Buy Now" instead of "Add to cart", and take shoppers straight to checkout after the item is added, without opening the cart drawer. Saving a change clears the page cache, so visitors see the new label straight away. This is a theme feature: switching to another theme turns it off.', 'egnitech-one' ); ?></p>
 				</div>
 				<div class="egnitech-option-control">
 					<label class="egnitech-switch">

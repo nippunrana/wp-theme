@@ -9,6 +9,7 @@ Code: `inc/palette/` (loaded from `functions.php` in wp-admin only), `assets/js/
 - **Never give the "Also replace colours changed in the Site Editor" switch a `name` attribute.** It would be posted to `options.php` with the form.
 - **Never hand an SVG to Imagick.** Rendering SVG can make the server read local files or fetch URLs. SVG logos get the "unreadable" message instead.
 - **Never hard-code a text colour on an Accent background, or use Base for it.** Use `var(--egnitech-on-accent, …)`: no single colour reads on every accent (black on the default teal, white on a dark blue).
+- **Never use `WP_Theme_JSON_Resolver`.** WordPress marks it internal, not for themes. Read the theme.json palette with `egnitech_one_theme_json_palette()` (`wp_get_global_settings()` with origin `base`), and find or create the stored record with `egnitech_one_palette_global_styles_id()`.
 - **Never add or rename a slot here.** The six theme.json slugs are what every pattern and stylesheet reads. Generated palettes are always `light-dark()` pairs; only "Switch back" may restore a plain Site Editor colour.
 
 ## Decisions

@@ -110,7 +110,7 @@ Agents working in the child theme read this file instead of the parent's; `egnit
 > **Context Selection Rule:**
 > If you are working within the parent theme core (e.g., inside `egnitech-one/` folder, and the objective is to modify the core foundation), you MUST ignore this file and use the parent theme's `ai-context.md` (`egnitech-one/ai-context.md`) instead.
 
-This file provides the **environmental ground rules** and **project identity** for the child theme. For technical implementation procedures (creating templates, patterns, or asset loading), refer to the local `wp-block-theme` skill located in the directory `egnitech-one/.agent/skills/wp-block-theme/`.
+This file provides the **environmental ground rules** and **project identity** for the child theme. For technical implementation procedures (creating templates, patterns, or asset loading), refer to the local `wp-block-theme` skill kept outside this repo in the owner's `OSR/skills/wp-block-theme/` folder.
 
 ## Project Identity
 - **Child Theme**: `THEME_NAME` (Folder: `THEME_SLUG`)
@@ -143,7 +143,7 @@ This child theme's folder/slug is renamed per site (e.g. `egnitech-one-child` â†
 
 ## Implementation Workflow
 For all development tasks involving templates, patterns, `theme.json`, or asset enqueuing:
-1. **Use the `wp-block-theme` skill** located in `egnitech-one/.agent/skills/wp-block-theme/`. It contains the expert logic for HTML conversion, CSS scoping, and the atomic asset pipeline.
+1. **Use the `wp-block-theme` skill** (`OSR/skills/wp-block-theme/SKILL.md`, outside this repo). It contains the expert logic for HTML conversion, CSS scoping, and the atomic asset pipeline.
 2. **Follow the Pattern-First Model**: New patterns should use modular asset bundles (scoped `style.css` and `index.js` inside the pattern directory) registered via `register_block_style()` as detailed in the skill.
 
 ## Project-Specific Systems
@@ -180,7 +180,7 @@ Google reCAPTCHA v2 keys are managed globally under the parent theme's options p
 5. **PHP 8.4 & WP 7.0 Compliance (MANDATORY)**: All child theme PHP files (including `functions.php`, helper scripts, or template overrides) must include `declare(strict_types=1);` on line 2, and use native type hints for all parameters and return types. Any custom `theme.json` in the child theme must inherit from parent settings and use `"version": 3`.
 
 ## Technical References
-Refer to the following in the local `wp-block-theme` skill (under `egnitech-one/.agent/skills/wp-block-theme/`) for deep-dives:
+Refer to the following in the local `wp-block-theme` skill (`OSR/skills/wp-block-theme/`, outside this repo) for deep-dives:
 - `references/html-conversion.md`: The 10-step process for converting designs to FSE.
 - `references/architecture.md`: Scoping rules and the asset pipeline.
 - `references/theme-json.md`: Global design system tokens.
