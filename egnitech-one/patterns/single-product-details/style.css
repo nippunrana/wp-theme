@@ -655,20 +655,15 @@
 	
 	.egnitech-card-qty {
 		font-size: 1rem;
-		position: relative;
 	}
 	
-	/* Phones: the benefit text was cut off here, so the save line takes its place */
+	/* Phones: the benefit text was cut off here, so only "Buy N (Save Extra N%)" remains */
 	.egnitech-card-desc {
 		display: none;
 	}
 
-	/* Hangs below "Buy N" without adding height, so "Buy N" stays level with the radio as on Buy 1 */
+	/* Never split "(Save Extra N%)" across two lines */
 	.egnitech-card-save {
-		position: absolute;
-		top: 100%;
-		left: 0;
-		margin: 4px 0 0;
 		white-space: nowrap;
 	}
 	
