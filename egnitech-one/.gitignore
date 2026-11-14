@@ -6,3 +6,4 @@ Thumbs.db
 .idea/
 vendor/
 .agent/
+.agent
