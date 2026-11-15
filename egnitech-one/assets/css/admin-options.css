@@ -8,7 +8,6 @@
 /* ===== CSS Variables (Design System) ===== */
 :root {
     /* Colors */
-    --egnitech-bg: #f3f4f6;
     --egnitech-card-bg: rgba(255, 255, 255, 0.7);
     --egnitech-card-border: rgba(255, 255, 255, 0.4);
     --egnitech-text-main: #111827;
@@ -27,7 +26,6 @@
     --egnitech-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --egnitech-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     --egnitech-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-    --egnitech-shadow-glow: 0 0 20px var(--egnitech-accent-glow);
 
     /* Layout & Spacing */
     --egnitech-radius-lg: 16px;
@@ -322,44 +320,6 @@ textarea.egnitech-textarea {
     color: var(--egnitech-text-muted);
     font-size: 13px;
     pointer-events: none;
-}
-
-/* Color Picker Customization */
-.egnitech-color-picker-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #fff;
-    padding: 6px 12px 6px 8px;
-    border: 1px solid var(--egnitech-border);
-    border-radius: var(--egnitech-radius-md);
-    box-shadow: var(--egnitech-shadow-sm);
-}
-
-.color-label {
-    font-size: 13px;
-    font-weight: 500;
-}
-
-.egnitech-color-field {
-    -webkit-appearance: none;
-    border: none;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    padding: 0;
-    cursor: pointer;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.egnitech-color-field::-webkit-color-swatch-wrapper {
-    padding: 0;
-}
-
-.egnitech-color-field::-webkit-color-swatch {
-    border: none;
-    border-radius: 50%;
 }
 
 /* Modern Toggle Switch */
@@ -713,13 +673,6 @@ textarea.egnitech-textarea {
 .egnitech-logo-actions {
     display: flex;
     gap: 10px;
-}
-
-/* Status message */
-.egnitech-status-msg {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--egnitech-success);
 }
 
 /* Save Bar (Sticky Bottom) */
@@ -1140,66 +1093,6 @@ textarea.egnitech-textarea {
 .egnitech-delayed-disclaimer strong {
     color: #b45309;
 }
-/* ===== Premium Notice Styles ===== */
-.egnitech-premium-notice {
-    display: flex;
-    align-items: center;
-    gap: var(--egnitech-spacing-xl);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid var(--egnitech-card-border);
-    border-radius: var(--egnitech-radius-lg);
-    padding: var(--egnitech-spacing-xl);
-    margin: var(--egnitech-spacing-lg) 0 var(--egnitech-spacing-xl) 0;
-    box-shadow: var(--egnitech-shadow-lg);
-    animation: fadeUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.egnitech-notice-illustration {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 64px;
-    height: 64px;
-    background: var(--egnitech-accent-glow);
-    border-radius: var(--egnitech-radius-md);
-    color: var(--egnitech-accent);
-    flex-shrink: 0;
-}
-
-.egnitech-notice-illustration .dashicons {
-    font-size: 32px;
-    width: 32px;
-    height: 32px;
-}
-
-.egnitech-notice-content {
-    flex: 1;
-}
-
-.egnitech-notice-title {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--egnitech-text-main);
-    margin-bottom: var(--egnitech-spacing-xs) !important;
-    letter-spacing: -0.025em;
-}
-
-.egnitech-notice-text {
-    font-size: 15px;
-    color: var(--egnitech-text-muted);
-    line-height: 1.6;
-    margin-bottom: var(--egnitech-spacing-lg) !important;
-    max-width: 600px;
-}
-
-.egnitech-notice-footer {
-    display: flex;
-    gap: var(--egnitech-spacing-md);
-    align-items: center;
-}
-
 /* Disabled State Visual Enhancement */
 .egnitech-tab-panel input:disabled,
 .egnitech-tab-panel textarea:disabled,
