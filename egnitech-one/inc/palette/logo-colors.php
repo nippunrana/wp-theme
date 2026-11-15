@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Bump when the extraction logic changes, so cached results are thrown away.
  */
-const EGNITECH_ONE_LOGO_COLORS_VERSION = 1;
+const EGNITECH_ONE_LOGO_COLORS_VERSION = 2;
 
 /**
  * Brand colours of an image attachment, cached until the file or the algorithm changes.
