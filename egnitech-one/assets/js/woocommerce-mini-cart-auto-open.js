@@ -8,6 +8,16 @@
 	'use strict';
 
 	/**
+	 * Whether the mini-cart drawer is showing.
+	 *
+	 * @return {boolean} True when the drawer is open.
+	 */
+	function isMiniCartDrawerOpen() {
+		const overlay = document.querySelector('.wc-block-components-drawer__screen-overlay');
+		return !!overlay && !overlay.classList.contains('wc-block-components-drawer__screen-overlay--is-hidden');
+	}
+
+	/**
 	 * Helper function to open the mini-cart drawer.
 	 *
 	 * @return {boolean} True if successful, false otherwise.
@@ -30,13 +40,9 @@
 
 		// 2. Fallback: Click the mini-cart button
 		const miniCartButton = document.querySelector('.wc-block-mini-cart__button');
-		if (miniCartButton) {
-			const overlay = document.querySelector('.wc-block-components-drawer__screen-overlay');
-			const isHidden = overlay ? overlay.classList.contains('wc-block-components-drawer__screen-overlay--is-hidden') : true;
-			if (isHidden) {
-				miniCartButton.click();
-				return true;
-			}
+		if (miniCartButton && !isMiniCartDrawerOpen()) {
+			miniCartButton.click();
+			return true;
 		}
 		return false;
 	}
@@ -50,16 +56,19 @@
 			// Clear the cookie
 			document.cookie = cookieName + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 
-			// Attempt to open the drawer
-			if (!openMiniCartDrawer()) {
-				let attempts = 0;
-				const interval = setInterval(() => {
-					attempts++;
-					if (openMiniCartDrawer() || attempts > 30) {
-						clearInterval(interval);
-					}
-				}, 100);
-			}
+			// The mini-cart ignores clicks until its own script has started, which is often after this
+			// one runs. So keep asking, for up to five seconds, until the drawer reports open: the
+			// button only ever opens the drawer, so asking twice does no harm.
+			openMiniCartDrawer();
+			let attempts = 0;
+			const interval = setInterval(() => {
+				attempts++;
+				if (isMiniCartDrawerOpen() || attempts > 50) {
+					clearInterval(interval);
+					return;
+				}
+				openMiniCartDrawer();
+			}, 100);
 		}
 	}
 

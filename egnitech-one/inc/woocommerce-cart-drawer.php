@@ -51,13 +51,19 @@ add_action( 'update_option_egnitech_one_woocommerce_buy_now', 'egnitech_one_purg
 add_action( 'add_option_egnitech_one_woocommerce_buy_now', 'egnitech_one_purge_cache_on_buy_now_change' );
 
 /**
- * Set a cookie when a product is added to the cart to open the drawer on page load as a fallback.
+ * Set a cookie when a product is added to the cart by a full-page form post, so the drawer opens
+ * on the page that follows.
  *
  * @return void
  */
 function egnitech_one_set_add_to_cart_cookie(): void {
 	// Buy Now sends the shopper to checkout, where a drawer popping open would be in the way.
 	if ( egnitech_one_is_buy_now() ) {
+		return;
+	}
+	// An AJAX or REST add opens the drawer on the page it came from. A cookie set there would open
+	// it again on whichever page the shopper visits next.
+	if ( wp_doing_ajax() || wp_is_serving_rest_request() ) {
 		return;
 	}
 	// The cart-drawer script reads and clears this cookie, so it cannot be HttpOnly and its path must stay '/'.
