@@ -42,17 +42,23 @@ function egnitech_one_get_current_host(): string {
 }
 
 /**
+ * Get the cache directory used until a path has been saved.
+ * Built from the site's own address only, never from the request's Host header, which the visitor chooses.
+ *
+ * @return string
+ */
+function egnitech_one_get_default_cache_directory(): string {
+	$host = egnitech_one_get_current_host();
+	return '/var/cache/nginx/' . ( '' !== $host ? $host : 'example.com' );
+}
+
+/**
  * Get the configured cache directory path.
  *
  * @return string
  */
 function egnitech_one_get_cache_directory(): string {
-	$host = egnitech_one_get_current_host();
-	if ( empty( $host ) ) {
-		$host = $_SERVER['HTTP_HOST'] ?? 'example.com';
-	}
-	$default_path = '/var/cache/nginx/' . strtolower( $host );
-	return get_option( 'egnitech_one_fastcgi_cache_path', $default_path );
+	return get_option( 'egnitech_one_fastcgi_cache_path', egnitech_one_get_default_cache_directory() );
 }
 
 /**
@@ -164,14 +170,11 @@ function egnitech_one_purge_url( string $url ): bool {
 	$purge_method = get_option( 'egnitech_one_fastcgi_purge_method', 'filesystem' );
 
 	if ( 'http_purge' === $purge_method ) {
-		// Use HTTP PURGE loopback request
-		// Replace scheme or URL component for purge target if Nginx module requires /purge/ prefix
-		$purge_url = str_replace( array( 'http://', 'https://' ), array( 'http://', 'https://' ), $url );
-		
-		// Send request with method PURGE
-		$response = wp_remote_request( $purge_url, array(
+		// Send a PURGE request to the page's own address (a loopback request).
+		$response = wp_remote_request( $url, array(
 			'method'      => 'PURGE',
-			'sslverify'   => false,
+			/** This filter is documented in wp-includes/class-wp-http-streams.php */
+			'sslverify'   => apply_filters( 'https_local_ssl_verify', false ),
 			'timeout'     => 5,
 			'redirection' => 0,
 		) );

@@ -491,7 +491,7 @@ register_setting( 'egnitech_one_options', 'egnitech_one_fastcgi_purge_method', [
 
 register_setting( 'egnitech_one_options', 'egnitech_one_fastcgi_cache_path', [
 'type'              => 'string',
-'default'           => '/var/cache/nginx/' . ( wp_parse_url( home_url(), PHP_URL_HOST ) ?: ( $_SERVER['HTTP_HOST'] ?? 'example.com' ) ),
+'default'           => egnitech_one_get_default_cache_directory(),
 'sanitize_callback' => 'sanitize_text_field',
 ] );
 
@@ -739,7 +739,7 @@ $recaptcha_secret_key = get_option( 'egnitech_one_recaptcha_secret_key', '' );
 // FastCGI Cache options.
 $fastcgi_cache_enabled = get_option( 'egnitech_one_fastcgi_cache_enabled', 'no' );
 $fastcgi_purge_method  = get_option( 'egnitech_one_fastcgi_purge_method', 'filesystem' );
-$fastcgi_cache_path    = get_option( 'egnitech_one_fastcgi_cache_path', '/var/cache/nginx/' . ( wp_parse_url( home_url(), PHP_URL_HOST ) ?: ( $_SERVER['HTTP_HOST'] ?? 'example.com' ) ) );
+$fastcgi_cache_path    = egnitech_one_get_cache_directory();
 
 // Layout from Global Styles (synced).
 $layout               = egnitech_one_get_layout_settings();
@@ -1685,7 +1685,7 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
                 <div class="egnitech-option-row" id="egnitech-fastcgi-path-row" style="<?php echo 'filesystem' === $fastcgi_purge_method ? '' : 'display: none;'; ?>">
                     <div class="egnitech-option-info">
                         <label><?php esc_html_e( 'Cache Directory Path', 'egnitech-one' ); ?></label>
-                        <?php $domain_name = wp_parse_url( home_url(), PHP_URL_HOST ) ?: ( $_SERVER['HTTP_HOST'] ?? 'example.com' ); ?>
+                        <?php $domain_name = egnitech_one_get_current_host(); ?>
                         <p class="description"><?php printf( esc_html__( 'The absolute path to the Nginx fastcgi_cache_path directory (e.g. /var/cache/nginx/%s). Must match your nginx.conf.', 'egnitech-one' ), esc_html( $domain_name ) ); ?></p>
                     </div>
                     <div class="egnitech-option-control">
