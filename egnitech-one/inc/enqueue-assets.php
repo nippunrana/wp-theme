@@ -304,6 +304,7 @@ if ( ! function_exists( 'egnitech_one_admin_scripts' ) ) {
 			'i18n'            => array(
 				'loading'       => __( 'Loading…', 'egnitech-one' ),
 				'confirmDelete' => __( 'Are you sure you want to delete this code snippet?', 'egnitech-one' ),
+				'error'         => __( 'Failed to add script.', 'egnitech-one' ),
 			),
 		) );
 	}
