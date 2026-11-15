@@ -102,7 +102,8 @@ function egnitech_one_save_bulk_discount_fields( int $product_id ): void {
 		}
 		if ( isset( $_POST[ $val_key ] ) ) {
 			$val_val = sanitize_text_field( $_POST[ $val_key ] );
-			update_post_meta( $product_id, $val_key, '' !== $val_val ? (string) floatval( $val_val ) : '' );
+			// The field's 0-100 limit is only a browser hint, and a percentage above 100 would make the price negative.
+			update_post_meta( $product_id, $val_key, '' !== $val_val ? (string) min( 100.0, max( 0.0, floatval( $val_val ) ) ) : '' );
 		}
 		if ( isset( $_POST[ $label_key ] ) ) {
 			update_post_meta( $product_id, $label_key, sanitize_text_field( $_POST[ $label_key ] ) );
@@ -228,7 +229,7 @@ function egnitech_one_render_bulk_discount_selector(): void {
 					<span class="egnitech-price-amount">
 						<span class="egnitech-price-num"><?php echo esc_html( $format_price( $base_price ) ); ?></span>
 					</span>
-					<span class="egnitech-price-label"><?php echo sprintf( esc_html__( '(%s each)', 'egnitech-one' ), $format_price( $base_price ) ); ?></span>
+					<span class="egnitech-price-label"><?php echo sprintf( esc_html__( '(%s each)', 'egnitech-one' ), esc_html( $format_price( $base_price ) ) ); ?></span>
 				</div>
 			</div>
 
@@ -264,7 +265,7 @@ function egnitech_one_render_bulk_discount_selector(): void {
 						<span class="egnitech-price-amount">
 							<span class="egnitech-price-num"><?php echo esc_html( $format_price( $total_discounted_price ) ); ?></span>
 						</span>
-						<span class="egnitech-price-label"><?php echo sprintf( esc_html__( '(%s each)', 'egnitech-one' ), $format_price( $discounted_price ) ); ?></span>
+						<span class="egnitech-price-label"><?php echo sprintf( esc_html__( '(%s each)', 'egnitech-one' ), esc_html( $format_price( $discounted_price ) ) ); ?></span>
 					</div>
 					
 					<?php if ( $is_last ) : ?>
