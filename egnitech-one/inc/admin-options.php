@@ -332,11 +332,14 @@ register_setting( 'egnitech_one_options', 'egnitech_one_dark_mode_enabled', [
 'sanitize_callback' => 'sanitize_text_field',
 ] );
 
+// Registered only while dark mode is on, which is also when its field is printed (see the WooCommerce note below).
+if ( egnitech_one_is_dark_mode_enabled() ) {
 register_setting( 'egnitech_one_options', 'egnitech_one_dark_mode_default', [
 'type'              => 'string',
 'default'           => 'system',
 'sanitize_callback' => 'egnitech_one_sanitize_dark_mode_default',
 ] );
+}
 
 register_setting( 'egnitech_one_options', 'egnitech_one_reading_progress', [
 'type'              => 'string',
@@ -477,6 +480,9 @@ register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_buy_now', [
 ] );
 }
 
+/* ----- FastCGI Cache ----- */
+// Registered only on nginx, which is also when their tab is printed.
+if ( egnitech_one_is_nginx() ) {
 register_setting( 'egnitech_one_options', 'egnitech_one_fastcgi_cache_enabled', [
 'type'              => 'string',
 'default'           => 'no',
@@ -494,6 +500,7 @@ register_setting( 'egnitech_one_options', 'egnitech_one_fastcgi_cache_path', [
 'default'           => egnitech_one_get_default_cache_directory(),
 'sanitize_callback' => 'sanitize_text_field',
 ] );
+}
 
 }
 add_action( 'admin_init', 'egnitech_one_register_settings' );
