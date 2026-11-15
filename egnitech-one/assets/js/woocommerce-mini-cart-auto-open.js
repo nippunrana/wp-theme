@@ -73,6 +73,25 @@
 	}
 
 	/**
+	 * Submit the form the ordinary way, as a click on its button would have.
+	 * form.submit() sends no button, and a simple product's id travels only on its
+	 * add-to-cart button, so the button's name and value are added as a field first.
+	 *
+	 * @param {HTMLFormElement}   form   The add-to-cart form.
+	 * @param {HTMLButtonElement} button The button that was clicked.
+	 */
+	function submitWithButton(form, button) {
+		if (button.name && !form.querySelector('input[name="' + CSS.escape(button.name) + '"]')) {
+			const field = document.createElement('input');
+			field.type = 'hidden';
+			field.name = button.name;
+			field.value = button.value;
+			form.appendChild(field);
+		}
+		form.submit();
+	}
+
+	/**
 	 * Listen for AJAX add to cart event (jQuery-based archives).
 	 */
 	function initAjaxListener() {
@@ -154,7 +173,9 @@
 			})
 			.then((data) => {
 				if (data.error && data.product_url) {
-					// Fallback to normal form submission if there's an error
+					// WooCommerce answered but could not add this one (a variable product, or a refusal it
+					// has already put on screen). Resubmit without the button: the form's own fields carry
+					// what a variable product needs, and a refused simple product is not tried twice.
 					form.submit();
 					return;
 				}
@@ -179,8 +200,9 @@
 			})
 			.catch((error) => {
 				console.error('AJAX add-to-cart error:', error);
-				// Fallback to normal form submission if fetch fails completely
-				form.submit();
+				// No usable answer came back (offline, blocked, or a server error), so nothing was
+				// reported to the shopper: submit the form the ordinary way, so the product is still added.
+				submitWithButton(form, submitButton);
 			})
 			.finally(() => {
 				// Restore button state
