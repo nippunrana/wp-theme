@@ -2,6 +2,16 @@
 declare(strict_types=1);
 
 /**
+ * Theme Options Page and Settings
+ *
+ * @package EgniTech_One
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
  * Helper to generate shared accordion structure
  *
  * @param array $args The arguments array.
@@ -175,21 +185,6 @@ function egnitech_one_generate_script_item_html( string|int $id, string $name, s
         'content'      => $content,
         'delete_title' => __( 'Delete Script', 'egnitech-one' )
     ) );
-    return ob_get_clean();
-}
-/**
- * Theme Options Page and Settings
- *
- * @package EgniTech_One
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-exit;
-}
-
-if ( ! is_admin() ) {
-// Only load these functions in the admin area
-return;
 }
 
 /**
