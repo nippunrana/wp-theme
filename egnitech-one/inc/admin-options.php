@@ -501,13 +501,15 @@ add_action( 'admin_init', 'egnitech_one_register_settings' );
 /* ----- Sanitize callbacks ----- */
 
 /**
- * Sanitize scripts — only allow for users with unfiltered_html capability.
+ * Sanitize scripts — only users with the unfiltered_html capability may change them.
+ * Anyone else keeps what is saved: the form rewrites every setting on each save, so an
+ * empty string here would delete every snippet whenever such a user saved any tab.
  */
 function egnitech_one_sanitize_scripts( mixed $input ): string {
-if ( ! current_user_can( 'unfiltered_html' ) ) {
-return '';
-}
-return is_string( $input ) ? $input : '';
+	if ( ! current_user_can( 'unfiltered_html' ) ) {
+		return (string) get_option( 'egnitech_one_custom_scripts', '' );
+	}
+	return is_string( $input ) ? $input : '';
 }
 
 /**
