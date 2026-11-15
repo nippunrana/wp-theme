@@ -243,7 +243,7 @@ function egnitech_one_render_bulk_discount_selector(): void {
 				$discounted_price = $base_price * ( 1.0 - ( $pct / 100.0 ) );
 				$total_discounted_price = $discounted_price * $qty;
 				$total_original_price = $base_price * $qty;
-				$tier_label = ! empty( $tier['label'] ) ? $tier['label'] : sprintf( esc_html__( 'Save %d%% per unit', 'egnitech-one' ), $pct );
+				$tier_label = ! empty( $tier['label'] ) ? $tier['label'] : sprintf( esc_html__( 'Save %g%% per unit', 'egnitech-one' ), $pct );
 				?>
 				<div class="egnitech-bulk-discount-card<?php echo $is_last ? ' egnitech-last-tier' : ''; ?>" 
 					data-qty="<?php echo esc_attr( (string) $qty ); ?>" 
