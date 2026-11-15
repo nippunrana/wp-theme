@@ -39,4 +39,4 @@ Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/
 - **The endpoint address is built from the domain root.** On a WordPress installed in a subfolder the request goes to the wrong place and every add-to-cart falls back to a reload.
 - **The mini-cart's "open drawer on add" behaviour is forced when the block is rendered** (`egnitech_one_force_mini_cart_drawer_behavior`). Changing that setting on the Mini-Cart block in the Site Editor has no effect.
 - **Opening the drawer depends on WooCommerce's internal class names** (the mini-cart button and the drawer overlay's hidden state). After a WooCommerce update that renames them, items are still added but the drawer stays shut.
-- **The script loads on every front-end page of every site, WooCommerce or not**, and declares jQuery as a dependency there too (`assets-and-versioning.md`).
+- **The script loads on every front-end page while WooCommerce is active**, and declares jQuery as a dependency (`assets-and-versioning.md`). Without WooCommerce it is not loaded at all.

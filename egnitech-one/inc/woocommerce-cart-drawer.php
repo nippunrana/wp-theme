@@ -98,7 +98,8 @@ add_filter( 'render_block_data', 'egnitech_one_force_mini_cart_drawer_behavior',
  * @return void
  */
 function egnitech_one_enqueue_mini_cart_script(): void {
-	if ( is_admin() ) {
+	// There is no cart to open without WooCommerce: skip the script, and the jQuery it depends on.
+	if ( ! class_exists( 'WooCommerce' ) ) {
 		return;
 	}
 
