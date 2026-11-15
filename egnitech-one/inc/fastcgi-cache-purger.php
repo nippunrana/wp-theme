@@ -377,14 +377,14 @@ function egnitech_one_ajax_clear_entire_cache(): void {
 
 	$result = egnitech_one_purge_all_site_cache();
 
-	// Reset cache size transient to 0 bytes
-	set_transient( 'egnitech_one_fastcgi_cache_size', array(
-		'bytes'     => 0,
-		'formatted' => egnitech_one_format_bytes( 0 ),
-		'timestamp' => time(),
-	), DAY_IN_SECONDS );
-
 	if ( $result['success'] ) {
+		// The folder is empty now: record that, so the size is not recounted on the next page load.
+		set_transient( 'egnitech_one_fastcgi_cache_size', array(
+			'bytes'     => 0,
+			'formatted' => egnitech_one_format_bytes( 0 ),
+			'timestamp' => time(),
+		), DAY_IN_SECONDS );
+
 		wp_send_json_success( array(
 			'message'   => $result['message'],
 			'formatted' => egnitech_one_format_bytes( 0 ),
