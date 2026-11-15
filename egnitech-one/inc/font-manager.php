@@ -2,10 +2,11 @@
 declare(strict_types=1);
 
 /**
- * EgniTech One — Font Manager
+ * EgniTech One — Font overview
  *
- * Handles curated Google Fonts installation, font assignment to
- * body/headings, and sync with the Site Editor via Global Styles.
+ * Read-only helpers for the Typography card in Theme Options: the fonts the site
+ * can use, and which of them body text and headings are set to. Nothing here
+ * installs or assigns a font. Fonts are changed in the Site Editor.
  *
  * @package EgniTech_One
  * @since   1.2.0
