@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const tiers = [];
 	cards.forEach(card => {
 		const qty = parseInt(card.getAttribute('data-qty'), 10);
-		const pct = parseFloat(card.getAttribute('data-pct') || '0', 10);
+		const pct = parseFloat(card.getAttribute('data-pct') || '0');
 		tiers.push({ el: card, qty, pct });
 	});
 
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		// Update last tier card dynamically
 		if (lastTierCard) {
-			const lastTierPct = parseFloat(lastTierCard.getAttribute('data-pct') || '0', 10);
+			const lastTierPct = parseFloat(lastTierCard.getAttribute('data-pct') || '0');
 			const lastTierUnitPrice = basePrice * (1.0 - lastTierPct / 100.0);
 			const dynamicQty = (qty >= lastTierBaseQty) ? qty : lastTierBaseQty;
 
@@ -162,76 +162,53 @@ document.addEventListener('DOMContentLoaded', () => {
 		updatePricing(qty);
 	});
 
+	/**
+	 * Repaint every card and the totals from the current base price.
+	 */
+	function repaintCards() {
+		container.setAttribute('data-base-price', String(basePrice));
+
+		cards.forEach(card => {
+			const qty = parseInt(card.getAttribute('data-qty'), 10);
+			const pct = parseFloat(card.getAttribute('data-pct') || '0');
+			const unitPrice = basePrice * (1.0 - pct / 100.0);
+			const totalDiscounted = unitPrice * qty;
+			const totalOriginal = basePrice * qty;
+
+			const priceNumEl = card.querySelector('.egnitech-price-num');
+			if (priceNumEl) {
+				priceNumEl.textContent = formatPrice(totalDiscounted);
+			}
+
+			const priceOriginalEl = card.querySelector('.egnitech-price-original');
+			if (priceOriginalEl) {
+				priceOriginalEl.textContent = formatPrice(totalOriginal);
+			}
+
+			const priceLabelEl = card.querySelector('.egnitech-price-label');
+			if (priceLabelEl) {
+				priceLabelEl.textContent = `(${formatPrice(unitPrice)} each)`;
+			}
+		});
+
+		let qty = parseInt(qtyInput.value, 10);
+		if (isNaN(qty) || qty < 1) qty = 1;
+		updatePricing(qty);
+	}
+
 	// WooCommerce Variable Product Variation Form integration
 	if (typeof jQuery !== 'undefined') {
 		jQuery(cartForm).on('found_variation', (event, variation) => {
 			if (variation && variation.display_price) {
 				basePrice = parseFloat(variation.display_price);
-				container.setAttribute('data-base-price', String(basePrice));
-				
-				// Recalculate price text on each card
-				cards.forEach(card => {
-					const qty = parseInt(card.getAttribute('data-qty'), 10);
-					const pct = parseFloat(card.getAttribute('data-pct') || '0', 10);
-					const unitPrice = basePrice * (1.0 - pct / 100.0);
-					const totalDiscounted = unitPrice * qty;
-					const totalOriginal = basePrice * qty;
-					
-					const priceNumEl = card.querySelector('.egnitech-price-num');
-					if (priceNumEl) {
-						priceNumEl.textContent = formatPrice(totalDiscounted);
-					}
-
-					const priceOriginalEl = card.querySelector('.egnitech-price-original');
-					if (priceOriginalEl) {
-						priceOriginalEl.textContent = formatPrice(totalOriginal);
-					}
-
-					const priceLabelEl = card.querySelector('.egnitech-price-label');
-					if (priceLabelEl) {
-						priceLabelEl.textContent = `(${formatPrice(unitPrice)} each)`;
-					}
-				});
-
-				// Update totals
-				let qty = parseInt(qtyInput.value, 10);
-				if (isNaN(qty) || qty < 1) qty = 1;
-				updatePricing(qty);
+				repaintCards();
 			}
 		});
 
 		jQuery(cartForm).on('reset_data', () => {
 			// Restore default base product price
 			basePrice = parseFloat(container.getAttribute('data-default-price'));
-			container.setAttribute('data-base-price', String(basePrice));
-
-			// Recalculate cards
-			cards.forEach(card => {
-				const qty = parseInt(card.getAttribute('data-qty'), 10);
-				const pct = parseFloat(card.getAttribute('data-pct') || '0', 10);
-				const unitPrice = basePrice * (1.0 - pct / 100.0);
-				const totalDiscounted = unitPrice * qty;
-				const totalOriginal = basePrice * qty;
-				
-				const priceNumEl = card.querySelector('.egnitech-price-num');
-				if (priceNumEl) {
-					priceNumEl.textContent = formatPrice(totalDiscounted);
-				}
-
-				const priceOriginalEl = card.querySelector('.egnitech-price-original');
-				if (priceOriginalEl) {
-					priceOriginalEl.textContent = formatPrice(totalOriginal);
-				}
-
-				const priceLabelEl = card.querySelector('.egnitech-price-label');
-				if (priceLabelEl) {
-					priceLabelEl.textContent = `(${formatPrice(unitPrice)} each)`;
-				}
-			});
-
-			let qty = parseInt(qtyInput.value, 10);
-			if (isNaN(qty) || qty < 1) qty = 1;
-			updatePricing(qty);
+			repaintCards();
 		});
 	}
 
