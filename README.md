@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-GPL--2.0-green.svg?style=flat-square)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![Aesthetics](https://img.shields.io/badge/Performance-%3C%2050KB-brightgreen.svg?style=flat-square)](#)
 
-**EgniTech One** is a modern, lightweight, and performance-first WordPress FSE (Full Site Editing) block parent theme. Designed for speed, flexibility, and painless child-theme extension, it delivers native light/dark mode transitions, fluid typography, a modular administration system, and zero jQuery dependencies.
+**EgniTech One** is a modern, lightweight, and performance-first WordPress FSE (Full Site Editing) block parent theme. Designed for speed, flexibility, and painless child-theme extension, it delivers native light/dark mode transitions, fluid typography, a modular administration system, and vanilla JavaScript (jQuery loads only on WooCommerce stores).
 
 ---
 

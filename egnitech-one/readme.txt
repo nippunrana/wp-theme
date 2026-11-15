@@ -4,7 +4,7 @@ Contributors: Nippun Rana
 Requires at least: 7.0
 Tested up to: 7.0
 Requires PHP: 8.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,7 @@ EgniTech One is a modern, performance-first WordPress block theme designed for s
 * Native dark/light mode — respects OS preference, toggleable by users
 * Self-hosted Inter variable font for modern, crisp typography
 * Under 50 KB theme weight (excluding font)
-* Zero jQuery dependency
+* Vanilla JavaScript: jQuery is loaded only on WooCommerce stores, for WooCommerce's own cart and variation events
 * Full Site Editing support — customize everything visually
 * Clean, responsive design for all devices
 * Accessible with proper ARIA labels and focus styles
