@@ -65,21 +65,14 @@ function egnitech_one_generate_script_item_html( string|int $id, string $name, s
         $current_load_type_label = __( 'Delayed', 'egnitech-one' );
     }
 
-    $checked_attr = $is_active ? 'checked="checked"' : '';
-    
-    $loc_header_checked     = 'header' === $location ? 'checked="checked"' : '';
-    $loc_footer_checked     = 'footer' === $location ? 'checked="checked"' : '';
-    $load_normal_checked    = 'normal' === $load_type ? 'checked="checked"' : '';
-    $load_after_dom_checked = 'after_dom' === $load_type ? 'checked="checked"' : '';
-    $load_delayed_checked   = 'delayed_3s' === $load_type ? 'checked="checked"' : '';
-    $disclaimer_display     = 'delayed_3s' === $load_type ? 'block' : 'none';
+    $disclaimer_display = 'delayed_3s' === $load_type ? 'block' : 'none';
 
     // Render using shared helper
     $highlights = '<span class="egnitech-highlight-badge highlight-location">' . esc_html( $current_location_label ) . '</span>' .
                   '<span class="egnitech-highlight-badge highlight-load">' . esc_html( $current_load_type_label ) . '</span>';
     
     $actions = '<label class="egnitech-switch egnitech-script-status">' .
-               '<input type="checkbox" ' . esc_attr( $checked_attr ) . ' />' .
+               '<input type="checkbox"' . checked( $is_active, true, false ) . ' />' .
                '<span class="egnitech-slider"></span>' .
                '</label>';
 
@@ -101,7 +94,7 @@ function egnitech_one_generate_script_item_html( string|int $id, string $name, s
         <div class="egnitech-option-control">
             <div class="egnitech-radio-group">
                 <label class="egnitech-radio-label">
-                    <input type="radio" name="location_<?php echo esc_attr( $id ); ?>" value="header" <?php echo esc_attr( $loc_header_checked ); ?> />
+                    <input type="radio" name="location_<?php echo esc_attr( $id ); ?>" value="header"<?php checked( 'header', $location ); ?> />
                     <span class="egnitech-radio-btn">
                         <?php esc_html_e( 'Header (<head>)', 'egnitech-one' ); ?>
                         <span class="egnitech-tooltip-wrap">
@@ -111,7 +104,7 @@ function egnitech_one_generate_script_item_html( string|int $id, string $name, s
                     </span>
                 </label>
                 <label class="egnitech-radio-label">
-                    <input type="radio" name="location_<?php echo esc_attr( $id ); ?>" value="footer" <?php echo esc_attr( $loc_footer_checked ); ?> />
+                    <input type="radio" name="location_<?php echo esc_attr( $id ); ?>" value="footer"<?php checked( 'footer', $location ); ?> />
                     <span class="egnitech-radio-btn">
                         <?php esc_html_e( 'Footer (before </body>)', 'egnitech-one' ); ?>
                         <span class="egnitech-tooltip-wrap">
@@ -130,7 +123,7 @@ function egnitech_one_generate_script_item_html( string|int $id, string $name, s
         <div class="egnitech-option-control">
             <div class="egnitech-radio-group">
                 <label class="egnitech-radio-label">
-                    <input type="radio" name="load_<?php echo esc_attr( $id ); ?>" value="normal" <?php echo esc_attr( $load_normal_checked ); ?> />
+                    <input type="radio" name="load_<?php echo esc_attr( $id ); ?>" value="normal"<?php checked( 'normal', $load_type ); ?> />
                     <span class="egnitech-radio-btn egnitech-radio-btn-pill">
                         <?php esc_html_e( 'Normal', 'egnitech-one' ); ?>
                         <span class="egnitech-tooltip-wrap">
@@ -140,7 +133,7 @@ function egnitech_one_generate_script_item_html( string|int $id, string $name, s
                     </span>
                 </label>
                 <label class="egnitech-radio-label">
-                    <input type="radio" name="load_<?php echo esc_attr( $id ); ?>" value="after_dom" <?php echo esc_attr( $load_after_dom_checked ); ?> />
+                    <input type="radio" name="load_<?php echo esc_attr( $id ); ?>" value="after_dom"<?php checked( 'after_dom', $load_type ); ?> />
                     <span class="egnitech-radio-btn egnitech-radio-btn-pill">
                         <?php esc_html_e( 'After DOM', 'egnitech-one' ); ?>
                         <span class="egnitech-tooltip-wrap">
@@ -150,7 +143,7 @@ function egnitech_one_generate_script_item_html( string|int $id, string $name, s
                     </span>
                 </label>
                 <label class="egnitech-radio-label">
-                    <input type="radio" name="load_<?php echo esc_attr( $id ); ?>" value="delayed_3s" <?php echo esc_attr( $load_delayed_checked ); ?> />
+                    <input type="radio" name="load_<?php echo esc_attr( $id ); ?>" value="delayed_3s"<?php checked( 'delayed_3s', $load_type ); ?> />
                     <span class="egnitech-radio-btn egnitech-radio-btn-pill">
                         <?php esc_html_e( 'Delayed (3s)', 'egnitech-one' ); ?>
                         <span class="egnitech-tooltip-wrap">
