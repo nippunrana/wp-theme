@@ -102,7 +102,9 @@
                     clearBtn.disabled = false;
                     if (res.success) {
                         clearStatus.style.color = 'var(--egnitech-success)';
-                        clearStatus.innerHTML = '<span class="dashicons dashicons-yes" style="vertical-align: text-bottom; color: var(--egnitech-success); margin-right: 4px;"></span> ' + res.data.message;
+                        // The message comes from the server: add it as text, never as markup.
+                        clearStatus.innerHTML = '<span class="dashicons dashicons-yes" style="vertical-align: text-bottom; color: var(--egnitech-success); margin-right: 4px;"></span> ';
+                        clearStatus.appendChild(document.createTextNode(res.data.message));
                         
                         // Update size display in page
                         if (sizeValSpan) {
@@ -120,7 +122,8 @@
                         }, 5000);
                     } else {
                         clearStatus.style.color = 'var(--egnitech-danger)';
-                        clearStatus.innerHTML = '<span class="dashicons dashicons-warning" style="vertical-align: text-bottom; color: var(--egnitech-danger); margin-right: 4px;"></span> ' + (res.data.message || 'Failed to clear cache.');
+                        clearStatus.innerHTML = '<span class="dashicons dashicons-warning" style="vertical-align: text-bottom; color: var(--egnitech-danger); margin-right: 4px;"></span> ';
+                        clearStatus.appendChild(document.createTextNode(res.data.message || 'Failed to clear cache.'));
                     }
                 })
                 .catch(function () {
