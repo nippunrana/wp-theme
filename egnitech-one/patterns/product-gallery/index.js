@@ -296,11 +296,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		lightbox.addEventListener('touchend', function(e) {
 			touchendX = e.changedTouches[0].screenX;
 			touchendY = e.changedTouches[0].screenY;
-			handleSwipe(true);
+			handleSwipe();
 		}, { passive: true });
 	}
 
-	function handleSwipe(isLightbox) {
+	function handleSwipe() {
 		var diffX = touchendX - touchstartX;
 		var diffY = touchendY - touchstartY;
 

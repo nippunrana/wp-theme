@@ -427,8 +427,6 @@
 
         if (!addBtn || !scriptsList) return;
 
-        if (!addBtn || !scriptsList) return;
-
         // Initialize shared accordion & delete logic
         initAccordionInteractions(scriptsList);
 
