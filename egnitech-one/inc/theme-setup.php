@@ -230,7 +230,8 @@ if ( ! function_exists( 'egnitech_one_filter_post_meta_blocks' ) ) {
 add_filter( 'render_block', 'egnitech_one_filter_post_meta_blocks', 10, 2 );
 
 /**
- * Register block styles and block patterns for WooCommerce product page.
+ * Register the block styles for the WooCommerce product page.
+ * The product patterns need no code here: WordPress registers every file in patterns/ from its header.
  */
 if ( ! function_exists( 'egnitech_one_register_block_styles' ) ) {
 	function egnitech_one_register_block_styles(): void {
@@ -265,72 +266,6 @@ if ( ! function_exists( 'egnitech_one_register_block_styles' ) ) {
 				'style_handle' => 'egnitech-one-product-gallery',
 			)
 		);
-
-		// Manually register single product patterns.
-		$patterns_dir = get_template_directory() . '/patterns/';
-
-		// Register single-product pattern.
-		$single_product_file = $patterns_dir . 'single-product.php';
-		if ( file_exists( $single_product_file ) ) {
-			ob_start();
-			include $single_product_file;
-			$content = ob_get_clean();
-
-			// Remove PHP tag comments.
-			$content = preg_replace( '/^<\?php.*?\?>/s', '', (string) $content );
-			$content = trim( (string) $content );
-
-			register_block_pattern(
-				'egnitech-one/single-product',
-				array(
-					'title'      => __( 'Single Product', 'egnitech-one' ),
-					'categories' => array( 'egnitech-one' ),
-					'content'    => $content,
-				)
-			);
-		}
-
-		// Register single-product-details pattern.
-		$single_product_details_file = $patterns_dir . 'single-product-details.php';
-		if ( file_exists( $single_product_details_file ) ) {
-			ob_start();
-			include $single_product_details_file;
-			$content = ob_get_clean();
-
-			// Remove PHP tag comments.
-			$content = preg_replace( '/^<\?php.*?\?>/s', '', (string) $content );
-			$content = trim( (string) $content );
-
-			register_block_pattern(
-				'egnitech-one/single-product-details',
-				array(
-					'title'      => __( 'Single Product Details', 'egnitech-one' ),
-					'categories' => array( 'egnitech-one' ),
-					'content'    => $content,
-				)
-			);
-		}
-
-		// Register product-gallery pattern.
-		$product_gallery_file = $patterns_dir . 'product-gallery.php';
-		if ( file_exists( $product_gallery_file ) ) {
-			ob_start();
-			include $product_gallery_file;
-			$content = ob_get_clean();
-
-			// Remove PHP tag comments.
-			$content = preg_replace( '/^<\?php.*?\?>/s', '', (string) $content );
-			$content = trim( (string) $content );
-
-			register_block_pattern(
-				'egnitech-one/product-gallery',
-				array(
-					'title'      => __( 'Product Gallery', 'egnitech-one' ),
-					'categories' => array( 'egnitech-one' ),
-					'content'    => $content,
-				)
-			);
-		}
 	}
 }
 add_action( 'init', 'egnitech_one_register_block_styles' );
