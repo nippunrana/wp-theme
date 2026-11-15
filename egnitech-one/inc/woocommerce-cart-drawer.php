@@ -53,29 +53,26 @@ add_action( 'add_option_egnitech_one_woocommerce_buy_now', 'egnitech_one_purge_c
 /**
  * Set a cookie when a product is added to the cart to open the drawer on page load as a fallback.
  *
- * @param mixed $cart_item_key The cart item key.
- * @param mixed $product_id    The product ID.
- * @param mixed $quantity      The quantity.
- * @param mixed $variation_id  The variation ID.
- * @param mixed $variation     The variation data.
- * @param mixed $cart_item_data The cart item data.
  * @return void
  */
-function egnitech_one_set_add_to_cart_cookie(
-	mixed $cart_item_key,
-	mixed $product_id,
-	mixed $quantity,
-	mixed $variation_id,
-	mixed $variation,
-	mixed $cart_item_data
-): void {
+function egnitech_one_set_add_to_cart_cookie(): void {
 	// Buy Now sends the shopper to checkout, where a drawer popping open would be in the way.
 	if ( egnitech_one_is_buy_now() ) {
 		return;
 	}
-	setcookie( 'egnitech_just_added_to_cart', '1', time() + 20, '/' );
+	// The cart-drawer script reads and clears this cookie, so it cannot be HttpOnly and its path must stay '/'.
+	setcookie(
+		'egnitech_just_added_to_cart',
+		'1',
+		array(
+			'expires'  => time() + 20,
+			'path'     => '/',
+			'secure'   => is_ssl(),
+			'samesite' => 'Lax',
+		)
+	);
 }
-add_action( 'woocommerce_add_to_cart', 'egnitech_one_set_add_to_cart_cookie', 10, 6 );
+add_action( 'woocommerce_add_to_cart', 'egnitech_one_set_add_to_cart_cookie', 10, 0 );
 
 /**
  * Force the mini-cart block to open the drawer when a product is added via AJAX.
