@@ -121,7 +121,7 @@ function egnitech_one_apply_bulk_discounts( WC_Cart $cart ): void {
 		return;
 	}
 
-	foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) {
+	foreach ( $cart->get_cart() as $cart_item ) {
 		$product_id = $cart_item['product_id'];
 		$quantity   = $cart_item['quantity'];
 
@@ -199,10 +199,8 @@ function egnitech_one_render_bulk_discount_selector(): void {
 	/**
 	 * Helper function to format price inside loop.
 	 */
-	$format_price = static function( float $price ) use ( $currency_symbol, $currency_pos ): string {
-		$formatted = number_format( $price, 2, '.', '' );
-		$formatted = wc_price( $price );
-		return strip_tags( $formatted );
+	$format_price = static function( float $price ): string {
+		return strip_tags( wc_price( $price ) );
 	};
 
 	?>

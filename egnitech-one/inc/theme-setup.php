@@ -634,8 +634,6 @@ if ( ! function_exists( 'egnitech_one_product_gallery_shortcode' ) ) {
 		}
 
 		ob_start();
-		?>
-		<?php
 		$thumbnail_style = get_option( 'egnitech_one_woocommerce_gallery_thumbnail_style', 'bottom-carousel' );
 		$show_lightbox_icon = get_option( 'egnitech_one_woocommerce_gallery_lightbox_icon', 'yes' );
 		$gallery_classes = array(
@@ -827,8 +825,3 @@ if ( ! function_exists( 'egnitech_one_render_product_short_description_block' ) 
 	}
 }
 add_filter( 'render_block', 'egnitech_one_render_product_short_description_block', 10, 2 );
-
-
-
-
-
