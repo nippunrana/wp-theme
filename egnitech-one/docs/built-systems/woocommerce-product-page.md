@@ -18,7 +18,6 @@ Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/
 - **The trust-badge fallback text is written for one shop.** A product with empty badge fields shows "Eco-Friendly UV Tech", "1 Year Warranty" and "Secure Checkout" (`egnitech_one_product_trust_badges_shortcode`). This is the parent theme: a site selling anything else must fill the three fields on every product, or the fallback must change.
 - **An empty short description prints nothing.** `egnitech_one_render_product_short_description_block` stops WordPress building an excerpt out of the long description, and prints the short description with its HTML kept.
 - **The related-products section is WooCommerce's own pattern, called by slug.** If a WooCommerce update renames or drops that pattern, the section disappears with no error.
-- **Two product shortcodes call WooCommerce without checking it is active.** They are safe only because they appear solely in the product patterns. On an ordinary page of a site without WooCommerce, `[egnitech_product_gallery]` or `[egnitech_product_sections]` is a fatal error.
 
 ## Add to cart and the cart drawer
 

@@ -481,7 +481,8 @@ add_shortcode( 'egnitech_product_trust_badges', 'egnitech_one_product_trust_badg
 if ( ! function_exists( 'egnitech_one_product_sections_shortcode' ) ) {
 	function egnitech_one_product_sections_shortcode(): string {
 		$product_id = get_the_ID();
-		if ( ! $product_id ) {
+		// The theme stays active when WooCommerce is switched off, and the shortcode may be typed into any post.
+		if ( ! $product_id || ! function_exists( 'wc_get_product' ) ) {
 			return '';
 		}
 
@@ -567,7 +568,8 @@ add_action( 'after_setup_theme', 'egnitech_one_woocommerce_gallery_features', 10
 if ( ! function_exists( 'egnitech_one_product_gallery_shortcode' ) ) {
 	function egnitech_one_product_gallery_shortcode(): string {
 		$product_id = get_the_ID();
-		if ( ! $product_id ) {
+		// The theme stays active when WooCommerce is switched off, and the shortcode may be typed into any post.
+		if ( ! $product_id || ! function_exists( 'wc_get_product' ) ) {
 			return '';
 		}
 
