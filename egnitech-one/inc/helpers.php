@@ -38,13 +38,24 @@ if ( ! function_exists( 'egnitech_one_asset_version' ) ) {
 }
 
 /**
- * Get the footer copyright text from theme options.
+ * Get the footer copyright text from theme options, with {year} and {site_name} filled in.
+ * An empty setting gives the default line, as the Theme Options screen says it does.
  *
  * @return string Copyright text.
  */
 if ( ! function_exists( 'egnitech_one_get_footer_copyright' ) ) {
 	function egnitech_one_get_footer_copyright(): string {
-		return (string) egnitech_one_get_option( 'egnitech_one_footer_copyright', '' );
+		$text = (string) egnitech_one_get_option( 'egnitech_one_footer_copyright', '' );
+		if ( '' === trim( $text ) ) {
+			/* translators: {year} and {site_name} are placeholders: keep them exactly as written. */
+			$text = __( '© {year} {site_name} · All rights reserved', 'egnitech-one' );
+		}
+
+		return str_replace(
+			array( '{year}', '{site_name}' ),
+			array( (string) wp_date( 'Y' ), get_bloginfo( 'name', 'display' ) ),
+			$text
+		);
 	}
 }
 
