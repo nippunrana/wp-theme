@@ -68,7 +68,10 @@ function egnitech_one_read_logo_pixels( string $file, string $mime ): array|stri
 	}
 
 	// SVG is never handed to Imagick: rendering it can make the server read other files or URLs.
-	if ( str_contains( $mime, 'svg' ) ) {
+	// Nor is anything that is not really a picture (a PDF set as the logo, say). The file's own
+	// contents decide that, not its recorded type: only raster images reach a decoder.
+	$real_mime = (string) wp_get_image_mime( $file );
+	if ( str_contains( $mime, 'svg' ) || ! str_starts_with( $real_mime, 'image/' ) ) {
 		return 'unreadable';
 	}
 
@@ -88,7 +91,6 @@ function egnitech_one_read_logo_pixels( string $file, string $mime ): array|stri
 			'image/bmp'  => IMG_BMP,
 			'image/avif' => IMG_AVIF,
 		);
-		$real_mime = (string) wp_get_image_mime( $file );
 		if ( isset( $gd_types[ $real_mime ] ) && ( imagetypes() & $gd_types[ $real_mime ] ) ) {
 			$src = imagecreatefromstring( (string) file_get_contents( $file ) );
 		}
