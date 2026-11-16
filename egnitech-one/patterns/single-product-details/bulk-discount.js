@@ -14,8 +14,29 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (!qtyInput) return;
 
 	const cards = container.querySelectorAll('.egnitech-bulk-discount-card');
+	const summaryLabel = container.querySelector('.egnitech-summary-label');
 	const summaryTotal = container.querySelector('.egnitech-summary-total');
 	const summarySavings = container.querySelector('.egnitech-summary-savings');
+	const notice = container.querySelector('.egnitech-bulk-cart-notice');
+	const noticeTitle = container.querySelector('.egnitech-bulk-cart-notice-title');
+	const noticeDetail = container.querySelector('.egnitech-bulk-cart-notice-detail');
+
+	// The PHP texts, restored whenever the cart has none of this product.
+	const originalLabel = summaryLabel ? summaryLabel.textContent : '';
+	cards.forEach(card => {
+		const saveEl = card.querySelector('.egnitech-card-save');
+		if (saveEl) saveEl.dataset.original = saveEl.textContent;
+	});
+
+	// The cart charges the tier reached by the whole cart line, so the cards are priced on
+	// what is already in it plus what is being added. Lines are matched by product or
+	// variation id, exactly as the cart counts them (bulk-discounts.md).
+	const productId = parseInt(container.getAttribute('data-product-id'), 10);
+	const cartUrl = container.getAttribute('data-cart-url');
+	const isVariable = cartForm.classList.contains('variations_form');
+	let variationId = 0;
+	let cartItems = [];
+	let inCartQty = 0;
 
 	const lastTierCard = container.querySelector('.egnitech-last-tier');
 	const lastTierBaseQty = lastTierCard ? parseInt(lastTierCard.getAttribute('data-qty'), 10) : 0;
@@ -58,6 +79,48 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	/**
+	 * Discount percentage the cart charges for a line of this many units.
+	 *
+	 * @param {number} qty Units in the cart line.
+	 * @return {number} Percentage, 0 when no tier is reached.
+	 */
+	function tierPctFor(qty) {
+		for (const tier of tiers) {
+			if (qty >= tier.qty) return tier.pct;
+		}
+		return 0;
+	}
+
+	/**
+	 * Current quantity in the stepper, at least 1.
+	 *
+	 * @return {number} Quantity.
+	 */
+	function currentQty() {
+		const qty = parseInt(qtyInput.value, 10);
+		return (isNaN(qty) || qty < 1) ? 1 : qty;
+	}
+
+	/**
+	 * Show or hide the "already in your cart" notice.
+	 */
+	function updateNotice() {
+		if (!notice) return;
+		if (inCartQty < 1) {
+			notice.hidden = true;
+			return;
+		}
+
+		const pct = tierPctFor(inCartQty);
+		noticeTitle.textContent = `${inCartQty} already in your cart` + (pct > 0 ? ` · ${pct}% off unlocked` : '');
+		// tiers[0] is the largest tier: once it is reached, every extra unit costs the same.
+		noticeDetail.textContent = (tiers.length && inCartQty >= tiers[0].qty)
+			? `Extra units cost ${formatPrice(basePrice * (1.0 - pct / 100.0))} each`
+			: 'Prices below count them towards your discount';
+		notice.hidden = false;
+	}
+
+	/**
 	 * Update layout states, highlighted cards, and pricing totals.
 	 *
 	 * @param {number} qty Current quantity.
@@ -82,21 +145,66 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (baseCard) baseCard.classList.add('active');
 		}
 
-		// Calculate prices
-		const discountPct = activeTier ? activeTier.pct : 0;
-		const unitPrice = basePrice * (1.0 - discountPct / 100.0);
-		const totalPrice = unitPrice * qty;
-		const regularTotal = basePrice * qty;
-		const savedAmount = regularTotal - totalPrice;
+		// Price the cards. The last card follows the stepper once it passes that tier.
+		cards.forEach(card => {
+			let cardQty = parseInt(card.getAttribute('data-qty'), 10);
+			if (card === lastTierCard) {
+				cardQty = (qty >= lastTierBaseQty) ? qty : lastTierBaseQty;
+				card.setAttribute('data-qty', String(cardQty));
+				const qtyNumEl = card.querySelector('.egnitech-qty-num');
+				if (qtyNumEl) qtyNumEl.textContent = String(cardQty);
+			}
 
-		// Update subtotal display
+			const pct = tierPctFor(inCartQty + cardQty);
+			const unitPrice = basePrice * (1.0 - pct / 100.0);
+
+			const priceNumEl = card.querySelector('.egnitech-price-num');
+			if (priceNumEl) {
+				priceNumEl.textContent = formatPrice(unitPrice * cardQty);
+			}
+
+			// Struck-through full price, only when there is a saving to compare with.
+			const priceOriginalEl = card.querySelector('.egnitech-price-original');
+			if (priceOriginalEl) {
+				priceOriginalEl.textContent = pct > 0 ? formatPrice(basePrice * cardQty) : '';
+			}
+
+			const priceLabelEl = card.querySelector('.egnitech-price-label');
+			if (priceLabelEl) {
+				priceLabelEl.textContent = `(${formatPrice(unitPrice)} each)`;
+			}
+
+			const saveEl = card.querySelector('.egnitech-card-save');
+			if (saveEl) {
+				if (inCartQty > 0) {
+					saveEl.textContent = pct > 0 ? `(Save Extra ${pct}%)` : '';
+				} else {
+					saveEl.textContent = saveEl.dataset.original;
+				}
+			}
+		});
+
+		// Totals for the whole cart line this add will make.
+		const lineQty = inCartQty + qty;
+		const discountPct = tierPctFor(lineQty);
+		const unitPrice = basePrice * (1.0 - discountPct / 100.0);
+		const savedAmount = (basePrice - unitPrice) * lineQty;
+
+		if (summaryLabel) {
+			summaryLabel.textContent = inCartQty > 0 ? `Adding ${qty} → ${lineQty} in cart:` : originalLabel;
+		}
+
 		if (summaryTotal) {
-			summaryTotal.textContent = formatPrice(totalPrice);
+			summaryTotal.textContent = formatPrice(unitPrice * lineQty);
 		}
 
 		// Update savings text callout. Never hide it: on phones it sits on its own line and the page would jump.
 		if (summarySavings) {
-			if (savedAmount > 0) {
+			if (inCartQty > 0) {
+				summarySavings.classList.remove('is-hint');
+				summarySavings.textContent = `(${lineQty} × ${formatPrice(unitPrice)} each`
+					+ (savedAmount > 0 ? ` - saved ${formatPrice(savedAmount)})` : ')');
+			} else if (savedAmount > 0) {
 				summarySavings.classList.remove('is-hint');
 				summarySavings.textContent = `(Saved ${formatPrice(savedAmount)} - ${discountPct}% off)`;
 			} else {
@@ -105,34 +213,48 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 
-		// Update last tier card dynamically
-		if (lastTierCard) {
-			const lastTierPct = parseFloat(lastTierCard.getAttribute('data-pct') || '0');
-			const lastTierUnitPrice = basePrice * (1.0 - lastTierPct / 100.0);
-			const dynamicQty = (qty >= lastTierBaseQty) ? qty : lastTierBaseQty;
+		updateNotice();
+	}
 
-			// Update card attribute
-			lastTierCard.setAttribute('data-qty', String(dynamicQty));
+	/**
+	 * Read this product's line from the cart and repaint.
+	 */
+	function loadCart() {
+		fetch(cartUrl, { credentials: 'same-origin' })
+			.then(response => {
+				if (!response.ok) throw new Error('Cart request failed');
+				return response.json();
+			})
+			.then(cart => {
+				cartItems = Array.isArray(cart.items) ? cart.items : [];
+				applyCart();
+			})
+			.catch(() => {
+				// Leave the cards as they are: without the cart they show the plain tier prices.
+			});
+	}
 
-			const qtyNumEl = lastTierCard.querySelector('.egnitech-qty-num');
-			if (qtyNumEl) {
-				qtyNumEl.textContent = String(dynamicQty);
-			}
+	/**
+	 * Take the in-cart quantity for the current product or chosen variation and repaint.
+	 * A variable product counts nothing until a variation is chosen.
+	 */
+	function applyCart() {
+		const id = isVariable ? variationId : productId;
+		const line = id ? cartItems.find(item => item.id === id) : null;
+		inCartQty = line ? line.quantity : 0;
+		updatePricing(currentQty());
+	}
 
-			const priceOriginalEl = lastTierCard.querySelector('.egnitech-price-original');
-			if (priceOriginalEl) {
-				priceOriginalEl.textContent = formatPrice(basePrice * dynamicQty);
-			}
-
-			const priceNumEl = lastTierCard.querySelector('.egnitech-price-num');
-			if (priceNumEl) {
-				priceNumEl.textContent = formatPrice(lastTierUnitPrice * dynamicQty);
-			}
-
-			const priceLabelEl = lastTierCard.querySelector('.egnitech-price-label');
-			if (priceLabelEl) {
-				priceLabelEl.textContent = `(${formatPrice(lastTierUnitPrice)} each)`;
-			}
+	/**
+	 * Read the cart only when WooCommerce's cookie says it holds something, so an
+	 * empty-cart visitor does not cost the server an uncached request on every product page.
+	 */
+	function syncCart() {
+		if (document.cookie.includes('woocommerce_items_in_cart=')) {
+			loadCart();
+		} else {
+			cartItems = [];
+			applyCart();
 		}
 	}
 
@@ -167,33 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	 */
 	function repaintCards() {
 		container.setAttribute('data-base-price', String(basePrice));
-
-		cards.forEach(card => {
-			const qty = parseInt(card.getAttribute('data-qty'), 10);
-			const pct = parseFloat(card.getAttribute('data-pct') || '0');
-			const unitPrice = basePrice * (1.0 - pct / 100.0);
-			const totalDiscounted = unitPrice * qty;
-			const totalOriginal = basePrice * qty;
-
-			const priceNumEl = card.querySelector('.egnitech-price-num');
-			if (priceNumEl) {
-				priceNumEl.textContent = formatPrice(totalDiscounted);
-			}
-
-			const priceOriginalEl = card.querySelector('.egnitech-price-original');
-			if (priceOriginalEl) {
-				priceOriginalEl.textContent = formatPrice(totalOriginal);
-			}
-
-			const priceLabelEl = card.querySelector('.egnitech-price-label');
-			if (priceLabelEl) {
-				priceLabelEl.textContent = `(${formatPrice(unitPrice)} each)`;
-			}
-		});
-
-		let qty = parseInt(qtyInput.value, 10);
-		if (isNaN(qty) || qty < 1) qty = 1;
-		updatePricing(qty);
+		applyCart();
 	}
 
 	// WooCommerce Variable Product Variation Form integration
@@ -201,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		jQuery(cartForm).on('found_variation', (event, variation) => {
 			if (variation && variation.display_price) {
 				basePrice = parseFloat(variation.display_price);
+				variationId = variation.variation_id || 0;
 				repaintCards();
 			}
 		});
@@ -208,12 +305,20 @@ document.addEventListener('DOMContentLoaded', () => {
 		jQuery(cartForm).on('reset_data', () => {
 			// Restore default base product price
 			basePrice = parseFloat(container.getAttribute('data-default-price'));
+			variationId = 0;
 			repaintCards();
 		});
 	}
 
-	// Perform initial price calculations
-	let initialQty = parseInt(qtyInput.value, 10);
-	if (isNaN(initialQty) || initialQty < 1) initialQty = 1;
-	updatePricing(initialQty);
+	// Re-read the cart after any add or removal on this page (the no-reload add-to-cart and
+	// the cart drawer), and when the page comes back from the browser's back-forward cache.
+	document.addEventListener('wc-blocks_added_to_cart', loadCart);
+	document.addEventListener('wc-blocks_removed_from_cart', loadCart);
+	window.addEventListener('pageshow', event => {
+		if (event.persisted) syncCart();
+	});
+
+	// Perform initial price calculations, then correct them for what is already in the cart.
+	updatePricing(currentQty());
+	syncCart();
 });

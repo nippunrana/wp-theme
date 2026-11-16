@@ -543,6 +543,46 @@
 	letter-spacing: 0.05em;
 }
 
+/* "Already in your cart" notice, shown by bulk-discount.js */
+.egnitech-bulk-cart-notice {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+	margin-bottom: var(--wp--preset--spacing--30);
+	padding: 12px 16px;
+	border: 1px solid light-dark(rgba(0, 212, 170, 0.25), rgba(0, 212, 170, 0.35));
+	border-radius: 12px;
+	background: light-dark(rgba(0, 212, 170, 0.06), rgba(0, 212, 170, 0.12));
+	font-size: 0.9rem;
+	color: var(--wp--preset--color--contrast);
+}
+
+.egnitech-bulk-cart-notice[hidden] {
+	display: none;
+}
+
+.egnitech-bulk-cart-notice-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.egnitech-bulk-cart-notice-title {
+	font-weight: 700;
+}
+
+.egnitech-bulk-cart-notice-detail {
+	opacity: 0.75;
+}
+
+.egnitech-bulk-cart-notice-link {
+	font-weight: 600;
+	color: var(--wp--preset--color--accent, #00D4AA);
+	white-space: nowrap;
+}
+
 .egnitech-bulk-discount-grid {
 	display: flex;
 	flex-direction: column;
@@ -640,6 +680,12 @@
 	font-weight: 600;
 	color: var(--wp--preset--color--accent, #00D4AA);
 	margin-left: 6px;
+}
+
+/* Buy 1 has these only while the cart pushes it into a tier */
+.egnitech-card-save:empty,
+.egnitech-price-original:empty {
+	display: none;
 }
 
 .egnitech-card-desc {

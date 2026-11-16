@@ -209,11 +209,22 @@ function egnitech_one_render_bulk_discount_selector(): void {
 		data-default-price="<?php echo esc_attr( (string) $base_price ); ?>"
 		data-base-price="<?php echo esc_attr( (string) $base_price ); ?>"
 		data-currency-symbol="<?php echo esc_attr( $currency_symbol ); ?>"
-		data-currency-pos="<?php echo esc_attr( $currency_pos ); ?>">
+		data-currency-pos="<?php echo esc_attr( $currency_pos ); ?>"
+		data-product-id="<?php echo esc_attr( (string) $product_id ); ?>"
+		data-cart-url="<?php echo esc_url( rest_url( 'wc/store/v1/cart' ) ); ?>">
 		
 		<h3 class="egnitech-bulk-discount-heading">
 			<?php esc_html_e( 'Buy More, Save More!', 'egnitech-one' ); ?>
 		</h3>
+
+		<!-- Filled in by bulk-discount.js when this product is already in the cart. Never fill it in PHP: the page is cached for every visitor. -->
+		<div class="egnitech-bulk-cart-notice" hidden>
+			<span class="egnitech-bulk-cart-notice-text">
+				<strong class="egnitech-bulk-cart-notice-title"></strong>
+				<span class="egnitech-bulk-cart-notice-detail"></span>
+			</span>
+			<a class="egnitech-bulk-cart-notice-link" href="<?php echo esc_url( wc_get_cart_url() ); ?>"><?php esc_html_e( 'View cart', 'egnitech-one' ); ?></a>
+		</div>
 		
 		<div class="egnitech-bulk-discount-grid">
 			<!-- Tier 0: Base Price (1 Device) -->
@@ -222,10 +233,11 @@ function egnitech_one_render_bulk_discount_selector(): void {
 					<div class="egnitech-card-radio"></div>
 				</div>
 				<div class="egnitech-card-info">
-					<span class="egnitech-card-qty"><?php esc_html_e( 'Buy', 'egnitech-one' ); ?> <span class="egnitech-qty-num">1</span></span>
+					<span class="egnitech-card-qty"><?php esc_html_e( 'Buy', 'egnitech-one' ); ?> <span class="egnitech-qty-num">1</span> <span class="egnitech-card-save"></span></span>
 					<span class="egnitech-card-desc"><?php esc_html_e( 'Standard single unit package', 'egnitech-one' ); ?></span>
 				</div>
 				<div class="egnitech-card-pricing">
+					<span class="egnitech-price-original"></span>
 					<span class="egnitech-price-amount">
 						<span class="egnitech-price-num"><?php echo esc_html( $format_price( $base_price ) ); ?></span>
 					</span>
@@ -280,7 +292,7 @@ function egnitech_one_render_bulk_discount_selector(): void {
 		<!-- Summary Box -->
 		<div class="egnitech-bulk-discount-summary">
 			<div class="egnitech-summary-text">
-				<?php esc_html_e( 'Total Cost:', 'egnitech-one' ); ?> 
+				<span class="egnitech-summary-label"><?php esc_html_e( 'Total Cost:', 'egnitech-one' ); ?></span>
 				<span class="egnitech-summary-total"><?php echo esc_html( $format_price( $base_price ) ); ?></span>
 			</div>
 			<?php
