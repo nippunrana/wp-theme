@@ -761,8 +761,9 @@
 
 /* Mobile responsive fixes */
 @media (max-width: 480px) {
-	/* Phones: the "Saved … off" line repeats the chosen card's prices, so only the Buy 1 hint shows */
-	.egnitech-summary-savings:not(.is-hint) {
+	/* Phones: no line under the total. "Saved … off" repeats the chosen card's prices, and the
+	   "Buy 2+ and save" hint repeats the cards' own "Save Extra" labels. */
+	.egnitech-summary-savings {
 		display: none;
 	}
 
