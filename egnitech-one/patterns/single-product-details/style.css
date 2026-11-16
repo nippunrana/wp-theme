@@ -761,6 +761,11 @@
 
 /* Mobile responsive fixes */
 @media (max-width: 480px) {
+	/* Phones: the "Saved … off" line repeats the chosen card's prices, so only the Buy 1 hint shows */
+	.egnitech-summary-savings:not(.is-hint) {
+		display: none;
+	}
+
 	/* Room for the badges overhanging each card, so taps don't land on the wrong option */
 	.egnitech-bulk-discount-grid {
 		gap: var(--wp--preset--spacing--40);
