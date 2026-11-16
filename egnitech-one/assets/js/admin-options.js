@@ -209,6 +209,8 @@
                 }
             });
         });
+
+        setupToggleVisibility('egnitech_one_woocommerce_buy_now', 'egnitech-buy-now-behaviour-row');
     }
 
     /**

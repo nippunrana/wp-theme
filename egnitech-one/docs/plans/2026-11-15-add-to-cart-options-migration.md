@@ -1,7 +1,7 @@
 # Plan: move the product page to WooCommerce's "Add to Cart + Options" block
 
 - **Written:** 15 Nov 2026
-- **Last reviewed:** 15 Nov 2026 (WooCommerce 11.3.0, WordPress 7.1.4)
+- **Last reviewed:** 16 Nov 2026 (WooCommerce 11.3.0, WordPress 7.1.4)
 - **Status:** Waiting. Do not start until the trigger below is met.
 
 ## Trigger
@@ -32,6 +32,7 @@ Also read that release's notes for changes to the block's Interactivity API stor
 4. **Buy Now's redirect** sits in that same intercept. It needs whatever stable event or filter the new block offers. The full-page path (`woocommerce_add_to_cart_redirect`) should carry over.
 5. **The full-width row** is theme CSS today. The new block's Product Button has a width setting, so the CSS override should go entirely.
 6. **The "Buy Now" label** comes from `woocommerce_product_single_add_to_cart_text`. Confirm the new block's button reads that filter.
+7. **The second Buy Now button** (Add to Cart and Buy Now both on) is a `<button>` printed on `woocommerce_after_add_to_cart_button`. Inside the new block that forces legacy mode, as in item 1, so it must be rebuilt on the new block's own markup. Its per-click checkout marker (`egnitech-buy-now`) must be carried over as well.
 
 ## Goal
 
@@ -45,7 +46,7 @@ Also read that release's notes for changes to the block's Interactivity API stor
 2. **Build and test away from the live site.** On homegears.in the theme clone *is* production (`ai-context.md`).
 3. **Test every product type and setting:**
    - product types: simple, variable, sold individually (no stepper), external and grouped;
-   - bulk tiers 1/2/3, Buy Now on and off, and the drawer opening;
+   - bulk tiers 1/2/3; Add to Cart only, Buy Now only and both, each Buy Now in checkout and drawer mode; and the drawer opening;
    - widths of 1400, 600 and 375px.
 4. **Remove whatever the move makes obsolete,** then update `docs/built-systems/woocommerce-product-page.md`, `bulk-discounts.md`, and this plan's status.
 

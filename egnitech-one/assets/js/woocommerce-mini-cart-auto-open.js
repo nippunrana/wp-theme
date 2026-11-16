@@ -118,7 +118,10 @@
 				return;
 			}
 
-			const submitButton = form.querySelector('.single_add_to_cart_button');
+			// The button that was clicked: with Buy Now beside Add to Cart (Theme Options) the form has two.
+			const submitButton = event.submitter && event.submitter.classList.contains('single_add_to_cart_button')
+				? event.submitter
+				: form.querySelector('.single_add_to_cart_button');
 			if (!submitButton) {
 				return;
 			}
@@ -129,6 +132,17 @@
 			}
 
 			event.preventDefault();
+
+			// Buy Now beside Add to Cart marks its request through its formaction, which form.submit()
+			// ignores: the fallbacks below copy it onto the form, so they still reach checkout. The form's
+			// own address is kept first: after Back, a page restored from the browser's cache would
+			// otherwise still carry Buy Now's, and send Add to Cart to checkout.
+			if (!form.dataset.egnitechAction) {
+				form.dataset.egnitechAction = form.action;
+			}
+			const fallbackAction = submitButton.hasAttribute('formaction') ? submitButton.formAction : form.dataset.egnitechAction;
+			const config = window.egnitechCart || {};
+			const toCheckout = config.checkoutUrl && (config.buyNowOnly || submitButton.classList.contains('egnitech-buy-now-button'));
 
 			// Add visual loading state
 			submitButton.classList.add('loading');
@@ -176,14 +190,15 @@
 					// WooCommerce answered but could not add this one (a variable product, or a refusal it
 					// has already put on screen). Resubmit without the button: the form's own fields carry
 					// what a variable product needs, and a refused simple product is not tried twice.
+					form.action = fallbackAction;
 					form.submit();
 					return;
 				}
 
-				// Buy Now (Theme Options): straight to checkout. Before the cart events below,
+				// Buy Now set to go to checkout (Theme Options). Before the cart events below,
 				// because the mini-cart opens its drawer on those.
-				if (window.egnitechCart && window.egnitechCart.checkoutUrl) {
-					window.location.href = window.egnitechCart.checkoutUrl;
+				if (toCheckout) {
+					window.location.href = config.checkoutUrl;
 					return;
 				}
 
@@ -202,6 +217,7 @@
 				console.error('AJAX add-to-cart error:', error);
 				// No usable answer came back (offline, blocked, or a server error), so nothing was
 				// reported to the shopper: submit the form the ordinary way, so the product is still added.
+				form.action = fallbackAction;
 				submitWithButton(form, submitButton);
 			})
 			.finally(() => {

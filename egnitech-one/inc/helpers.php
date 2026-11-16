@@ -139,7 +139,9 @@ if ( ! function_exists( 'egnitech_one_prime_options' ) ) {
 				'egnitech_one_woocommerce_gallery_lightbox',
 				'egnitech_one_woocommerce_gallery_lightbox_icon',
 				'egnitech_one_woocommerce_gallery_thumbnail_style',
+				'egnitech_one_woocommerce_add_to_cart_button',
 				'egnitech_one_woocommerce_buy_now',
+				'egnitech_one_woocommerce_buy_now_behaviour',
 			)
 		);
 	}

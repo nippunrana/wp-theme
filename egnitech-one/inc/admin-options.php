@@ -473,10 +473,20 @@ register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_gallery_thum
 'default'           => 'bottom-carousel',
 'sanitize_callback' => 'sanitize_text_field',
 ] );
+register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_add_to_cart_button', [
+'type'              => 'string',
+'default'           => 'yes',
+'sanitize_callback' => 'sanitize_text_field',
+] );
 register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_buy_now', [
 'type'              => 'string',
 'default'           => '',
 'sanitize_callback' => 'sanitize_text_field',
+] );
+register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_buy_now_behaviour', [
+'type'              => 'string',
+'default'           => 'checkout',
+'sanitize_callback' => 'egnitech_one_sanitize_buy_now_behaviour',
 ] );
 }
 
@@ -553,6 +563,14 @@ return in_array( $input, $valid, true ) ? (string) $input : 'list';
 function egnitech_one_sanitize_sidebar_position( mixed $input ): string {
 $valid = array( 'none', 'left', 'right' );
 return in_array( $input, $valid, true ) ? (string) $input : 'none';
+}
+
+/**
+ * Sanitize the Buy Now behaviour option.
+ */
+function egnitech_one_sanitize_buy_now_behaviour( mixed $input ): string {
+$valid = array( 'checkout', 'cart' );
+return in_array( $input, $valid, true ) ? (string) $input : 'checkout';
 }
 
 /**
@@ -726,7 +744,9 @@ $gallery_zoom          = get_option( 'egnitech_one_woocommerce_gallery_zoom', 'y
 $gallery_lightbox      = get_option( 'egnitech_one_woocommerce_gallery_lightbox', 'yes' );
 $gallery_lightbox_icon = get_option( 'egnitech_one_woocommerce_gallery_lightbox_icon', 'yes' );
 $gallery_layout        = get_option( 'egnitech_one_woocommerce_gallery_layout', 'custom' );
+$add_to_cart_button    = get_option( 'egnitech_one_woocommerce_add_to_cart_button', 'yes' );
 $buy_now               = get_option( 'egnitech_one_woocommerce_buy_now', '' );
+$buy_now_behaviour     = get_option( 'egnitech_one_woocommerce_buy_now_behaviour', 'checkout' );
 
 
 // SMTP options.
@@ -1409,19 +1429,45 @@ esc_html_e( 'Customize the "Built by EgniTech" text. HTML allowed.', 'egnitech-o
 	<div class="egnitech-card">
 		<div class="egnitech-card-header">
 			<h2 class="egnitech-card-title"><?php esc_html_e( 'Product Page Button', 'egnitech-one' ); ?></h2>
-			<p class="egnitech-card-desc"><?php esc_html_e( 'How the main button on product pages behaves.', 'egnitech-one' ); ?></p>
+			<p class="egnitech-card-desc"><?php esc_html_e( 'Which buttons product pages show, and what Buy Now does. With both on, they share the row half and half. If both are off, the page still shows Add to Cart, so shoppers can always buy. Saving a change clears the page cache, so visitors see it straight away. This is a theme feature: switching to another theme turns it off.', 'egnitech-one' ); ?></p>
 		</div>
 		<div class="egnitech-card-body">
 			<div class="egnitech-option-row">
 				<div class="egnitech-option-info">
-					<label><?php esc_html_e( 'Buy Now', 'egnitech-one' ); ?></label>
-					<p class="description"><?php esc_html_e( 'Label the button "Buy Now" instead of "Add to cart", and take shoppers straight to checkout after the item is added, without opening the cart drawer. Saving a change clears the page cache, so visitors see the new label straight away. This is a theme feature: switching to another theme turns it off.', 'egnitech-one' ); ?></p>
+					<label><?php esc_html_e( 'Add to Cart', 'egnitech-one' ); ?></label>
+					<p class="description"><?php esc_html_e( 'Show the "Add to cart" button. It adds the item and opens the cart drawer.', 'egnitech-one' ); ?></p>
 				</div>
 				<div class="egnitech-option-control">
 					<label class="egnitech-switch">
-						<input type="checkbox" name="egnitech_one_woocommerce_buy_now" value="yes" <?php checked( 'yes', $buy_now ); ?> />
+						<input type="checkbox" name="egnitech_one_woocommerce_add_to_cart_button" value="yes" <?php checked( 'yes', $add_to_cart_button ); ?> />
 						<span class="egnitech-slider"></span>
 					</label>
+				</div>
+			</div>
+
+			<div class="egnitech-option-row">
+				<div class="egnitech-option-info">
+					<label><?php esc_html_e( 'Buy Now', 'egnitech-one' ); ?></label>
+					<p class="description"><?php esc_html_e( 'Show a "Buy Now" button.', 'egnitech-one' ); ?></p>
+				</div>
+				<div class="egnitech-option-control">
+					<label class="egnitech-switch">
+						<input type="checkbox" name="egnitech_one_woocommerce_buy_now" id="egnitech_one_woocommerce_buy_now" value="yes" <?php checked( 'yes', $buy_now ); ?> />
+						<span class="egnitech-slider"></span>
+					</label>
+				</div>
+			</div>
+
+			<div class="egnitech-option-row" id="egnitech-buy-now-behaviour-row" style="<?php echo 'yes' === $buy_now ? '' : 'display:none;'; ?>">
+				<div class="egnitech-option-info">
+					<label><?php esc_html_e( 'Buy Now Behaviour', 'egnitech-one' ); ?></label>
+					<p class="description"><?php esc_html_e( 'What happens after Buy Now adds the item: go straight to checkout, or stay on the page and open the cart drawer, as Add to Cart does.', 'egnitech-one' ); ?></p>
+				</div>
+				<div class="egnitech-option-control">
+					<select name="egnitech_one_woocommerce_buy_now_behaviour" class="egnitech-input">
+						<option value="checkout" <?php selected( 'checkout', $buy_now_behaviour ); ?>><?php esc_html_e( 'Go to checkout', 'egnitech-one' ); ?></option>
+						<option value="cart" <?php selected( 'cart', $buy_now_behaviour ); ?>><?php esc_html_e( 'Open the cart drawer', 'egnitech-one' ); ?></option>
+					</select>
 				</div>
 			</div>
 		</div>

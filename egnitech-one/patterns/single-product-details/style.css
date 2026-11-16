@@ -195,6 +195,62 @@
 	grid-column: 1 / -1;
 }
 
+/* Buy Now beside Add to Cart (Theme Options): the two buttons share the button space half and half.
+   Column gap only: WooCommerce's float-clearing pseudo-elements are grid items too, and a row gap
+   would space them out as empty rows. */
+.is-style-single-product-details .wc-block-add-to-cart-form :has(> .egnitech-buy-now-button) {
+	grid-template-columns: min-content 1fr 1fr;
+	column-gap: 8px;
+}
+
+.is-style-single-product-details .wc-block-add-to-cart-form :has(> .egnitech-buy-now-button):not(:has(> .wc-block-components-quantity-selector)) {
+	grid-template-columns: 1fr 1fr;
+}
+
+/* The row's gap now spaces the stepper too. */
+.is-style-single-product-details .wc-block-add-to-cart-form :has(> .egnitech-buy-now-button) > .wc-block-components-quantity-selector {
+	margin-inline-end: 0;
+}
+
+/* Each button in a column of its own: Add to Cart the second-last, Buy Now the last. Placed
+   explicitly, because WooCommerce pins its button to column 2, the no-stepper rule above spans it
+   across the row, and a sold-individually product keeps an empty quantity box that takes the first cell. */
+.is-style-single-product-details .wc-block-add-to-cart-form :has(> .egnitech-buy-now-button) > .wp-element-button:has(~ .egnitech-buy-now-button) {
+	grid-column: -3 / -2;
+}
+
+.is-style-single-product-details .wc-block-add-to-cart-form :has(> .egnitech-buy-now-button) > .egnitech-buy-now-button.wp-element-button {
+	grid-column: -2 / -1;
+}
+
+/* Phones: beside the stepper each button is too narrow for its label, so the two buttons take
+   a row of their own under it, still half and half. */
+@media (max-width: 480px) {
+	.is-style-single-product-details .wc-block-add-to-cart-form :has(> .egnitech-buy-now-button) {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.is-style-single-product-details .wc-block-add-to-cart-form :has(> .egnitech-buy-now-button) > .wc-block-components-quantity-selector {
+		grid-column: 1 / -1;
+		justify-self: start;
+		margin-block-end: 8px;
+	}
+}
+
+/* Add to Cart is the secondary button beside Buy Now: outlined in the accent, text in Contrast
+   (accent text on Base can be too faint to read). Hover matches the site's button hover. */
+.is-style-single-product-details .wc-block-add-to-cart-form .wp-element-button:has(~ .egnitech-buy-now-button) {
+	background-color: transparent;
+	color: var(--wp--preset--color--contrast);
+	box-shadow: inset 0 0 0 2px var(--wp--preset--color--accent);
+}
+
+.is-style-single-product-details .wc-block-add-to-cart-form .wp-element-button:has(~ .egnitech-buy-now-button):hover {
+	background-color: var(--wp--preset--color--contrast);
+	color: var(--wp--preset--color--base);
+	box-shadow: inset 0 0 0 2px var(--wp--preset--color--contrast);
+}
+
 /* WooCommerce's stepper (quantitySelectorStyle "stepper" in patterns/single-product-details.php). */
 .is-style-single-product-details .wc-block-add-to-cart-form .wc-block-components-quantity-selector {
 	border: 2px solid var(--wp--preset--color--border);
