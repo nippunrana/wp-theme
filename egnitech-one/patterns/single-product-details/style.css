@@ -223,17 +223,25 @@
 	grid-column: -2 / -1;
 }
 
-/* Phones: beside the stepper each button is too narrow for its label, so the two buttons take
-   a row of their own under it, still half and half. */
+/* Phones: three across leaves each button too narrow for its label. Add to Cart stays beside the
+   stepper (or fills the row when there is none), and Buy Now takes the next row on its own. Its top
+   margin spaces the rows, as a row gap cannot here (see the gap note above). */
 @media (max-width: 480px) {
 	.is-style-single-product-details .wc-block-add-to-cart-form :has(> .egnitech-buy-now-button) {
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: min-content 1fr;
 	}
 
-	.is-style-single-product-details .wc-block-add-to-cart-form :has(> .egnitech-buy-now-button) > .wc-block-components-quantity-selector {
+	.is-style-single-product-details .wc-block-add-to-cart-form :has(> .egnitech-buy-now-button):not(:has(> .wc-block-components-quantity-selector)) {
+		grid-template-columns: 1fr;
+	}
+
+	.is-style-single-product-details .wc-block-add-to-cart-form :has(> .egnitech-buy-now-button) > .wp-element-button:has(~ .egnitech-buy-now-button) {
+		grid-column: -2 / -1;
+	}
+
+	.is-style-single-product-details .wc-block-add-to-cart-form :has(> .egnitech-buy-now-button) > .egnitech-buy-now-button.wp-element-button {
 		grid-column: 1 / -1;
-		justify-self: start;
-		margin-block-end: 8px;
+		margin-block-start: 12px;
 	}
 }
 
