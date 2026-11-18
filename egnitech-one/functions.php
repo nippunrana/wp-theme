@@ -48,3 +48,6 @@ require_once get_theme_file_path( 'inc/woocommerce-cart-drawer.php' );
 // 9. FastCGI Cache Purging System
 require_once get_theme_file_path( 'inc/fastcgi-cache-purger.php' );
 
+// 10. Cloudflare Turnstile (login, registration, lost-password and comment forms)
+require_once get_theme_file_path( 'inc/turnstile.php' );
+

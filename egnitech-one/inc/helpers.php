@@ -101,6 +101,27 @@ if ( ! function_exists( 'egnitech_one_get_recaptcha_settings' ) ) {
 }
 
 /**
+ * Get the Cloudflare Turnstile settings.
+ * "enabled" is true only when the switch is on and both keys are saved, so a half-filled
+ * card never blocks a form. The secret key is left out on purpose: only
+ * egnitech_one_turnstile_verify() reads it, and it must never reach the browser.
+ *
+ * @return array{enabled: bool, site_key: string} The Turnstile settings.
+ */
+if ( ! function_exists( 'egnitech_one_get_turnstile_settings' ) ) {
+	function egnitech_one_get_turnstile_settings(): array {
+		$site_key = (string) egnitech_one_get_option( 'egnitech_one_turnstile_site_key', '' );
+
+		return array(
+			'enabled'  => 'yes' === egnitech_one_get_option( 'egnitech_one_turnstile_enabled', 'no' )
+				&& '' !== $site_key
+				&& '' !== (string) egnitech_one_get_option( 'egnitech_one_turnstile_secret_key', '' ),
+			'site_key' => $site_key,
+		);
+	}
+}
+
+/**
  * Fetch every setting a front-end page reads with one database query.
  * A setting that was never saved has no database row, and WordPress would otherwise
  * look for each of those with a query of its own on every page not served from cache.
@@ -142,6 +163,9 @@ if ( ! function_exists( 'egnitech_one_prime_options' ) ) {
 				'egnitech_one_woocommerce_add_to_cart_button',
 				'egnitech_one_woocommerce_buy_now',
 				'egnitech_one_woocommerce_buy_now_behaviour',
+				'egnitech_one_turnstile_enabled',
+				'egnitech_one_turnstile_site_key',
+				'egnitech_one_turnstile_secret_key',
 			)
 		);
 	}

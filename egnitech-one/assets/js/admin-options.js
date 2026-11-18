@@ -16,6 +16,7 @@
         initScriptsManager();
         initSmtpToggle();
         initRecaptchaToggle();
+        initTurnstileToggle();
         initWooCommerceLayoutToggle();
         initFastCgiToggle();
     }
@@ -38,6 +39,13 @@
      */
     function initRecaptchaToggle() {
         setupToggleVisibility('egnitech_one_recaptcha_enabled', 'egnitech-recaptcha-details');
+    }
+
+    /**
+     * Initialize Cloudflare Turnstile Toggle Logic
+     */
+    function initTurnstileToggle() {
+        setupToggleVisibility('egnitech_one_turnstile_enabled', 'egnitech-turnstile-details');
     }
 
     /**

@@ -385,6 +385,36 @@ register_setting( 'egnitech_one_options', 'egnitech_one_recaptcha_secret_key', [
 	'sanitize_callback' => static fn( mixed $input ): string => egnitech_one_sanitize_secret( $input, 'egnitech_one_recaptcha_secret_key' ),
 ] );
 
+register_setting(
+	'egnitech_one_options',
+	'egnitech_one_turnstile_enabled',
+	array(
+		'type'              => 'string',
+		'default'           => 'no',
+		'sanitize_callback' => 'sanitize_text_field',
+	)
+);
+
+register_setting(
+	'egnitech_one_options',
+	'egnitech_one_turnstile_site_key',
+	array(
+		'type'              => 'string',
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_text_field',
+	)
+);
+
+register_setting(
+	'egnitech_one_options',
+	'egnitech_one_turnstile_secret_key',
+	array(
+		'type'              => 'string',
+		'default'           => '',
+		'sanitize_callback' => static fn( mixed $input ): string => egnitech_one_sanitize_secret( $input, 'egnitech_one_turnstile_secret_key' ),
+	)
+);
+
 /* ----- SMTP Settings ----- */
 register_setting( 'egnitech_one_options', 'egnitech_one_smtp_enabled', [
 'type'              => 'string',
@@ -764,6 +794,9 @@ $smtp_from_name   = get_option( 'egnitech_one_smtp_from_name', get_bloginfo( 'na
 $recaptcha_enabled    = get_option( 'egnitech_one_recaptcha_enabled', 'no' );
 $recaptcha_site_key   = get_option( 'egnitech_one_recaptcha_site_key', '' );
 $recaptcha_secret_key = get_option( 'egnitech_one_recaptcha_secret_key', '' );
+$turnstile_enabled    = get_option( 'egnitech_one_turnstile_enabled', 'no' );
+$turnstile_site_key   = get_option( 'egnitech_one_turnstile_site_key', '' );
+$turnstile_secret_key = get_option( 'egnitech_one_turnstile_secret_key', '' );
 
 // FastCGI Cache options.
 $fastcgi_cache_enabled = get_option( 'egnitech_one_fastcgi_cache_enabled', 'no' );
@@ -1563,6 +1596,49 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
                     </div>
                     <div class="egnitech-option-control">
                         <input type="password" name="egnitech_one_recaptcha_secret_key" value="" autocomplete="new-password" placeholder="<?php echo esc_attr( $recaptcha_secret_key ? __( 'Saved. Leave blank to keep it.', 'egnitech-one' ) : '' ); ?>" class="egnitech-input" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="egnitech-card">
+        <div class="egnitech-card-header">
+            <h2 class="egnitech-card-title"><?php esc_html_e( 'Cloudflare Turnstile', 'egnitech-one' ); ?></h2>
+            <p class="egnitech-card-desc"><?php esc_html_e( 'Stop bots on the login, registration, lost-password and comment forms, and on the WooCommerce My Account forms. Create a widget under Turnstile in your Cloudflare dashboard to get the keys.', 'egnitech-one' ); ?></p>
+        </div>
+        <div class="egnitech-card-body">
+            <div class="egnitech-option-row">
+                <div class="egnitech-option-info">
+                    <label><?php esc_html_e( 'Enable Turnstile', 'egnitech-one' ); ?></label>
+                    <p class="description"><?php esc_html_e( 'Takes effect once both keys are saved. Any of those forms sent without a valid answer is refused, so test a login in a private window before you log out.', 'egnitech-one' ); ?></p>
+                </div>
+                <div class="egnitech-option-control">
+                    <label class="egnitech-switch">
+                        <input type="checkbox" name="egnitech_one_turnstile_enabled" id="egnitech_one_turnstile_enabled" value="yes" <?php checked( 'yes', $turnstile_enabled ); ?> />
+                        <span class="egnitech-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="egnitech-turnstile-details" style="<?php echo 'yes' === $turnstile_enabled ? '' : 'display: none;'; ?>">
+                <div class="egnitech-option-row">
+                    <div class="egnitech-option-info">
+                        <label><?php esc_html_e( 'Site Key', 'egnitech-one' ); ?></label>
+                        <p class="description"><?php esc_html_e( 'Your Cloudflare Turnstile widget\'s Site Key.', 'egnitech-one' ); ?></p>
+                    </div>
+                    <div class="egnitech-option-control">
+                        <input type="text" name="egnitech_one_turnstile_site_key" value="<?php echo esc_attr( $turnstile_site_key ); ?>" class="egnitech-input" />
+                    </div>
+                </div>
+
+                <div class="egnitech-option-row">
+                    <div class="egnitech-option-info">
+                        <label><?php esc_html_e( 'Secret Key', 'egnitech-one' ); ?></label>
+                        <p class="description"><?php esc_html_e( 'Your Cloudflare Turnstile widget\'s Secret Key.', 'egnitech-one' ); ?></p>
+                    </div>
+                    <div class="egnitech-option-control">
+                        <input type="password" name="egnitech_one_turnstile_secret_key" value="" autocomplete="new-password" placeholder="<?php echo esc_attr( $turnstile_secret_key ? __( 'Saved. Leave blank to keep it.', 'egnitech-one' ) : '' ); ?>" class="egnitech-input" />
                     </div>
                 </div>
             </div>
