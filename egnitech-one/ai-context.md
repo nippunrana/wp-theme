@@ -80,6 +80,7 @@ Each file in `docs/built-systems/` holds only what the code cannot say: bans, de
 | Custom scripts | Built | [docs/built-systems/custom-scripts.md](docs/built-systems/custom-scripts.md) | Header and footer code from Theme Options, printed unescaped |
 | SMTP mail | Built | [docs/built-systems/smtp.md](docs/built-systems/smtp.md) | Also sets the sender of every email, SMTP on or off |
 | reCAPTCHA keys | Built | `inc/helpers.php` | Stores the keys and hands them out (section above). Nothing in this theme draws a challenge or checks an answer |
+| Cloudflare Turnstile | Built | [docs/built-systems/turnstile.md](docs/built-systems/turnstile.md) | Challenge on the login, registration, lost-password, comment and My Account forms. Fails closed: read before touching login or comment hooks |
 | Font overview | Built | `inc/font-manager.php` | Read-only list in Theme Options. Fonts are changed in the Site Editor; this file installs nothing |
 | Scroll-to-top, reading progress, breadcrumbs | Built | `inc/enqueue-assets.php`, `inc/theme-setup.php` | Switches under Theme Options > General. Their output is part of the cached page |
 | Add to Cart + Options migration | Roadmap | [docs/plans/2026-11-15-add-to-cart-options-migration.md](docs/plans/2026-11-15-add-to-cart-options-migration.md) | Waiting for WooCommerce to drop the block's Beta label. Read before touching the product page's add-to-cart form |
