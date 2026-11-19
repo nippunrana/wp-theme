@@ -51,8 +51,3 @@ require_once get_theme_file_path( 'inc/fastcgi-cache-purger.php' );
 // 10. Cloudflare Turnstile (login, registration, lost-password and comment forms)
 require_once get_theme_file_path( 'inc/turnstile.php' );
 
-// 11. Contact form (the block, sending a message, and the Messages screen)
-require_once get_theme_file_path( 'inc/contact-form-submit.php' );
-require_once get_theme_file_path( 'inc/contact-messages.php' );
-require_once get_theme_file_path( 'inc/blocks/contact-form.php' );
-

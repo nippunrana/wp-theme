@@ -415,16 +415,6 @@ register_setting(
 	)
 );
 
-register_setting(
-	'egnitech_one_options',
-	'egnitech_one_contact_recipients',
-	array(
-		'type'              => 'string',
-		'default'           => '',
-		'sanitize_callback' => 'egnitech_one_sanitize_email_list',
-	)
-);
-
 /* ----- SMTP Settings ----- */
 register_setting( 'egnitech_one_options', 'egnitech_one_smtp_enabled', [
 'type'              => 'string',
@@ -807,7 +797,6 @@ $recaptcha_secret_key = get_option( 'egnitech_one_recaptcha_secret_key', '' );
 $turnstile_enabled    = get_option( 'egnitech_one_turnstile_enabled', 'no' );
 $turnstile_site_key   = get_option( 'egnitech_one_turnstile_site_key', '' );
 $turnstile_secret_key = get_option( 'egnitech_one_turnstile_secret_key', '' );
-$contact_recipients   = get_option( 'egnitech_one_contact_recipients', '' );
 
 // FastCGI Cache options.
 $fastcgi_cache_enabled = get_option( 'egnitech_one_fastcgi_cache_enabled', 'no' );
@@ -1616,7 +1605,7 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
     <div class="egnitech-card">
         <div class="egnitech-card-header">
             <h2 class="egnitech-card-title"><?php esc_html_e( 'Cloudflare Turnstile', 'egnitech-one' ); ?></h2>
-            <p class="egnitech-card-desc"><?php esc_html_e( 'Stop bots on the login, registration, lost-password and comment forms, on the WooCommerce My Account forms and on every Contact Form block. Create a widget under Turnstile in your Cloudflare dashboard to get the keys.', 'egnitech-one' ); ?></p>
+            <p class="egnitech-card-desc"><?php esc_html_e( 'Stop bots on the login, registration, lost-password and comment forms, and on the WooCommerce My Account forms. Create a widget under Turnstile in your Cloudflare dashboard to get the keys.', 'egnitech-one' ); ?></p>
         </div>
         <div class="egnitech-card-body">
             <div class="egnitech-option-row">
@@ -1651,40 +1640,6 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
                     <div class="egnitech-option-control">
                         <input type="password" name="egnitech_one_turnstile_secret_key" value="" autocomplete="new-password" placeholder="<?php echo esc_attr( $turnstile_secret_key ? __( 'Saved. Leave blank to keep it.', 'egnitech-one' ) : '' ); ?>" class="egnitech-input" />
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="egnitech-card">
-        <div class="egnitech-card-header">
-            <h2 class="egnitech-card-title"><?php esc_html_e( 'Contact Form', 'egnitech-one' ); ?></h2>
-            <p class="egnitech-card-desc">
-                <?php
-                printf(
-                    /* translators: %s: link to the Messages screen. */
-                    esc_html__( 'Messages sent through a Contact Form block are emailed to the addresses below and saved under %s. Turn on Turnstile above to keep spam bots out.', 'egnitech-one' ),
-                    '<a href="' . esc_url( admin_url( 'edit.php?post_type=egnitech_message' ) ) . '">' . esc_html__( 'Messages', 'egnitech-one' ) . '</a>'
-                );
-                ?>
-            </p>
-        </div>
-        <div class="egnitech-card-body">
-            <div class="egnitech-option-row">
-                <div class="egnitech-option-info">
-                    <label for="egnitech_one_contact_recipients"><?php esc_html_e( 'Send messages to', 'egnitech-one' ); ?></label>
-                    <p class="description">
-                        <?php
-                        printf(
-                            /* translators: %s: the site's admin email address. */
-                            esc_html__( 'One or more addresses, separated by commas. Leave empty to use the site\'s admin email (%s). A Contact Form block can send to other addresses in its own settings. For reliable delivery, set a From Email on your own domain under SMTP Settings.', 'egnitech-one' ),
-                            esc_html( (string) get_option( 'admin_email' ) )
-                        );
-                        ?>
-                    </p>
-                </div>
-                <div class="egnitech-option-control">
-                    <input type="text" name="egnitech_one_contact_recipients" id="egnitech_one_contact_recipients" value="<?php echo esc_attr( $contact_recipients ); ?>" placeholder="<?php echo esc_attr( (string) get_option( 'admin_email' ) ); ?>" class="egnitech-input" />
                 </div>
             </div>
         </div>
