@@ -193,7 +193,9 @@ function egnitech_one_render_bulk_discount_selector(): void {
 		return $a['qty'] <=> $b['qty'];
 	} );
 
-	$base_price = (float) $product->get_price();
+	// WooCommerce's display price, which follows the shop's tax display setting. Variations reach the
+	// script as display_price, built the same way. The cart keeps the raw price (see bulk-discounts.md).
+	$base_price = (float) wc_get_price_to_display( $product );
 	$currency_symbol = get_woocommerce_currency_symbol();
 	$currency_pos = get_option( 'woocommerce_currency_pos', 'left' );
 
