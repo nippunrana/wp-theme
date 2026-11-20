@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * Stored secrets: the SMTP password and the Turnstile and reCAPTCHA secret keys.
+ * Stored secrets: the SMTP password and the Turnstile secret key.
  *
  * They are encrypted in the options table with a key made from WordPress's LOGGED_IN_KEY and
  * LOGGED_IN_SALT in wp-config.php, so a copy of the database alone does not reveal them. Where those
@@ -31,7 +31,6 @@ function egnitech_one_secret_options(): array {
 	return array(
 		'egnitech_one_turnstile_secret_key' => __( 'Cloudflare Turnstile secret key', 'egnitech-one' ),
 		'egnitech_one_smtp_password'        => __( 'SMTP password', 'egnitech-one' ),
-		'egnitech_one_recaptcha_secret_key' => __( 'reCAPTCHA secret key', 'egnitech-one' ),
 	);
 }
 
@@ -139,7 +138,7 @@ function egnitech_one_secrets_notices(): void {
 	if ( 'appearance_page_egnitech-one-options' === $screen->id && null === egnitech_one_secrets_key() ) {
 		printf(
 			'<div class="notice notice-warning"><p>%s</p></div>',
-			esc_html__( 'EgniTech One: the SMTP password and the Turnstile and reCAPTCHA secret keys are saved without encryption, because wp-config.php does not define LOGGED_IN_KEY and LOGGED_IN_SALT (or PHP\'s sodium library is missing). Anyone with a copy of the database can read them.', 'egnitech-one' )
+			esc_html__( 'EgniTech One: the SMTP password and the Turnstile secret key are saved without encryption, because wp-config.php does not define LOGGED_IN_KEY and LOGGED_IN_SALT (or PHP\'s sodium library is missing). Anyone with a copy of the database can read them.', 'egnitech-one' )
 		);
 	}
 }

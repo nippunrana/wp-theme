@@ -1,6 +1,6 @@
 # Stored secrets
 
-Code: `inc/secrets.php` (the key, encrypt, read, admin notices) and `egnitech_one_sanitize_secret()` in `inc/admin-options.php`. Covers the SMTP password and the Turnstile and reCAPTCHA secret keys.
+Code: `inc/secrets.php` (the key, encrypt, read, admin notices) and `egnitech_one_sanitize_secret()` in `inc/admin-options.php`. Covers the SMTP password and the Turnstile secret key.
 
 - **They are encrypted in the options table with a key made from `LOGGED_IN_KEY` and `LOGGED_IN_SALT` in `wp-config.php`.** This is Google Site Kit's model (owner's decision, 20 Nov 2026: no manual setup step for site owners). A copy of the database alone does not reveal them. Anything that runs PHP on the server can still read them.
 - **Never** read those two constants through `wp_salt()`, and **never** store the key, or anything made from it, in the database. Where the constants are missing, `wp_salt()` returns values WordPress keeps in the database, which would put the key next to what it locks.
@@ -10,7 +10,7 @@ Code: `inc/secrets.php` (the key, encrypt, read, admin notices) and `egnitech_on
   - Until then, Turnstile is off: an unreadable secret counts as missing, so logins are not refused. SMTP mail cannot sign in.
   - Putting the old values back in `wp-config.php` restores everything.
   - **Never** make an unreadable Turnstile secret count as set. Turnstile would stay on with no usable secret and refuse every login.
-- **Always read these secrets through `egnitech_one_read_secret()`.** `get_option()` returns the encrypted text. A child theme that replaces `egnitech_one_smtp_init()`, or reads these options itself, gets the encrypted text too. `egnitech_one_get_recaptcha_settings()` still returns the plain key.
+- **Always read these secrets through `egnitech_one_read_secret()`.** `get_option()` returns the encrypted text. A child theme that replaces `egnitech_one_smtp_init()`, or reads these options itself, gets the encrypted text too.
 - **A value without the `egnitech-enc:v1:` prefix is used as it is.** That covers one saved before encryption existed, one saved on a site that cannot encrypt, and one written by WP-CLI. It is encrypted at the next Theme Options save. That first save changes the stored Turnstile secret, which clears the whole page cache once.
 - **The sanitizer passes an already-encrypted value through untouched. Never remove that.** Each encryption uses a fresh random nonce, so re-encrypting would rewrite the option, and clear the page cache, on every save. WordPress also runs the sanitizer twice when an option is saved for the first time (seen on 7.1.4), so the second run receives the value the first one encrypted.
 - **A blank field over an unreadable secret keeps it as it is**, so putting the old salts back still recovers it.
