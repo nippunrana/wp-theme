@@ -159,19 +159,6 @@ The site is **light only** by default. Dark/light mode and the visitor toggle ex
 - Use `egnitech-one` only when translating existing strings defined by the parent theme's translation files.
 - Use `TEXT_DOMAIN` for all new translatable strings unique to the child theme.
 
-### Google reCAPTCHA v2 System
-Google reCAPTCHA v2 keys are managed globally under the parent theme's options page ("Integrations" tab).
-- **Accessing Keys**: Call the global helper function `egnitech_one_get_recaptcha_settings()`.
-- **Returned Schema**: Returns `array{enabled: bool, site_key: string, secret_key: string}`.
-- **Usage inside Child Theme**: Use this helper to easily fetch and render the captcha keys site-wide in forms or patterns:
-  ```php
-  $recaptcha = egnitech_one_get_recaptcha_settings();
-  if ( $recaptcha['enabled'] ) {
-      // Use $recaptcha['site_key'] and $recaptcha['secret_key']
-  }
-  ```
-- **Security**: Only `site_key` may be output client-side (e.g. in a `data-sitekey` attribute). `secret_key` is for server-side verification requests only and must never appear in markup or JS.
-
 ## Coding Standards
 1. **Vanilla JS Only**: No jQuery. Use ES6+. For complex interactions, use the **Interactivity API**.
 2. **CSS Scoping (MANDATORY)**: All custom CSS must be scoped to the block's variation class (e.g., `.is-style-{slug}`). NEVER use catch-all page wrappers (e.g., `.{slug}-wrapper`) as they cause style bleed.

@@ -2,6 +2,7 @@
 
 Code: `inc/turnstile.php` (widget, check, form hooks, cache clearing), the getter `egnitech_one_get_turnstile_settings()` in `inc/helpers.php`, and the **Integrations** tab in `inc/admin-options.php`.
 
+- **Turnstile is the theme's only bot check** (owner's decision, 20 Nov 2026). Google reCAPTCHA was removed with its settings and its helper `egnitech_one_get_recaptcha_settings()`. **Never** add reCAPTCHA or a second challenge back. A site that saved reCAPTCHA keys still holds three `egnitech_one_recaptcha_*` rows, the secret among them; nothing reads them.
 - **Turnstile starts only when the switch is on and both keys are saved.** Until then no widget is printed and nothing is checked. **Never** loosen this to the switch alone: the switch saved without a secret would refuse every login.
 - **It fails closed, including when Cloudflare cannot be reached.** A missing, wrong, reused or expired token refuses the form, and so does a check that errors or times out. If that locks the administrators out, run `wp option update egnitech_one_turnstile_enabled no` on the server (or blank that row in the options table). Then clear the page cache from the admin bar, because WP-CLI cannot (`page-cache.md`).
 - **Each check is limited to a request from its own form. Never widen one to the bare hook.** `authenticate` also runs for XML-RPC logins and on every visit to wp-login.php. `lostpassword_post` also runs when an administrator sends a reset link from the Users screen. None of those carry a token, so a check on the bare hook blocks them.
