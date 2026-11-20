@@ -210,6 +210,9 @@ function egnitech_one_render_bulk_discount_selector(): void {
 		data-base-price="<?php echo esc_attr( (string) $base_price ); ?>"
 		data-currency-symbol="<?php echo esc_attr( $currency_symbol ); ?>"
 		data-currency-pos="<?php echo esc_attr( $currency_pos ); ?>"
+		data-price-decimals="<?php echo esc_attr( (string) wc_get_price_decimals() ); ?>"
+		data-decimal-separator="<?php echo esc_attr( wc_get_price_decimal_separator() ); ?>"
+		data-thousand-separator="<?php echo esc_attr( wc_get_price_thousand_separator() ); ?>"
 		data-product-id="<?php echo esc_attr( (string) $product_id ); ?>"
 		data-cart-url="<?php echo esc_url( rest_url( 'wc/store/v1/cart' ) ); ?>">
 		

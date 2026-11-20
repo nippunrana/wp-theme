@@ -56,23 +56,34 @@ document.addEventListener('DOMContentLoaded', () => {
 	const currencySymbol = container.getAttribute('data-currency-symbol') || '$';
 	const currencyPos = container.getAttribute('data-currency-pos') || 'left';
 
+	// The shop's WooCommerce currency settings, printed by PHP. A page cached before these attributes
+	// existed has none of them, so fall back to WooCommerce's defaults. Only a missing attribute falls
+	// back: an empty thousand separator is a real setting.
+	const attrOr = (name, fallback) => container.getAttribute(name) ?? fallback;
+	const priceDecimals = parseInt(attrOr('data-price-decimals', '2'), 10);
+	const decimalSeparator = attrOr('data-decimal-separator', '.');
+	const thousandSeparator = attrOr('data-thousand-separator', ',');
+
 	/**
-	 * Formats price according to WooCommerce currency settings.
+	 * Formats price as WooCommerce's wc_price() does, with the shop's own currency settings.
 	 *
 	 * @param {number} amount Price amount.
 	 * @return {string} Formatted price string.
 	 */
 	function formatPrice(amount) {
-		const formatted = amount.toFixed(2);
+		const [whole, fraction] = amount.toFixed(priceDecimals).split('.');
+		const formatted = whole.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator)
+			+ (fraction ? decimalSeparator + fraction : '');
+		// A non-breaking space, as wc_price() uses, so the symbol never wraps away from the number.
 		switch (currencyPos) {
 			case 'left':
 				return currencySymbol + formatted;
 			case 'left_space':
-				return currencySymbol + ' ' + formatted;
+				return currencySymbol + ' ' + formatted;
 			case 'right':
 				return formatted + currencySymbol;
 			case 'right_space':
-				return formatted + ' ' + currencySymbol;
+				return formatted + ' ' + currencySymbol;
 			default:
 				return currencySymbol + formatted;
 		}
