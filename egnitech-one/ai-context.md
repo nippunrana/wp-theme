@@ -79,6 +79,7 @@ Each file in `docs/built-systems/` holds only what the code cannot say: bans, de
 | Bulk discounts | Built | [docs/built-systems/bulk-discounts.md](docs/built-systems/bulk-discounts.md) | Changes what customers are charged. The same sum lives in three places |
 | Custom scripts | Built | [docs/built-systems/custom-scripts.md](docs/built-systems/custom-scripts.md) | Header and footer code from Theme Options, printed unescaped |
 | SMTP mail | Built | [docs/built-systems/smtp.md](docs/built-systems/smtp.md) | Also sets the sender of every email, SMTP on or off |
+| Stored secrets | Built | [docs/built-systems/stored-secrets.md](docs/built-systems/stored-secrets.md) | SMTP password and Turnstile / reCAPTCHA secrets, encrypted with a key made from wp-config's salts. Changing those salts makes them unreadable |
 | reCAPTCHA keys | Built | `inc/helpers.php` | Stores the keys and hands them out (section above). Nothing in this theme draws a challenge or checks an answer |
 | Cloudflare Turnstile | Built | [docs/built-systems/turnstile.md](docs/built-systems/turnstile.md) | Challenge on the login, registration, lost-password, comment and My Account forms. Fails closed: read before touching login or comment hooks |
 | Font overview | Built | `inc/font-manager.php` | Read-only list in Theme Options. Fonts are changed in the Site Editor; this file installs nothing |

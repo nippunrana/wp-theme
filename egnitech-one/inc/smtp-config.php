@@ -44,7 +44,7 @@ if ( ! function_exists( 'egnitech_one_smtp_init' ) ) {
 		$encryption = get_option( 'egnitech_one_smtp_encryption', 'tls' );
 		$auth       = get_option( 'egnitech_one_smtp_auth', 'yes' );
 		$user       = get_option( 'egnitech_one_smtp_username' );
-		$pass       = get_option( 'egnitech_one_smtp_password' );
+		$pass       = (string) egnitech_one_read_secret( 'egnitech_one_smtp_password' ); // Decrypted: inc/secrets.php.
 
 		$phpmailer->isSMTP();
 		$phpmailer->Host       = (string) $host;

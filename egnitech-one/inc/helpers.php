@@ -95,7 +95,8 @@ if ( ! function_exists( 'egnitech_one_get_recaptcha_settings' ) ) {
 		return array(
 			'enabled'    => 'yes' === egnitech_one_get_option( 'egnitech_one_recaptcha_enabled', 'no' ),
 			'site_key'   => (string) egnitech_one_get_option( 'egnitech_one_recaptcha_site_key', '' ),
-			'secret_key' => (string) egnitech_one_get_option( 'egnitech_one_recaptcha_secret_key', '' ),
+			// Decrypted (inc/secrets.php): '' when none is saved or it can no longer be read.
+			'secret_key' => (string) egnitech_one_read_secret( 'egnitech_one_recaptcha_secret_key' ),
 		);
 	}
 }
@@ -103,8 +104,10 @@ if ( ! function_exists( 'egnitech_one_get_recaptcha_settings' ) ) {
 /**
  * Get the Cloudflare Turnstile settings.
  * "enabled" is true only when the switch is on and both keys are saved, so a half-filled
- * card never blocks a form. The secret key is left out on purpose: only
- * egnitech_one_turnstile_verify() reads it, and it must never reach the browser.
+ * card never blocks a form. A secret the site can no longer decrypt counts as missing, so
+ * changed salts switch Turnstile off instead of refusing every login (inc/secrets.php).
+ * The secret key is left out on purpose: only egnitech_one_turnstile_verify() uses it,
+ * and it must never reach the browser.
  *
  * @return array{enabled: bool, site_key: string} The Turnstile settings.
  */
@@ -115,7 +118,7 @@ if ( ! function_exists( 'egnitech_one_get_turnstile_settings' ) ) {
 		return array(
 			'enabled'  => 'yes' === egnitech_one_get_option( 'egnitech_one_turnstile_enabled', 'no' )
 				&& '' !== $site_key
-				&& '' !== (string) egnitech_one_get_option( 'egnitech_one_turnstile_secret_key', '' ),
+				&& '' !== (string) egnitech_one_read_secret( 'egnitech_one_turnstile_secret_key' ),
 			'site_key' => $site_key,
 		);
 	}

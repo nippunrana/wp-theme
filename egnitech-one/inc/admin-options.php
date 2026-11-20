@@ -560,15 +560,30 @@ function egnitech_one_sanitize_scripts( mixed $input ): string {
 }
 
 /**
- * Sanitize a stored secret (SMTP password, reCAPTCHA secret key).
+ * Sanitize a stored secret (SMTP password, reCAPTCHA and Turnstile secret keys).
  * The form never prints the saved value, so an empty field means "keep what is saved".
- * A new value is stored exactly as typed: any character is valid in a password.
+ * A new value keeps every character typed (any character is valid in a password) and is
+ * encrypted where the site can encrypt (inc/secrets.php). A value saved as typed before
+ * encryption existed is encrypted on the next save.
  */
 function egnitech_one_sanitize_secret( mixed $input, string $option ): string {
 if ( ! is_string( $input ) || '' === $input ) {
-return (string) get_option( $option, '' );
+$stored = (string) get_option( $option, '' );
+// A value the current key cannot open is kept as it is: putting the old salts back recovers it.
+return null === egnitech_one_read_secret( $option ) ? $stored : egnitech_one_encrypt_secret( $stored );
 }
-return $input;
+return egnitech_one_encrypt_secret( $input );
+}
+
+/**
+ * Placeholder for a secret field: whether a value is saved, or that it must be entered again.
+ */
+function egnitech_one_secret_field_placeholder( string $option ): string {
+$plain = egnitech_one_read_secret( $option );
+if ( null === $plain ) {
+return __( 'Can no longer be read. Enter it again.', 'egnitech-one' );
+}
+return '' !== $plain ? __( 'Saved. Leave blank to keep it.', 'egnitech-one' ) : '';
 }
 
 /**
@@ -786,17 +801,14 @@ $smtp_port        = get_option( 'egnitech_one_smtp_port', 587 );
 $smtp_encryption  = get_option( 'egnitech_one_smtp_encryption', 'tls' );
 $smtp_auth        = get_option( 'egnitech_one_smtp_auth', 'yes' );
 $smtp_username    = get_option( 'egnitech_one_smtp_username', '' );
-$smtp_password    = get_option( 'egnitech_one_smtp_password', '' );
 $smtp_from_email  = get_option( 'egnitech_one_smtp_from_email', '' );
 $smtp_from_name   = get_option( 'egnitech_one_smtp_from_name', get_bloginfo( 'name' ) );
 
 // Integrations options.
 $recaptcha_enabled    = get_option( 'egnitech_one_recaptcha_enabled', 'no' );
 $recaptcha_site_key   = get_option( 'egnitech_one_recaptcha_site_key', '' );
-$recaptcha_secret_key = get_option( 'egnitech_one_recaptcha_secret_key', '' );
 $turnstile_enabled    = get_option( 'egnitech_one_turnstile_enabled', 'no' );
 $turnstile_site_key   = get_option( 'egnitech_one_turnstile_site_key', '' );
-$turnstile_secret_key = get_option( 'egnitech_one_turnstile_secret_key', '' );
 
 // FastCGI Cache options.
 $fastcgi_cache_enabled = get_option( 'egnitech_one_fastcgi_cache_enabled', 'no' );
@@ -1595,7 +1607,7 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
                         <p class="description"><?php esc_html_e( 'Your Google reCAPTCHA v2 "I\'m not a robot" Secret Key.', 'egnitech-one' ); ?></p>
                     </div>
                     <div class="egnitech-option-control">
-                        <input type="password" name="egnitech_one_recaptcha_secret_key" value="" autocomplete="new-password" placeholder="<?php echo esc_attr( $recaptcha_secret_key ? __( 'Saved. Leave blank to keep it.', 'egnitech-one' ) : '' ); ?>" class="egnitech-input" />
+                        <input type="password" name="egnitech_one_recaptcha_secret_key" value="" autocomplete="new-password" placeholder="<?php echo esc_attr( egnitech_one_secret_field_placeholder( 'egnitech_one_recaptcha_secret_key' ) ); ?>" class="egnitech-input" />
                     </div>
                 </div>
             </div>
@@ -1638,7 +1650,7 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
                         <p class="description"><?php esc_html_e( 'Your Cloudflare Turnstile widget\'s Secret Key.', 'egnitech-one' ); ?></p>
                     </div>
                     <div class="egnitech-option-control">
-                        <input type="password" name="egnitech_one_turnstile_secret_key" value="" autocomplete="new-password" placeholder="<?php echo esc_attr( $turnstile_secret_key ? __( 'Saved. Leave blank to keep it.', 'egnitech-one' ) : '' ); ?>" class="egnitech-input" />
+                        <input type="password" name="egnitech_one_turnstile_secret_key" value="" autocomplete="new-password" placeholder="<?php echo esc_attr( egnitech_one_secret_field_placeholder( 'egnitech_one_turnstile_secret_key' ) ); ?>" class="egnitech-input" />
                     </div>
                 </div>
             </div>
@@ -1721,7 +1733,7 @@ if ( ! empty( $custom_scripts ) && is_array( $custom_scripts ) ) {
                     <label><?php esc_html_e( 'SMTP Password', 'egnitech-one' ); ?></label>
                 </div>
                 <div class="egnitech-option-control">
-                    <input type="password" name="egnitech_one_smtp_password" value="" autocomplete="new-password" placeholder="<?php echo esc_attr( $smtp_password ? __( 'Saved. Leave blank to keep it.', 'egnitech-one' ) : '' ); ?>" class="egnitech-input" />
+                    <input type="password" name="egnitech_one_smtp_password" value="" autocomplete="new-password" placeholder="<?php echo esc_attr( egnitech_one_secret_field_placeholder( 'egnitech_one_smtp_password' ) ); ?>" class="egnitech-input" />
                 </div>
             </div>
         </div>

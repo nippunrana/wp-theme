@@ -79,7 +79,7 @@ function egnitech_one_turnstile_verify( string $action ): bool {
 			array(
 				'timeout' => 10,
 				'body'    => array(
-					'secret'   => (string) egnitech_one_get_option( 'egnitech_one_turnstile_secret_key', '' ),
+					'secret'   => (string) egnitech_one_read_secret( 'egnitech_one_turnstile_secret_key' ),
 					'response' => $token,
 				),
 			)
