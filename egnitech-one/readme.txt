@@ -24,13 +24,12 @@ EgniTech One is a modern, performance-first WordPress block theme designed for s
 * Clean, responsive design for all devices
 * Accessible with proper ARIA labels and focus styles
 * Fluid typography and spacing with CSS clamp()
-* Google reCAPTCHA v2 support — easily manage keys site-wide in Theme Options
+* Cloudflare Turnstile on the login, registration, comment and My Account forms — set the keys in Theme Options
 
 == Changelog ==
 
 = 1.1.0 =
-* Add Integrations tab in Theme Options with Google reCAPTCHA v2 key management
-* Add egnitech_one_get_recaptcha_settings() helper function
+* Add Integrations tab in Theme Options with Cloudflare Turnstile
 
 = 1.0.0 =
 * Initial release

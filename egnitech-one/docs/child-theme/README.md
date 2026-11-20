@@ -41,10 +41,9 @@ Once it is on, write colours with `light-dark()`, for example `color: light-dark
 
 ---
 
-## Text domains and shared settings
+## Text domains
 
 * Use the child's own text domain for every new translatable string. Use `egnitech-one` only for strings the parent already defines.
-* reCAPTCHA keys are set once, in the parent's **Theme Options > Integrations** tab. Read them with `egnitech_one_get_recaptcha_settings()`. Only `site_key` may reach the browser; `secret_key` is for server-side checks only.
 
 ---
 
