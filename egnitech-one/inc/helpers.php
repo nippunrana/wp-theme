@@ -86,22 +86,6 @@ if ( ! function_exists( 'egnitech_one_is_dark_mode_enabled' ) ) {
 }
 
 /**
- * Get the Google reCAPTCHA v2 credentials and enabled status.
- *
- * @return array The reCAPTCHA settings.
- */
-if ( ! function_exists( 'egnitech_one_get_recaptcha_settings' ) ) {
-	function egnitech_one_get_recaptcha_settings(): array {
-		return array(
-			'enabled'    => 'yes' === egnitech_one_get_option( 'egnitech_one_recaptcha_enabled', 'no' ),
-			'site_key'   => (string) egnitech_one_get_option( 'egnitech_one_recaptcha_site_key', '' ),
-			// Decrypted (inc/secrets.php): '' when none is saved or it can no longer be read.
-			'secret_key' => (string) egnitech_one_read_secret( 'egnitech_one_recaptcha_secret_key' ),
-		);
-	}
-}
-
-/**
  * Get the Cloudflare Turnstile settings.
  * "enabled" is true only when the switch is on and both keys are saved, so a half-filled
  * card never blocks a form. A secret the site can no longer decrypt counts as missing, so
