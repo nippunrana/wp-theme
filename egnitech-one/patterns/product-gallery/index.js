@@ -72,6 +72,13 @@ document.addEventListener('DOMContentLoaded', function() {
 	var lightboxPrev = lightbox ? lightbox.querySelector('.egnitech-lightbox-arrow--prev') : null;
 	var lightboxNext = lightbox ? lightbox.querySelector('.egnitech-lightbox-arrow--next') : null;
 
+	// The gallery column is sticky on desktop, which makes it its own layer: inside it, the lightbox's
+	// z-index cannot lift it above the header or the details column beside it (the bulk-discount tiles,
+	// the quantity stepper showed through). Directly under <body> it covers the whole page.
+	if (lightbox && lightbox.parentElement !== document.body) {
+		document.body.appendChild(lightbox);
+	}
+
 	// Helper function to switch images in the gallery.
 	// quiet: don't scroll the active thumbnail into view (used when the page, not the visitor, asks).
 	function showImage(index, quiet) {
