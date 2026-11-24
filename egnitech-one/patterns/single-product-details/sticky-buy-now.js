@@ -69,6 +69,16 @@
 		bar.append(stepper);
 	}
 
+	// The bulk-discount box's total, copied as bulk-discount.js repaints it, never worked out here.
+	// Products without discount tiers have no box, and so no total in the bar.
+	const pageTotal = document.querySelector('#egnitech-bulk-discount .egnitech-summary-total');
+	let total = null;
+	if (pageTotal) {
+		total = document.createElement('span');
+		total.className = 'egnitech-sticky-buy__total';
+		bar.append(total);
+	}
+
 	const button = document.createElement('button');
 	button.type = 'button';
 	button.className = 'egnitech-sticky-buy__button wp-element-button';
@@ -96,6 +106,11 @@
 		}
 	}
 
+	/** Show the page's total. */
+	function syncTotal() {
+		total.textContent = pageTotal.textContent;
+	}
+
 	/** Copy the real button's label and its loading / disabled state. */
 	function syncButton() {
 		button.textContent = realButton.textContent.trim();
@@ -106,6 +121,10 @@
 	if (qtyInput) {
 		qtyInput.addEventListener('input', syncCount);
 		qtyInput.addEventListener('change', syncCount);
+	}
+	if (pageTotal) {
+		new MutationObserver(syncTotal).observe(pageTotal, { childList: true, characterData: true, subtree: true });
+		syncTotal();
 	}
 	new MutationObserver(syncButton).observe(realButton, {
 		attributes: true,

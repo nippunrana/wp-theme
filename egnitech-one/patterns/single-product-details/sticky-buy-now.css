@@ -13,11 +13,11 @@
 	gap: var(--wp--preset--spacing--20);
 	padding-block: var(--wp--preset--spacing--20);
 	padding-inline: var(--wp--preset--spacing--50);
-	/* Inverted from the page, 40% see-through, page blurred behind (owner's choices). */
-	background-color: color-mix(in srgb, var(--wp--preset--color--contrast) 60%, transparent);
+	/* Page colour, 25% see-through, page blurred behind, Contrast-coloured text (owner's choices, 24 Nov 2026). */
+	background-color: color-mix(in srgb, var(--wp--preset--color--base) 75%, transparent);
 	-webkit-backdrop-filter: blur(12px);
 	backdrop-filter: blur(12px);
-	border-top: 1px solid color-mix(in srgb, var(--wp--preset--color--base) 15%, transparent);
+	border-top: 1px solid color-mix(in srgb, var(--wp--preset--color--contrast) 10%, transparent);
 	box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
 	transform: translateY(100%);
 }
@@ -30,7 +30,7 @@
 .egnitech-sticky-buy__qty {
 	display: flex;
 	align-items: center;
-	border: 2px solid color-mix(in srgb, var(--wp--preset--color--base) 40%, transparent);
+	border: 2px solid color-mix(in srgb, var(--wp--preset--color--contrast) 25%, transparent);
 	border-radius: 8px;
 }
 
@@ -40,7 +40,7 @@
 	padding: 0;
 	border: 0;
 	background: none;
-	color: var(--wp--preset--color--base);
+	color: var(--wp--preset--color--contrast);
 	font-size: 1.25rem;
 	cursor: pointer;
 }
@@ -48,8 +48,18 @@
 .egnitech-sticky-buy__count {
 	min-width: 2ch;
 	text-align: center;
-	color: var(--wp--preset--color--base);
+	color: var(--wp--preset--color--contrast);
 	font-weight: 600;
+}
+
+/* The page's bulk-discount total, copied by the script. */
+.egnitech-sticky-buy__total {
+	flex: none;
+	align-self: center;
+	white-space: nowrap;
+	color: var(--wp--preset--color--contrast);
+	font-size: 1.125rem;
+	font-weight: 700;
 }
 
 .egnitech-sticky-buy__button.wp-element-button {
@@ -57,6 +67,8 @@
 	min-height: 48px;
 	margin: 0;
 	padding-block: 0;
+	/* Narrower than the theme's buttons, so the label stays on one line beside the total at 320px. */
+	padding-inline: var(--wp--preset--spacing--20);
 	border-radius: 8px;
 	font-size: 1rem;
 	font-weight: 600;
