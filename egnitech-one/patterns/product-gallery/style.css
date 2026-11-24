@@ -359,18 +359,42 @@
 .egnitech-gallery-mobile-arrow {
 	background: transparent;
 	border: none;
+	border-radius: 50%;
 	color: light-dark(#666666, #cccccc);
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 8px;
-	transition: color 0.2s ease, transform 0.2s ease;
+	/* A 44px tap target in the old 32px space, so nothing below moves. */
+	padding: 14px;
+	margin: -6px;
+	-webkit-tap-highlight-color: transparent;
+	transition: color 0.2s ease, background-color 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.egnitech-gallery-mobile-arrow:hover {
-	color: light-dark(#000000, #ffffff);
-	transform: scale(1.1);
+/* Mouse only: on touch screens a hover state stays on after the tap. */
+@media (hover: hover) {
+	.egnitech-gallery-mobile-arrow:hover {
+		color: light-dark(#000000, #ffffff);
+		background: color-mix(in srgb, currentColor 7%, transparent);
+	}
+}
+
+/* Replaces the browser's square tap highlight. Pressing in is instant so a quick tap still shows; release eases out. */
+.egnitech-gallery-mobile-arrow:active {
+	background: color-mix(in srgb, currentColor 14%, transparent);
+	transform: scale(0.9);
+	transition-duration: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.egnitech-gallery-mobile-arrow {
+		transition: color 0.2s ease, background-color 0.3s ease;
+	}
+
+	.egnitech-gallery-mobile-arrow:active {
+		transform: none;
+	}
 }
 
 .egnitech-gallery-mobile-fraction {
