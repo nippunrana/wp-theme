@@ -13,8 +13,11 @@
 	gap: var(--wp--preset--spacing--20);
 	padding-block: var(--wp--preset--spacing--20);
 	padding-inline: var(--wp--preset--spacing--50);
-	background-color: color-mix(in srgb, var(--wp--preset--color--base) 60%, transparent); /* 40% see-through (owner's choice). */
-	border-top: 1px solid var(--wp--preset--color--border);
+	/* Inverted from the page, 40% see-through, page blurred behind (owner's choices). */
+	background-color: color-mix(in srgb, var(--wp--preset--color--contrast) 60%, transparent);
+	-webkit-backdrop-filter: blur(12px);
+	backdrop-filter: blur(12px);
+	border-top: 1px solid color-mix(in srgb, var(--wp--preset--color--base) 15%, transparent);
 	box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
 	transform: translateY(100%);
 }
@@ -27,9 +30,8 @@
 .egnitech-sticky-buy__qty {
 	display: flex;
 	align-items: center;
-	border: 2px solid var(--wp--preset--color--border);
+	border: 2px solid color-mix(in srgb, var(--wp--preset--color--base) 40%, transparent);
 	border-radius: 8px;
-	background-color: var(--wp--preset--color--base);
 }
 
 .egnitech-sticky-buy__step {
@@ -38,7 +40,7 @@
 	padding: 0;
 	border: 0;
 	background: none;
-	color: var(--wp--preset--color--contrast);
+	color: var(--wp--preset--color--base);
 	font-size: 1.25rem;
 	cursor: pointer;
 }
@@ -46,7 +48,7 @@
 .egnitech-sticky-buy__count {
 	min-width: 2ch;
 	text-align: center;
-	color: var(--wp--preset--color--contrast);
+	color: var(--wp--preset--color--base);
 	font-weight: 600;
 }
 
