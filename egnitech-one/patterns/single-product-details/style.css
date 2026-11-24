@@ -525,13 +525,13 @@
 		width: auto !important;
 	}
 
-	/* Phones: half the 1.25rem block gap between the header and the gallery. Three margins
-	   meet there and collapse into the largest, so all three are halved: WooCommerce's
+	/* Phones: 15px between the header and the gallery, not the 1.25rem block gap. Three margins
+	   meet there and collapse into the largest, so all three are set: WooCommerce's
 	   wrapper under the header, the details grid, and the gallery (an empty <p> precedes it). */
 	.wp-site-blocks > :has(.is-style-single-product-details),
 	.egnitech-single-product-container > .is-style-single-product-details,
 	.egnitech-product-gallery-column > .egnitech-custom-gallery {
-		margin-block-start: 0.625rem;
+		margin-block-start: 0.9375rem;
 	}
 
 	.woocommerce-product-gallery ol.flex-control-thumbs {
