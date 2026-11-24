@@ -860,8 +860,19 @@
 	}
 }
 
-/* Narrower box (desktops of 992-1100px, large phones): a smaller pill keeps "Save Extra NN%" on one line */
+/* Narrower box (desktops of 992-1100px, large phones): a smaller pill keeps "Save Extra NN%" on one line,
+   and a smaller heading keeps "Save extra up to N%" beside it (at full size the two need a 412px box) */
 @container (max-width: 459px) {
+	.egnitech-bulk-discount-heading {
+		font-size: 0.85rem;
+		letter-spacing: 0.04em;
+	}
+
+	.egnitech-bulk-discount-upto {
+		padding: 4px 10px;
+		font-size: 0.75rem;
+	}
+
 	.egnitech-bulk-discount-card {
 		padding: 18px 8px 12px;
 	}
