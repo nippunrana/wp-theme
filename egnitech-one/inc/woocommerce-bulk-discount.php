@@ -221,7 +221,7 @@ function egnitech_one_render_bulk_discount_selector(): void {
 				<svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7V6a5 5 0 0 1 10 0v1h2.1a1 1 0 0 1 1 .92l1.03 12.4A1.6 1.6 0 0 1 19.53 22H4.47a1.6 1.6 0 0 1-1.6-1.68L3.9 7.92A1 1 0 0 1 4.9 7H7Zm2 0h6V6a3 3 0 0 0-6 0v1Z"/></svg>
 				<?php esc_html_e( 'Buy More, Save More!', 'egnitech-one' ); ?>
 			</h3>
-			<span class="egnitech-bulk-discount-upto"><?php echo sprintf( esc_html__( 'Save up to %g%%', 'egnitech-one' ), max( array_column( $active_tiers, 'pct' ) ) ); ?></span>
+			<span class="egnitech-bulk-discount-upto"><?php echo sprintf( esc_html__( 'Save extra up to %g%%', 'egnitech-one' ), max( array_column( $active_tiers, 'pct' ) ) ); ?></span>
 		</div>
 
 		<!-- Filled in by bulk-discount.js when this product is already in the cart. Never fill it in PHP: the page is cached for every visitor. -->

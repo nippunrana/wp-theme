@@ -573,7 +573,7 @@
 	container-type: inline-size;
 }
 
-/* Heading and "Save up to N%". The bottom margin leaves room for the badges overhanging the tiles. */
+/* Heading and "Save extra up to N%". The bottom margin leaves room for the badges overhanging the tiles. */
 .egnitech-bulk-discount-header {
 	display: flex;
 	flex-wrap: wrap;
