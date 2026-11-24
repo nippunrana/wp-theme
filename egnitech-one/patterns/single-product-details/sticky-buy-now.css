@@ -52,10 +52,14 @@
 	font-weight: 600;
 }
 
-/* The page's bulk-discount total, copied by the script. */
+/* The page's bulk-discount total, copied by the script. Its slot fits a six-digit total (₹999,999), so the
+   button keeps one width as the price changes (owner's request, 24 Nov 2026). */
 .egnitech-sticky-buy__total {
 	flex: none;
 	align-self: center;
+	min-width: 4.7em;
+	text-align: center;
+	font-variant-numeric: tabular-nums;
 	white-space: nowrap;
 	color: var(--wp--preset--color--contrast);
 	font-size: 1.125rem;
