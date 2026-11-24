@@ -61,12 +61,13 @@
 
 
 /* Info Column Details */
+/* Fixed sizes, not fluid ones: the title and price read the same on every device. */
 .egnitech-product-info-column .wp-block-post-title {
 	font-family: var(--wp--preset--font-family--inter), sans-serif;
-	font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-	font-weight: 700;
-	line-height: 1.2;
-	letter-spacing: -0.02em;
+	font-size: 1.25rem;
+	font-weight: 400;
+	line-height: 1.45;
+	letter-spacing: normal;
 	margin-bottom: var(--wp--preset--spacing--20);
 	color: var(--wp--preset--color--contrast);
 }
@@ -83,37 +84,48 @@
 }
 
 /* Pricing - Apple/D2C Clean Aesthetic */
+/* One size for the whole row; WooCommerce's spans inside <del> and <ins> inherit it. A rule
+   aimed at those inner spans made the old price as big as the new one while its strike line
+   stayed sized for smaller text. */
 .egnitech-product-info-column .wc-block-components-product-price,
 .egnitech-product-info-column .price {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: baseline;
-	gap: 12px;
+	gap: 0 12px;
 	margin-bottom: var(--wp--preset--spacing--30);
 	font-family: var(--wp--preset--font-family--inter), sans-serif;
+	font-size: 1.75rem;
+	font-weight: 700;
+	line-height: 1.2;
+	color: var(--wp--preset--color--contrast);
 }
 
 .egnitech-product-info-column .wc-block-components-product-price ins,
 .egnitech-product-info-column .price ins {
-	font-size: 1.85rem;
-	font-weight: 700;
-	color: var(--wp--preset--color--accent, #00D4AA);
 	text-decoration: none;
 }
 
+/* Thickness set explicitly: browsers pick different "auto" strike lines. */
 .egnitech-product-info-column .wc-block-components-product-price del,
 .egnitech-product-info-column .price del {
-	font-size: 1.25rem;
-	color: var(--wp--preset--color--contrast);
+	font-weight: 400;
 	opacity: 0.5;
 	text-decoration: line-through;
+	text-decoration-thickness: 0.06em;
 }
 
-/* Fallback for simple (non-sale) price */
-.egnitech-product-info-column .wc-block-components-product-price span:not(del):not(ins),
-.egnitech-product-info-column .price span:not(del):not(ins) {
-	font-size: 1.85rem;
-	font-weight: 700;
-	color: var(--wp--preset--color--contrast);
+/* "↓45%", added by egnitech_one_render_product_price_discount() */
+.egnitech-product-info-column .egnitech-price-discount {
+	color: light-dark(#388e3c, #66bb6a);
+	white-space: nowrap;
+}
+
+.egnitech-product-info-column .egnitech-price-discount svg {
+	width: 0.75em;
+	height: 0.75em;
+	margin-right: 0.05em;
+	vertical-align: -0.02em;
 }
 
 /* Excerpt/Short Description */

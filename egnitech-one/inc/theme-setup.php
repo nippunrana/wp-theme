@@ -762,3 +762,48 @@ if ( ! function_exists( 'egnitech_one_render_product_short_description_block' ) 
 	}
 }
 add_filter( 'render_block', 'egnitech_one_render_product_short_description_block', 10, 2 );
+
+/**
+ * Put the percentage saved ("↓45%") in front of the product page's sale price.
+ *
+ * Only where WooCommerce itself prints an old and a new price: a variable or grouped product
+ * shows a range instead. Worked out from the display prices, so it follows the shop's tax
+ * display setting.
+ *
+ * @param string $block_content Block HTML.
+ * @param array  $block         Block data.
+ * @return string Modified block content.
+ */
+if ( ! function_exists( 'egnitech_one_render_product_price_discount' ) ) {
+	function egnitech_one_render_product_price_discount( string $block_content, array $block ): string {
+		if (
+			is_admin()
+			|| 'woocommerce/product-price' !== ( $block['blockName'] ?? '' )
+			|| empty( $block['attrs']['isDescendentOfSingleProductTemplate'] )
+		) {
+			return $block_content;
+		}
+
+		$product = wc_get_product( get_the_ID() );
+		if ( ! $product || ! $product->is_on_sale() || $product->is_type( array( 'variable', 'grouped' ) ) ) {
+			return $block_content;
+		}
+
+		$regular = (float) wc_get_price_to_display( $product, array( 'price' => (float) $product->get_regular_price() ) );
+		$current = (float) wc_get_price_to_display( $product );
+		$percent = $regular > 0 ? (int) round( ( $regular - $current ) / $regular * 100 ) : 0;
+		if ( $percent < 1 ) {
+			return $block_content;
+		}
+
+		$badge = sprintf(
+			'<span class="egnitech-price-discount"><svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M5 13l7 7 7-7"/></svg><span aria-hidden="true">%1$d%%</span><span class="screen-reader-text">%2$s</span></span>',
+			$percent,
+			/* translators: %d: percentage saved on the sale price. */
+			esc_html( sprintf( __( '%d%% off.', 'egnitech-one' ), $percent ) )
+		);
+
+		return (string) preg_replace( '/(<div[^>]*\bwc-block-components-product-price\b[^>]*>)/', '$1' . $badge, $block_content, 1 );
+	}
+}
+add_filter( 'render_block', 'egnitech_one_render_product_price_discount', 10, 2 );
