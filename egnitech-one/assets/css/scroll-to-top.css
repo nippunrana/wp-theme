@@ -9,7 +9,7 @@
     position: fixed;
     bottom: 24px;
     right: 24px;
-    z-index: 9999;
+    z-index: 9998; /* Below WooCommerce's cart drawer (9999), so the open drawer covers it. */
     width: 44px;
     height: 44px;
     border: none;
