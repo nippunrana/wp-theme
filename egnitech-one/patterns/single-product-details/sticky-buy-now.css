@@ -1,0 +1,81 @@
+/**
+ * EgniTech One — Sticky Buy Now bar (built by sticky-buy-now.js).
+ *
+ * @package EgniTech_One
+ */
+
+.egnitech-sticky-buy {
+	position: fixed;
+	inset-inline: 0;
+	bottom: 0;
+	z-index: 9997; /* Below the scroll-to-top button (9998) and WooCommerce's cart drawer (9999). */
+	display: flex;
+	gap: var(--wp--preset--spacing--20);
+	padding-block: var(--wp--preset--spacing--20);
+	padding-inline: var(--wp--preset--spacing--50);
+	background-color: var(--wp--preset--color--base);
+	border-top: 1px solid var(--wp--preset--color--border);
+	box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+	transform: translateY(100%);
+}
+
+/* Fully down: out of the tab order and hidden from screen readers. */
+.egnitech-sticky-buy:not(.is-shown) {
+	visibility: hidden;
+}
+
+.egnitech-sticky-buy__qty {
+	display: flex;
+	align-items: center;
+	border: 2px solid var(--wp--preset--color--border);
+	border-radius: 8px;
+}
+
+.egnitech-sticky-buy__step {
+	align-self: stretch;
+	width: 40px;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--wp--preset--color--contrast);
+	font-size: 1.25rem;
+	cursor: pointer;
+}
+
+.egnitech-sticky-buy__count {
+	min-width: 2ch;
+	text-align: center;
+	color: var(--wp--preset--color--contrast);
+	font-weight: 600;
+}
+
+.egnitech-sticky-buy__button.wp-element-button {
+	flex: 1;
+	min-height: 48px;
+	margin: 0;
+	padding-block: 0;
+	border-radius: 8px;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+.egnitech-sticky-buy__button.is-loading {
+	opacity: 0.7;
+}
+
+.egnitech-sticky-buy__button.is-disabled {
+	opacity: 0.5;
+}
+
+/* Room at the foot of the page, so the bar never covers the footer's last line. */
+@media (max-width: 991px) {
+	body.has-egnitech-sticky-buy {
+		padding-bottom: var(--egnitech-sticky-buy-height, 0px);
+	}
+}
+
+@media (min-width: 992px) {
+	.egnitech-sticky-buy {
+		display: none;
+	}
+}

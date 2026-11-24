@@ -73,6 +73,25 @@ if ( ! function_exists( 'egnitech_one_enqueue_styles' ) ) {
 			// Registered, with its address and version, in inc/theme-setup.php.
 			wp_enqueue_style( 'egnitech-one-single-product-details' );
 
+			// Sticky Buy Now bar below 992px; the script builds it from the add-to-cart form.
+			$sticky_buy_path = 'patterns/single-product-details/sticky-buy-now';
+			wp_enqueue_style(
+				'egnitech-one-sticky-buy-now',
+				get_theme_file_uri( $sticky_buy_path . '.css' ),
+				array(),
+				egnitech_one_asset_version( get_theme_file_path( $sticky_buy_path . '.css' ) )
+			);
+			wp_enqueue_script(
+				'egnitech-one-sticky-buy-now',
+				get_theme_file_uri( $sticky_buy_path . '.js' ),
+				array(),
+				egnitech_one_asset_version( get_theme_file_path( $sticky_buy_path . '.js' ) ),
+				array(
+					'strategy'  => 'defer',
+					'in_footer' => true,
+				)
+			);
+
 			// Enqueue bulk discount script if product has active discount tiers.
 			$product_id = get_the_ID();
 			$has_tiers  = false;

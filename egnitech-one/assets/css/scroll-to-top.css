@@ -7,7 +7,7 @@
 
 .egnitech-scroll-top {
     position: fixed;
-    bottom: 24px;
+    bottom: calc(24px + var(--egnitech-sticky-buy-offset, 0px)); /* Rises with the product page's sticky Buy Now bar. */
     right: 24px;
     z-index: 9998; /* Below WooCommerce's cart drawer (9999), so the open drawer covers it. */
     width: 44px;
