@@ -92,6 +92,7 @@ Each file in `docs/built-systems/` holds only what the code cannot say: bans, de
 3. **Safe Containers**: Use `core/group` for complex layouts instead of `core/columns` to avoid Site Editor validation errors.
 4. **SVGs**: Provide explicit `width` and `height` attributes on inline `<svg>` tags to prevent layout shifts in the Site Editor.
 5. **PHP 8.4+ & WP 7.0 Compliance**: Minimum supported version is PHP 8.4 (per the `Requires PHP` header in `style.css`; owner's decision, 12 Nov 2026). PHP 8.4 features may be used; syntax that needs PHP 8.5 may not. All core PHP files (such as `functions.php`, files in `inc/`) must include `declare(strict_types=1);` on line 2, and declare strict types for all parameters and return types. Any `theme.json` must use `"version": 3`.
+6. **Focus rings use `:focus-visible`, never `:focus`**: a `:focus` ring stays on a clicked or tapped button, and the browser's back/forward cache restores that focus when the shopper presses Back (owner's report, 24 Nov 2026). `style.css` also strips WooCommerce's own `:focus` ring from its buttons for the same reason; keyboard users keep theirs.
 
 ---
 *Final AI Reminder*: This is the CORE theme. Changes here affect all child-theme instances. Maintain stability and extreme performance.

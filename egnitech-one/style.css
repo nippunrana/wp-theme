@@ -30,6 +30,15 @@ Tags: one-column, custom-colors, custom-menu, custom-logo, editor-style, feature
 	outline-color: var(--wp--preset--color--accent);
 }
 
+/* WooCommerce rings its buttons on any focus, so a clicked one stays ringed after Back. Keep it for keyboard focus only. */
+.wc-block-components-button:not(.is-link):focus:not(:focus-visible) {
+	box-shadow: none;
+}
+
+.wc-block-components-button:not(.is-link):is(.is-style-outline, .outlined):focus:not(:focus-visible) {
+	box-shadow: inset 0 0 0 1px currentColor;
+}
+
 /* Link underline refinement */
 a {
 	text-decoration-thickness: 1px !important;
