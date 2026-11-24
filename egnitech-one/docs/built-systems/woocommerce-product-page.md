@@ -18,6 +18,7 @@ Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/
 - **The gallery script refuses to start inside any iframe**, to stay out of the editor. In an iframe-based preview tool it looks broken and is not.
 - **The trust-badge fallback text is written for one shop.** A product with empty badge fields shows "Eco-Friendly UV Tech", "1 Year Warranty" and "Secure Checkout" (`egnitech_one_product_trust_badges_shortcode`). This is the parent theme: a site selling anything else must fill the three fields on every product, or the fallback must change.
 - **The title and price have fixed sizes, not `clamp()` or a fluid preset**, because the owner asked for the same look on every device (24 Nov 2026). Fluid presets change with screen width, which is why this is an exception to the theme's typography rule.
+  - **The only step is the title: 1.25rem on phones and tablets, 1.75rem from 992px** (the two-column desktop layout), at the owner's request (24 Nov 2026). The price stays one size everywhere.
   - **The "↓45%" badge is a fixed green, not Accent, and the old price keeps its ₹** (owner's choices, 24 Nov 2026; the design reference shows the old price without ₹).
   - The badge appears only where WooCommerce prints an old and a new price (`egnitech_one_render_product_price_discount`), so variable and grouped products have none.
   - Decimals come from WooCommerce's settings, never from the theme. With ".00" the row wraps on phones.

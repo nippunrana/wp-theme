@@ -61,7 +61,7 @@
 
 
 /* Info Column Details */
-/* Fixed sizes, not fluid ones: the title and price read the same on every device. */
+/* Fixed sizes, not fluid ones: the price reads the same on every device, the title steps up once on desktop. */
 .egnitech-product-info-column .wp-block-post-title {
 	font-family: var(--wp--preset--font-family--inter), sans-serif;
 	font-size: 1.25rem;
@@ -70,6 +70,12 @@
 	letter-spacing: normal;
 	margin-bottom: var(--wp--preset--spacing--20);
 	color: var(--wp--preset--color--contrast);
+}
+
+@media (min-width: 992px) {
+	.egnitech-product-info-column .wp-block-post-title {
+		font-size: 1.75rem;
+	}
 }
 
 /* Ratings */
