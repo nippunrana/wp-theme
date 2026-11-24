@@ -881,6 +881,17 @@
 		padding: 3px 6px;
 		font-size: 0.72rem;
 	}
+
+	/* At full size "Selected: Buy 3 (Save Extra 34%)" and "Total: ₹3,950" fill a 387px line exactly,
+	   so the total dropped below for some quantities and not others */
+	.egnitech-summary-selected,
+	.egnitech-summary-label {
+		font-size: 0.85rem;
+	}
+
+	.egnitech-summary-total {
+		font-size: 1.3rem;
+	}
 }
 
 /* Phone-sized box: everything smaller so three tiles fit a 360px screen */
