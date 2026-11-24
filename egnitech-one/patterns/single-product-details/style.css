@@ -559,7 +559,7 @@
 }
 
 /* ==========================================================================
-   Bulk Discount Selector (Vertical Stack Layout)
+   Bulk Discount Selector (tiles side by side, every screen size)
    ========================================================================== */
 
 .egnitech-bulk-discount-wrapper {
@@ -569,16 +569,47 @@
 	border-radius: 16px;
 	background: light-dark(#ffffff, #161616);
 	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.02), 0 2px 10px rgba(0, 0, 0, 0.01);
+	/* The tiles size themselves from this box, not the screen: on desktops of 992-1100px the box is narrower than on a tablet */
+	container-type: inline-size;
+}
+
+/* Heading and "Save up to N%". The bottom margin leaves room for the badges overhanging the tiles. */
+.egnitech-bulk-discount-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px 12px;
+	margin-bottom: 22px;
 }
 
 .egnitech-bulk-discount-heading {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
 	font-family: var(--wp--preset--font-family--inter), sans-serif;
-	font-size: 1.05rem;
-	font-weight: 700;
-	margin-bottom: var(--wp--preset--spacing--30);
+	font-size: 1rem;
+	font-weight: 800;
+	line-height: 1.3;
 	color: var(--wp--preset--color--contrast);
 	text-transform: uppercase;
-	letter-spacing: 0.05em;
+	letter-spacing: 0.06em;
+}
+
+.egnitech-bulk-discount-heading svg {
+	flex-shrink: 0;
+	color: var(--wp--preset--color--accent, #00D4AA);
+}
+
+.egnitech-bulk-discount-upto {
+	padding: 4px 12px;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--wp--preset--color--accent, #00D4AA) 12%, transparent);
+	color: var(--wp--preset--color--accent, #00D4AA);
+	font-size: 0.85rem;
+	font-weight: 600;
+	white-space: nowrap;
 }
 
 /* "Already in your cart" notice, shown by bulk-discount.js */
@@ -621,103 +652,72 @@
 	white-space: nowrap;
 }
 
+/* One row of equal tiles: Buy 1 and up to three tiers */
 .egnitech-bulk-discount-grid {
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: minmax(0, 1fr);
 	gap: 12px;
-	margin-bottom: var(--wp--preset--spacing--30);
 }
 
-/* Individual Vertical Card Row */
 .egnitech-bulk-discount-card {
 	position: relative;
 	display: flex;
-	align-items: center;
-	padding: var(--wp--preset--spacing--30);
-	border: 2px solid var(--wp--preset--color--border);
-	border-radius: 12px;
-	background: light-dark(rgba(0, 0, 0, 0.01), rgba(255, 255, 255, 0.02));
-	cursor: pointer;
-	transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
-	user-select: none;
-	gap: 16px;
-}
-
-/* Hover and active row states */
-.egnitech-bulk-discount-card:hover {
-	transform: translateY(-2px);
-	border-color: light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.25));
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-}
-
-.egnitech-bulk-discount-card.active {
-	transform: scale(1.015);
-	border-color: var(--wp--preset--color--accent, #00D4AA);
-	background: light-dark(rgba(0, 212, 170, 0.04), rgba(0, 212, 170, 0.08));
-	box-shadow: 0 4px 20px rgba(0, 212, 170, 0.12);
-}
-
-.egnitech-bulk-discount-card.active:hover {
-	transform: scale(1.015) translateY(-2px);
-}
-
-/* Custom Radio Indicator */
-.egnitech-card-selector {
-	flex-shrink: 0;
-}
-
-.egnitech-card-radio {
-	width: 20px;
-	height: 20px;
-	border: 2px solid var(--wp--preset--color--border);
-	border-radius: 50%;
-	position: relative;
-	transition: all 0.25s ease;
-	background: light-dark(#ffffff, #222);
-}
-
-.egnitech-bulk-discount-card.active .egnitech-card-radio {
-	border-color: var(--wp--preset--color--accent, #00D4AA);
-}
-
-.egnitech-card-radio::after {
-	content: '';
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%) scale(0);
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	background-color: var(--wp--preset--color--accent, #00D4AA);
-	transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.egnitech-bulk-discount-card.active .egnitech-card-radio::after {
-	transform: translate(-50%, -50%) scale(1);
-}
-
-/* Card Content / Info Columns */
-.egnitech-card-info {
-	flex-grow: 1;
-	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	align-items: center;
+	gap: 6px;
 	min-width: 0;
+	padding: 20px 10px 14px;
+	border: 2px solid var(--wp--preset--color--border);
+	border-radius: 14px;
+	background: light-dark(#ffffff, rgba(255, 255, 255, 0.02));
+	text-align: center;
+	cursor: pointer;
+	user-select: none;
+	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover only where there is a pointer: on touch it would stick to the last tile tapped */
+@media (hover: hover) {
+	.egnitech-bulk-discount-card:hover {
+		border-color: light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.25));
+	}
+}
+
+.egnitech-bulk-discount-card.active,
+.egnitech-bulk-discount-card.active:hover {
+	border-color: var(--wp--preset--color--accent, #00D4AA);
+	background: color-mix(in srgb, var(--wp--preset--color--accent, #00D4AA) 6%, light-dark(#ffffff, #161616));
+	box-shadow: 0 6px 18px color-mix(in srgb, var(--wp--preset--color--accent, #00D4AA) 18%, transparent);
+}
+
+/* Buy 1's "Standard" and "Base pack" fill the places the badge and the saving take on the other tiles */
+.egnitech-card-eyebrow,
+.egnitech-card-note {
+	font-size: 0.8rem;
+	line-height: 1.3;
+	color: var(--wp--preset--color--contrast);
+	opacity: 0.5;
 }
 
 .egnitech-card-qty {
 	font-family: var(--wp--preset--font-family--inter), sans-serif;
 	font-size: 1.15rem;
 	font-weight: 700;
+	line-height: 1.25;
 	color: var(--wp--preset--color--contrast);
 }
 
 .egnitech-card-save {
-	font-size: 0.85rem;
+	max-width: 100%;
+	padding: 3px 8px;
+	border-radius: 6px;
+	background: light-dark(#dcf5e3, rgba(34, 197, 94, 0.16));
+	color: light-dark(#17663a, #86efac);
+	font-size: 0.8rem;
 	font-weight: 600;
-	color: var(--wp--preset--color--accent, #00D4AA);
-	margin-left: 6px;
+	line-height: 1.3;
+	text-wrap: balance;
 }
 
 /* Buy 1 has these only while the cart pushes it into a tier */
@@ -726,32 +726,24 @@
 	display: none;
 }
 
-.egnitech-card-desc {
-	font-size: 0.85rem;
-	color: var(--wp--preset--color--contrast);
-	opacity: 0.6;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+.egnitech-card-save:not(:empty) ~ .egnitech-card-note {
+	display: none;
 }
 
-.egnitech-bulk-discount-card.active .egnitech-card-desc {
-	opacity: 0.85;
-}
-
-/* Pricing Section inside Card */
+/* Prices sit at the foot of every tile, so they line up across the row */
 .egnitech-card-pricing {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-end;
-	justify-content: center;
-	gap: 2px;
-	flex-shrink: 0;
-	text-align: right;
+	align-items: center;
+	gap: 1px;
+	align-self: stretch;
+	margin-top: auto;
+	padding-top: 8px;
+	border-top: 1px solid var(--wp--preset--color--border);
 }
 
 .egnitech-price-original {
-	font-size: 0.85rem;
+	font-size: 0.8rem;
 	color: var(--wp--preset--color--contrast);
 	opacity: 0.45;
 	text-decoration: line-through;
@@ -759,8 +751,9 @@
 
 .egnitech-price-amount {
 	font-family: var(--wp--preset--font-family--inter), sans-serif;
-	font-size: 1.25rem;
+	font-size: 1.3rem;
 	font-weight: 700;
+	line-height: 1.25;
 	color: var(--wp--preset--color--contrast);
 }
 
@@ -769,113 +762,222 @@
 }
 
 .egnitech-price-label {
-	font-size: 0.75rem;
+	font-size: 0.78rem;
 	color: var(--wp--preset--color--contrast);
-	opacity: 0.55;
+	opacity: 0.6;
 }
 
-/* "Best Value" Badge on active/top discount card */
+/* "Most Popular" in the accent colour, "Best Value" dark with a gold star, both centred on the top edge */
 .egnitech-card-top-badge {
 	position: absolute;
-	top: -9px;
-	left: 16px;
-	right: auto;
-	font-family: var(--wp--preset--font-family--inter), sans-serif;
-	font-size: 0.7rem;
-	font-weight: 800;
-	padding: 3px 10px;
-	border-radius: 4px;
-	background: var(--wp--preset--color--contrast);
-	color: var(--wp--preset--color--base);
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
-}
-
-@media (min-width: 768px) {
-	.egnitech-card-top-badge {
-		left: auto;
-		right: 16px;
-	}
-}
-
-/* Summary Footer Box */
-.egnitech-bulk-discount-summary {
-	margin-top: var(--wp--preset--spacing--30);
-	padding-top: var(--wp--preset--spacing--30);
-	border-top: 1px solid var(--wp--preset--color--border);
-	display: flex;
-	justify-content: space-between;
+	top: 0;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: inline-flex;
 	align-items: center;
+	gap: 4px;
+	padding: 3px 10px;
+	border-radius: 999px;
+	background: var(--wp--preset--color--accent, #00D4AA);
+	color: var(--egnitech-on-accent, #000000);
+	font-family: var(--wp--preset--font-family--inter), sans-serif;
+	font-size: 0.68rem;
+	font-weight: 800;
+	line-height: 1.4;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.egnitech-card-top-badge.is-best-value {
+	background: #2f3542;
+	color: #f6c544;
+}
+
+.egnitech-card-top-badge svg {
+	flex-shrink: 0;
+}
+
+/* "Selected: Buy 2 (Save Extra 25%)" and "Total: ₹2,993" */
+.egnitech-bulk-discount-summary {
+	display: flex;
 	flex-wrap: wrap;
-	gap: 12px;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 6px 16px;
+	margin-top: var(--wp--preset--spacing--30);
+	padding-top: 14px;
+	border-top: 1px solid var(--wp--preset--color--border);
+	font-family: var(--wp--preset--font-family--inter), sans-serif;
+	color: var(--wp--preset--color--contrast);
+}
+
+.egnitech-summary-selected,
+.egnitech-summary-label {
+	font-size: 0.95rem;
+}
+
+.egnitech-summary-selected-label,
+.egnitech-summary-label {
+	opacity: 0.65;
+}
+
+.egnitech-summary-selected-label {
+	margin-right: 6px;
+}
+
+.egnitech-summary-selected-value {
+	font-weight: 700;
 }
 
 .egnitech-summary-text {
-	font-family: var(--wp--preset--font-family--inter), sans-serif;
-	font-size: 1.15rem;
-	font-weight: 600;
-	color: var(--wp--preset--color--contrast);
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+	margin-left: auto;
 }
 
 .egnitech-summary-total {
-	font-size: 1.4rem;
-	font-weight: 700;
+	font-size: 1.5rem;
+	font-weight: 800;
 	color: var(--wp--preset--color--accent, #00D4AA);
-	margin-left: 4px;
 }
 
-.egnitech-summary-savings {
-	display: inline-block;
-	font-family: var(--wp--preset--font-family--inter), sans-serif;
-	font-size: 0.95rem;
-	font-weight: 600;
-	background: light-dark(rgba(0, 212, 170, 0.06), rgba(0, 212, 170, 0.12));
-	color: var(--wp--preset--color--accent, #00D4AA);
-	padding: 6px 14px;
-	border-radius: 30px;
-	border: 1px solid light-dark(rgba(0, 212, 170, 0.15), rgba(0, 212, 170, 0.25));
+/* Four tiles in a row need a box at least 540px wide inside; a narrower box puts them two by two,
+   with room between the rows for the badges */
+@container (min-width: 540px) {
+	.egnitech-bulk-discount-grid:has(> :nth-child(4)) .egnitech-card-save {
+		padding: 3px 6px;
+		font-size: 0.72rem;
+	}
 }
 
-/* Buy 1: an upsell hint, softer than an actual saving */
-.egnitech-summary-savings.is-hint {
-	border-style: dashed;
-	font-weight: 500;
+@container (max-width: 539px) {
+	.egnitech-bulk-discount-grid:has(> :nth-child(4)) {
+		grid-auto-flow: row;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		row-gap: 20px;
+	}
 }
 
-/* Mobile responsive fixes */
-@media (max-width: 480px) {
-	/* Phones: no line under the total. "Saved … off" repeats the chosen card's prices, and the
-	   "Buy 2+ and save" hint repeats the cards' own "Save Extra" labels. */
-	.egnitech-summary-savings {
-		display: none;
+/* Narrower box (desktops of 992-1100px, large phones): a smaller pill keeps "Save Extra NN%" on one line */
+@container (max-width: 459px) {
+	.egnitech-bulk-discount-card {
+		padding: 18px 8px 12px;
 	}
 
-	/* Room for the badges overhanging each card, so taps don't land on the wrong option */
+	.egnitech-card-save {
+		padding: 3px 6px;
+		font-size: 0.72rem;
+	}
+}
+
+/* Phone-sized box: everything smaller so three tiles fit a 360px screen */
+@container (max-width: 379px) {
+	.egnitech-bulk-discount-heading {
+		font-size: 0.75rem;
+		gap: 5px;
+		letter-spacing: 0.03em;
+	}
+
+	.egnitech-bulk-discount-heading svg {
+		width: 16px;
+		height: 16px;
+	}
+
+	.egnitech-bulk-discount-header {
+		gap: 6px 8px;
+	}
+
+	.egnitech-bulk-discount-upto {
+		padding: 3px 8px;
+		font-size: 0.7rem;
+	}
+
 	.egnitech-bulk-discount-grid {
-		gap: var(--wp--preset--spacing--40);
+		gap: 6px;
 	}
 
 	.egnitech-bulk-discount-card {
-		padding: var(--wp--preset--spacing--20);
-		gap: 12px;
+		gap: 5px;
+		padding: 16px 3px 10px;
+		border-radius: 12px;
 	}
-	
+
+	.egnitech-card-eyebrow,
+	.egnitech-card-note {
+		font-size: 0.7rem;
+	}
+
 	.egnitech-card-qty {
 		font-size: 1rem;
 	}
-	
-	/* Phones: the benefit text was cut off here, so only "Buy N (Save Extra N%)" remains */
-	.egnitech-card-desc {
-		display: none;
+
+	/* "Save Extra 25%" fits a 360px phone on one line; narrower screens wrap it in two */
+	.egnitech-card-save {
+		padding: 2px 3px;
+		font-size: 0.63rem;
 	}
 
-	/* Never split "(Save Extra N%)" across two lines */
-	.egnitech-card-save {
-		white-space: nowrap;
+	.egnitech-price-original {
+		font-size: 0.7rem;
 	}
-	
+
 	.egnitech-price-amount {
-		font-size: 1.1rem;
+		font-size: 1.05rem;
+	}
+
+	.egnitech-price-label {
+		font-size: 0.68rem;
+	}
+
+	.egnitech-card-top-badge {
+		padding: 2px 6px;
+		font-size: 0.56rem;
+		gap: 3px;
+		letter-spacing: 0.03em;
+	}
+
+	.egnitech-card-top-badge svg {
+		width: 10px;
+		height: 10px;
+	}
+
+	/* Labels above their values, so the line fits a 360px phone */
+	.egnitech-bulk-discount-summary {
+		align-items: flex-end;
+		padding-top: 12px;
+	}
+
+	.egnitech-summary-selected,
+	.egnitech-summary-text {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.egnitech-summary-text {
+		align-items: flex-end;
+	}
+
+	.egnitech-summary-selected-label,
+	.egnitech-summary-label {
+		margin: 0;
+		font-size: 0.72rem;
+	}
+
+	.egnitech-summary-selected-value {
+		font-size: 0.85rem;
+	}
+
+	.egnitech-summary-total {
+		font-size: 1.3rem;
+	}
+}
+
+/* Phones: a thinner frame round the box, which the box's own size queries cannot set */
+@media (max-width: 480px) {
+	.egnitech-bulk-discount-wrapper {
+		padding: 12px 8px;
 	}
 }

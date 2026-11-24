@@ -173,13 +173,11 @@ function egnitech_one_render_bulk_discount_selector(): void {
 	for ( $i = 1; $i <= 3; $i++ ) {
 		$qty   = (int) get_post_meta( $product_id, "_bulk_discount_tier_{$i}_qty", true );
 		$val   = (float) get_post_meta( $product_id, "_bulk_discount_tier_{$i}_val", true );
-		$label = get_post_meta( $product_id, "_bulk_discount_tier_{$i}_label", true );
-		
+
 		if ( $qty > 0 && $val > 0 ) {
 			$active_tiers[] = array(
 				'qty'   => $qty,
 				'pct'   => $val,
-				'label' => $label,
 			);
 		}
 	}
@@ -218,9 +216,13 @@ function egnitech_one_render_bulk_discount_selector(): void {
 		data-product-id="<?php echo esc_attr( (string) $product_id ); ?>"
 		data-cart-url="<?php echo esc_url( rest_url( 'wc/store/v1/cart' ) ); ?>">
 		
-		<h3 class="egnitech-bulk-discount-heading">
-			<?php esc_html_e( 'Buy More, Save More!', 'egnitech-one' ); ?>
-		</h3>
+		<div class="egnitech-bulk-discount-header">
+			<h3 class="egnitech-bulk-discount-heading">
+				<svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7V6a5 5 0 0 1 10 0v1h2.1a1 1 0 0 1 1 .92l1.03 12.4A1.6 1.6 0 0 1 19.53 22H4.47a1.6 1.6 0 0 1-1.6-1.68L3.9 7.92A1 1 0 0 1 4.9 7H7Zm2 0h6V6a3 3 0 0 0-6 0v1Z"/></svg>
+				<?php esc_html_e( 'Buy More, Save More!', 'egnitech-one' ); ?>
+			</h3>
+			<span class="egnitech-bulk-discount-upto"><?php echo sprintf( esc_html__( 'Save up to %g%%', 'egnitech-one' ), max( array_column( $active_tiers, 'pct' ) ) ); ?></span>
+		</div>
 
 		<!-- Filled in by bulk-discount.js when this product is already in the cart. Never fill it in PHP: the page is cached for every visitor. -->
 		<div class="egnitech-bulk-cart-notice" hidden>
@@ -234,19 +236,17 @@ function egnitech_one_render_bulk_discount_selector(): void {
 		<div class="egnitech-bulk-discount-grid">
 			<!-- Tier 0: Base Price (1 Device) -->
 			<div class="egnitech-bulk-discount-card active" data-qty="1" data-pct="0">
-				<div class="egnitech-card-selector">
-					<div class="egnitech-card-radio"></div>
-				</div>
-				<div class="egnitech-card-info">
-					<span class="egnitech-card-qty"><?php esc_html_e( 'Buy', 'egnitech-one' ); ?> <span class="egnitech-qty-num">1</span> <span class="egnitech-card-save"></span></span>
-					<span class="egnitech-card-desc"><?php esc_html_e( 'Standard single unit package', 'egnitech-one' ); ?></span>
-				</div>
+				<span class="egnitech-card-eyebrow"><?php esc_html_e( 'Standard', 'egnitech-one' ); ?></span>
+				<span class="egnitech-card-qty"><?php esc_html_e( 'Buy', 'egnitech-one' ); ?> <span class="egnitech-qty-num">1</span></span>
+				<!-- Empty unless the cart pushes Buy 1 into a tier; "Base pack" hides while it shows -->
+				<span class="egnitech-card-save"></span>
+				<span class="egnitech-card-note"><?php esc_html_e( 'Base pack', 'egnitech-one' ); ?></span>
 				<div class="egnitech-card-pricing">
 					<span class="egnitech-price-original"></span>
 					<span class="egnitech-price-amount">
 						<span class="egnitech-price-num"><?php echo esc_html( $format_price( $base_price ) ); ?></span>
 					</span>
-					<span class="egnitech-price-label"><?php echo sprintf( esc_html__( '(%s each)', 'egnitech-one' ), esc_html( $format_price( $base_price ) ) ); ?></span>
+					<span class="egnitech-price-label"><?php echo sprintf( esc_html__( '%s each', 'egnitech-one' ), esc_html( $format_price( $base_price ) ) ); ?></span>
 				</div>
 			</div>
 
@@ -260,56 +260,39 @@ function egnitech_one_render_bulk_discount_selector(): void {
 				$discounted_price = $base_price * ( 1.0 - ( $pct / 100.0 ) );
 				$total_discounted_price = $discounted_price * $qty;
 				$total_original_price = $base_price * $qty;
-				$tier_label = ! empty( $tier['label'] ) ? $tier['label'] : sprintf( esc_html__( 'Save %g%% per unit', 'egnitech-one' ), $pct );
 				?>
 				<div class="egnitech-bulk-discount-card<?php echo $is_last ? ' egnitech-last-tier' : ''; ?>" 
 					data-qty="<?php echo esc_attr( (string) $qty ); ?>" 
 					data-pct="<?php echo esc_attr( (string) $pct ); ?>"
 					<?php echo $is_last ? 'data-is-last="true"' : ''; ?>>
-					
-					<div class="egnitech-card-selector">
-						<div class="egnitech-card-radio"></div>
-					</div>
-					<div class="egnitech-card-info">
-						<span class="egnitech-card-qty">
-							<?php esc_html_e( 'Buy', 'egnitech-one' ); ?> <span class="egnitech-qty-num"><?php echo esc_html( (string) $qty ); ?></span>
-							<span class="egnitech-card-save"><?php echo sprintf( esc_html__( '(Save Extra %g%%)', 'egnitech-one' ), $pct ); ?></span>
-						</span>
-						<span class="egnitech-card-desc"><?php echo esc_html( $tier_label ); ?></span>
-					</div>
+
+					<?php if ( $is_last ) : ?>
+						<span class="egnitech-card-top-badge is-best-value"><svg aria-hidden="true" focusable="false" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96L12 2.5z"/></svg><?php esc_html_e( 'Best Value', 'egnitech-one' ); ?></span>
+					<?php elseif ( $index === 0 ) : ?>
+						<span class="egnitech-card-top-badge"><?php esc_html_e( 'Most Popular', 'egnitech-one' ); ?></span>
+					<?php endif; ?>
+					<span class="egnitech-card-qty"><?php esc_html_e( 'Buy', 'egnitech-one' ); ?> <span class="egnitech-qty-num"><?php echo esc_html( (string) $qty ); ?></span></span>
+					<span class="egnitech-card-save"><?php echo sprintf( esc_html__( 'Save Extra %g%%', 'egnitech-one' ), $pct ); ?></span>
 					<div class="egnitech-card-pricing">
 						<span class="egnitech-price-original"><?php echo esc_html( $format_price( $total_original_price ) ); ?></span>
 						<span class="egnitech-price-amount">
 							<span class="egnitech-price-num"><?php echo esc_html( $format_price( $total_discounted_price ) ); ?></span>
 						</span>
-						<span class="egnitech-price-label"><?php echo sprintf( esc_html__( '(%s each)', 'egnitech-one' ), esc_html( $format_price( $discounted_price ) ) ); ?></span>
+						<span class="egnitech-price-label"><?php echo sprintf( esc_html__( '%s each', 'egnitech-one' ), esc_html( $format_price( $discounted_price ) ) ); ?></span>
 					</div>
-					
-					<?php if ( $is_last ) : ?>
-						<span class="egnitech-card-top-badge"><?php esc_html_e( 'Best Value', 'egnitech-one' ); ?></span>
-					<?php elseif ( $index === 0 ) : ?>
-						<span class="egnitech-card-top-badge"><?php esc_html_e( 'Most Popular', 'egnitech-one' ); ?></span>
-					<?php endif; ?>
 				</div>
 			<?php endforeach; ?>
 		</div>
 
-		<!-- Summary Box -->
+		<!-- Summary: bulk-discount.js keeps both halves in step with the stepper and the cart -->
 		<div class="egnitech-bulk-discount-summary">
-			<div class="egnitech-summary-text">
-				<span class="egnitech-summary-label"><?php esc_html_e( 'Total Cost:', 'egnitech-one' ); ?></span>
-				<span class="egnitech-summary-total"><?php echo esc_html( $format_price( $base_price ) ); ?></span>
+			<div class="egnitech-summary-selected">
+				<span class="egnitech-summary-selected-label"><?php esc_html_e( 'Selected:', 'egnitech-one' ); ?></span>
+				<strong class="egnitech-summary-selected-value"><?php esc_html_e( 'Buy', 'egnitech-one' ); ?> 1</strong>
 			</div>
-			<?php
-			$savings_hint = sprintf(
-				/* translators: 1: smallest tier quantity, 2: largest tier percentage */
-				__( 'Buy %1$d+ and save up to %2$g%%', 'egnitech-one' ),
-				$active_tiers[0]['qty'],
-				max( array_column( $active_tiers, 'pct' ) )
-			);
-			?>
-			<div class="egnitech-summary-savings-wrapper">
-				<span class="egnitech-summary-savings is-hint" data-hint="<?php echo esc_attr( $savings_hint ); ?>"><?php echo esc_html( $savings_hint ); ?></span>
+			<div class="egnitech-summary-text">
+				<span class="egnitech-summary-label"><?php esc_html_e( 'Total:', 'egnitech-one' ); ?></span>
+				<span class="egnitech-summary-total"><?php echo esc_html( $format_price( $base_price ) ); ?></span>
 			</div>
 		</div>
 	</div>

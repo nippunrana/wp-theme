@@ -14,15 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (!qtyInput) return;
 
 	const cards = container.querySelectorAll('.egnitech-bulk-discount-card');
-	const summaryLabel = container.querySelector('.egnitech-summary-label');
 	const summaryTotal = container.querySelector('.egnitech-summary-total');
-	const summarySavings = container.querySelector('.egnitech-summary-savings');
+	const selectedLabel = container.querySelector('.egnitech-summary-selected-label');
+	const selectedValue = container.querySelector('.egnitech-summary-selected-value');
 	const notice = container.querySelector('.egnitech-bulk-cart-notice');
 	const noticeTitle = container.querySelector('.egnitech-bulk-cart-notice-title');
 	const noticeDetail = container.querySelector('.egnitech-bulk-cart-notice-detail');
 
 	// The PHP texts, restored whenever the cart has none of this product.
-	const originalLabel = summaryLabel ? summaryLabel.textContent : '';
+	const originalSelectedLabel = selectedLabel ? selectedLabel.textContent : '';
 	cards.forEach(card => {
 		const saveEl = card.querySelector('.egnitech-card-save');
 		if (saveEl) saveEl.dataset.original = saveEl.textContent;
@@ -182,13 +182,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			const priceLabelEl = card.querySelector('.egnitech-price-label');
 			if (priceLabelEl) {
-				priceLabelEl.textContent = `(${formatPrice(unitPrice)} each)`;
+				priceLabelEl.textContent = `${formatPrice(unitPrice)} each`;
 			}
 
 			const saveEl = card.querySelector('.egnitech-card-save');
 			if (saveEl) {
 				if (inCartQty > 0) {
-					saveEl.textContent = pct > 0 ? `(Save Extra ${pct}%)` : '';
+					saveEl.textContent = pct > 0 ? `Save Extra ${pct}%` : '';
 				} else {
 					saveEl.textContent = saveEl.dataset.original;
 				}
@@ -199,29 +199,20 @@ document.addEventListener('DOMContentLoaded', () => {
 		const lineQty = inCartQty + qty;
 		const discountPct = tierPctFor(lineQty);
 		const unitPrice = basePrice * (1.0 - discountPct / 100.0);
-		const savedAmount = (basePrice - unitPrice) * lineQty;
 
-		if (summaryLabel) {
-			summaryLabel.textContent = inCartQty > 0 ? `Adding ${qty} → ${lineQty} in cart:` : originalLabel;
+		// "Selected" follows the stepper, not the highlighted card: with tiers at 2 and 5, three units are "Buy 3".
+		if (selectedLabel && selectedValue) {
+			if (inCartQty > 0) {
+				selectedLabel.textContent = 'Adding:';
+				selectedValue.textContent = `${qty} → ${lineQty} in cart`;
+			} else {
+				selectedLabel.textContent = originalSelectedLabel;
+				selectedValue.textContent = `Buy ${qty}` + (discountPct > 0 ? ` (Save Extra ${discountPct}%)` : '');
+			}
 		}
 
 		if (summaryTotal) {
 			summaryTotal.textContent = formatPrice(unitPrice * lineQty);
-		}
-
-		// Update savings text callout. Never hide it: on phones it sits on its own line and the page would jump.
-		if (summarySavings) {
-			if (inCartQty > 0) {
-				summarySavings.classList.remove('is-hint');
-				summarySavings.textContent = `(${lineQty} × ${formatPrice(unitPrice)} each`
-					+ (savedAmount > 0 ? ` - saved ${formatPrice(savedAmount)})` : ')');
-			} else if (savedAmount > 0) {
-				summarySavings.classList.remove('is-hint');
-				summarySavings.textContent = `(Saved ${formatPrice(savedAmount)} - ${discountPct}% off)`;
-			} else {
-				summarySavings.classList.add('is-hint');
-				summarySavings.textContent = summarySavings.dataset.hint;
-			}
 		}
 
 		updateNotice();
