@@ -322,10 +322,15 @@
 	flex-shrink: 0;
 }
 
-/* WordPress's own icons are solid shapes: filled, not outlined. */
+/* WordPress's own icons are solid shapes: filled, not outlined. They are drawn smaller
+   inside their square, so they are enlarged to match, overlapping their padding so the
+   badge keeps its height. */
 .egnitech-trust-badge .trust-icon--solid {
 	fill: var(--wp--preset--color--accent, #00D4AA);
 	stroke: none;
+	width: 24px;
+	height: 24px;
+	margin: -4px;
 }
 
 .egnitech-trust-badge .badge-text {

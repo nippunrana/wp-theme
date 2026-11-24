@@ -2,9 +2,10 @@
 declare(strict_types=1);
 
 /**
- * Product trust badges: the three rows' defaults, the icons offered for them, and the
- * admin icon picker. The meta box, its save handler and the [egnitech_product_trust_badges]
- * shortcode are in inc/theme-setup.php.
+ * Product trust badges: the icons offered for them, and each product's badge list (up to
+ * EGNITECH_ONE_TRUST_BADGE_LIMIT) with its cleaning, reading and rendering. The meta box, its
+ * save handler and the [egnitech_product_trust_badges] shortcode are hooked in
+ * inc/theme-setup.php; the meta box markup is in inc/woocommerce-trust-badges-admin.php.
  *
  * Icons are stored by name, never as markup: a theme icon ("lock") or a WordPress core
  * icon ("core/shield"). The product page prints only the chosen icons, inline.
@@ -31,8 +32,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/** Most badges a product can have. Enforced on save, not only in the admin screen. */
+const EGNITECH_ONE_TRUST_BADGE_LIMIT = 10;
+
+/** Icon for a new badge, and for a stored icon that is no longer offered. */
+const EGNITECH_ONE_TRUST_BADGE_ICON = 'circle-check';
+
+/** Product meta holding the badge list. */
+const EGNITECH_ONE_TRUST_BADGES_META = '_egnitech_trust_badges';
+
 /**
- * The three badge rows and what each shows when its fields are left empty.
+ * The three fixed rows products had before the badge list, and what each showed when its
+ * fields were left empty. Used only for products whose badge list was never saved.
  *
  * @return array<int, array{text: string, icon: string}>
  */
@@ -143,42 +154,99 @@ function egnitech_one_trust_badge_icon_svg( string $name ): string {
 }
 
 /**
- * Prints one row's icon picker: a button showing the chosen icon that opens a grid of
- * radio buttons, one per icon. The styles and script are in assets/{css,js}/admin-trust-badges.*.
+ * Cleans a badge list before it is stored (the meta's sanitize callback) and when it is read.
+ * Drops badges without text, replaces an icon that is not offered, keeps at most the limit.
  *
- * @param int    $row      Badge row number.
- * @param string $selected The chosen icon name; must be one egnitech_one_trust_badge_icon_svg() knows.
+ * @param mixed $badges Raw list: array of array{text, icon, active}.
+ * @return list<array{text: string, icon: string, active: bool}>
  */
-function egnitech_one_render_trust_badge_icon_picker( int $row, string $selected ): void {
-	$groups = array(
-		__( 'Theme icons', 'egnitech-one' )     => wp_list_pluck( egnitech_one_trust_badge_theme_icons(), 'label' ),
-		__( 'WordPress icons', 'egnitech-one' ) => egnitech_one_trust_badge_core_icons(),
+function egnitech_one_sanitize_trust_badges( mixed $badges ): array {
+	if ( ! is_array( $badges ) ) {
+		return array();
+	}
+
+	$clean = array();
+	foreach ( $badges as $badge ) {
+		if ( ! is_array( $badge ) ) {
+			continue;
+		}
+
+		$text = sanitize_text_field( $badge['text'] ?? '' );
+		if ( '' === $text ) {
+			continue;
+		}
+
+		$icon = is_string( $badge['icon'] ?? null ) ? $badge['icon'] : '';
+		if ( '' === egnitech_one_trust_badge_icon_svg( $icon ) ) {
+			$icon = EGNITECH_ONE_TRUST_BADGE_ICON;
+		}
+
+		$clean[] = array(
+			'text'   => $text,
+			'icon'   => $icon,
+			'active' => ! empty( $badge['active'] ),
+		);
+
+		if ( count( $clean ) === EGNITECH_ONE_TRUST_BADGE_LIMIT ) {
+			break;
+		}
+	}
+	return $clean;
+}
+
+/**
+ * Registers the badge list so every write (the meta box, WP-CLI, imports) is cleaned the same way.
+ */
+function egnitech_one_register_trust_badges_meta(): void {
+	register_post_meta(
+		'product',
+		EGNITECH_ONE_TRUST_BADGES_META,
+		array(
+			'type'              => 'array',
+			'single'            => true,
+			'sanitize_callback' => 'egnitech_one_sanitize_trust_badges',
+		)
 	);
-	?>
-	<details class="egnitech-icon-picker" name="egnitech-icon-picker">
-		<summary>
-			<span class="egnitech-icon-picker__current"><?php echo egnitech_one_trust_badge_icon_svg( $selected ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- theme markup or core's sanitised SVG. ?></span>
-			<span class="screen-reader-text">
-				<?php
-				/* translators: %d: badge row number. */
-				echo esc_html( sprintf( __( 'Choose the icon for trust badge %d', 'egnitech-one' ), $row ) );
-				?>
-			</span>
-		</summary>
-		<div class="egnitech-icon-picker__panel">
-			<?php foreach ( $groups as $heading => $icons ) : ?>
-				<p class="egnitech-icon-picker__heading"><?php echo esc_html( $heading ); ?></p>
-				<div class="egnitech-icon-picker__grid">
-					<?php foreach ( $icons as $name => $label ) : ?>
-						<label class="egnitech-icon-picker__option" title="<?php echo esc_attr( $label ); ?>">
-							<input type="radio" class="screen-reader-text" name="egnitech_trust_badge_<?php echo (int) $row; ?>_icon" value="<?php echo esc_attr( (string) $name ); ?>" <?php checked( $selected, (string) $name ); ?> />
-							<?php echo egnitech_one_trust_badge_icon_svg( (string) $name ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- theme markup or core's sanitised SVG. ?>
-							<span class="screen-reader-text"><?php echo esc_html( $label ); ?></span>
-						</label>
-					<?php endforeach; ?>
-				</div>
-			<?php endforeach; ?>
-		</div>
-	</details>
-	<?php
+}
+add_action( 'init', 'egnitech_one_register_trust_badges_meta' );
+
+/**
+ * A product's badges, in display order, switched-off ones included.
+ *
+ * A product whose list was never saved gets its three old fixed rows, read from their old
+ * meta keys with the old fallbacks, so it looks as it did. A saved empty list means no badges.
+ *
+ * @return list<array{text: string, icon: string, active: bool}>
+ */
+function egnitech_one_get_trust_badges( int $product_id ): array {
+	if ( metadata_exists( 'post', $product_id, EGNITECH_ONE_TRUST_BADGES_META ) ) {
+		return egnitech_one_sanitize_trust_badges( get_post_meta( $product_id, EGNITECH_ONE_TRUST_BADGES_META, true ) );
+	}
+
+	$badges = array();
+	foreach ( egnitech_one_trust_badge_defaults() as $row => $default ) {
+		$text = get_post_meta( $product_id, "_egnitech_trust_badge_{$row}", true );
+		$icon = (string) get_post_meta( $product_id, "_egnitech_trust_badge_{$row}_icon", true );
+
+		$badges[] = array(
+			'text'   => empty( $text ) ? $default['text'] : (string) $text,
+			'icon'   => '' === egnitech_one_trust_badge_icon_svg( $icon ) ? $default['icon'] : $icon,
+			'active' => 'no' !== get_post_meta( $product_id, "_egnitech_trust_badge_{$row}_active", true ),
+		);
+	}
+	return $badges;
+}
+
+/**
+ * The product page's badge strip: the switched-on badges in order, or '' when there are none.
+ */
+function egnitech_one_render_trust_badges( int $product_id ): string {
+	$badges = '';
+	foreach ( egnitech_one_get_trust_badges( $product_id ) as $badge ) {
+		if ( $badge['active'] ) {
+			$badges .= '<div class="egnitech-trust-badge">' . egnitech_one_trust_badge_icon_svg( $badge['icon'] ) . '<span class="badge-text">' . esc_html( $badge['text'] ) . '</span></div>';
+		}
+	}
+
+	return '' === $badges ? '' : '<div class="egnitech-product-trust-badges">' . $badges . '</div>';
 }

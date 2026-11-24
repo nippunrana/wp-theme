@@ -297,36 +297,8 @@ if ( ! function_exists( 'egnitech_one_render_product_trust_badges_metabox' ) ) {
 		// Add nonce for security.
 		wp_nonce_field( 'egnitech_save_product_trust_badges', 'egnitech_product_trust_badges_nonce' );
 
-		// One row per badge: on/off switch, icon picker, text.
-		foreach ( egnitech_one_trust_badge_defaults() as $row => $default ) :
-			$text   = get_post_meta( $post->ID, "_egnitech_trust_badge_{$row}", true );
-			$icon   = (string) get_post_meta( $post->ID, "_egnitech_trust_badge_{$row}_icon", true );
-			$active = 'no' !== get_post_meta( $post->ID, "_egnitech_trust_badge_{$row}_active", true );
-			if ( '' === egnitech_one_trust_badge_icon_svg( $icon ) ) {
-				$icon = $default['icon'];
-			}
-			?>
-			<div class="egnitech-trust-badge-field">
-				<label for="egnitech_trust_badge_<?php echo (int) $row; ?>"><strong>
-					<?php
-					/* translators: 1: badge row number, 2: default badge text. */
-					echo esc_html( sprintf( __( 'Trust Badge %1$d (Default: %2$s)', 'egnitech-one' ), $row, $default['text'] ) );
-					?>
-				</strong></label>
-				<div class="egnitech-trust-badge-row">
-					<label class="egnitech-trust-badge-switch">
-						<input type="checkbox" name="egnitech_trust_badge_<?php echo (int) $row; ?>_active" value="yes" <?php checked( $active ); ?> />
-						<?php esc_html_e( 'Active', 'egnitech-one' ); ?>
-					</label>
-					<?php egnitech_one_render_trust_badge_icon_picker( $row, $icon ); ?>
-					<input type="text" id="egnitech_trust_badge_<?php echo (int) $row; ?>" name="egnitech_trust_badge_<?php echo (int) $row; ?>" value="<?php echo esc_attr( $text ); ?>" class="large-text" placeholder="<?php echo esc_attr( $default['text'] ); ?>" />
-				</div>
-			</div>
-		<?php endforeach; ?>
-		<p class="description">
-			<?php esc_html_e( 'Leave a text field blank to use its default text. Switch a badge off to hide it on this product.', 'egnitech-one' ); ?>
-		</p>
-		<?php
+		// The badge list, its row template and the icon dialog (inc/woocommerce-trust-badges-admin.php).
+		egnitech_one_render_trust_badges_box( $post );
 	}
 }
 
@@ -352,24 +324,11 @@ if ( ! function_exists( 'egnitech_one_save_product_trust_badges' ) ) {
 			return;
 		}
 
-		// Save fields.
-		foreach ( array_keys( egnitech_one_trust_badge_defaults() ) as $row ) {
-			if ( isset( $_POST[ "egnitech_trust_badge_{$row}" ] ) ) {
-				update_post_meta( $post_id, "_egnitech_trust_badge_{$row}", sanitize_text_field( $_POST[ "egnitech_trust_badge_{$row}" ] ) );
-			}
-
-			// A switched-off checkbox is not posted at all, so "off" is stored as 'no'.
-			// No value at all means on, so products saved before the switch keep their badges.
-			update_post_meta( $post_id, "_egnitech_trust_badge_{$row}_active", isset( $_POST[ "egnitech_trust_badge_{$row}_active" ] ) ? 'yes' : 'no' );
-
-			// Only an offered icon's name is stored; anything else leaves the row's default icon.
-			$icon = isset( $_POST[ "egnitech_trust_badge_{$row}_icon" ] ) ? sanitize_text_field( wp_unslash( $_POST[ "egnitech_trust_badge_{$row}_icon" ] ) ) : '';
-			if ( '' !== egnitech_one_trust_badge_icon_svg( $icon ) ) {
-				update_post_meta( $post_id, "_egnitech_trust_badge_{$row}_icon", $icon );
-			} else {
-				delete_post_meta( $post_id, "_egnitech_trust_badge_{$row}_icon" );
-			}
-		}
+		// Save the list. The nonce shows the box was on the page, so no list posted means every
+		// badge was removed: an empty list is stored, never deleted. Unslashed, cleaned and
+		// capped by egnitech_one_sanitize_trust_badges(), registered with the meta.
+		$badges = isset( $_POST['egnitech_trust_badges'] ) && is_array( $_POST['egnitech_trust_badges'] ) ? array_values( $_POST['egnitech_trust_badges'] ) : array();
+		update_post_meta( $post_id, EGNITECH_ONE_TRUST_BADGES_META, $badges );
 	}
 }
 add_action( 'save_post_product', 'egnitech_one_save_product_trust_badges' );
@@ -386,32 +345,7 @@ if ( ! function_exists( 'egnitech_one_product_trust_badges_shortcode' ) ) {
 			return '';
 		}
 
-		$badges = '';
-		foreach ( egnitech_one_trust_badge_defaults() as $row => $default ) {
-			// Switched off in the product's meta box.
-			if ( 'no' === get_post_meta( $product_id, "_egnitech_trust_badge_{$row}_active", true ) ) {
-				continue;
-			}
-
-			$text = get_post_meta( $product_id, "_egnitech_trust_badge_{$row}", true );
-			if ( empty( $text ) ) {
-				$text = $default['text'];
-			}
-
-			$icon = egnitech_one_trust_badge_icon_svg( (string) get_post_meta( $product_id, "_egnitech_trust_badge_{$row}_icon", true ) );
-			if ( '' === $icon ) {
-				$icon = egnitech_one_trust_badge_icon_svg( $default['icon'] );
-			}
-
-			$badges .= '<div class="egnitech-trust-badge">' . $icon . '<span class="badge-text">' . esc_html( $text ) . '</span></div>';
-		}
-
-		// Every badge switched off: no empty strip.
-		if ( '' === $badges ) {
-			return '';
-		}
-
-		return '<div class="egnitech-product-trust-badges">' . $badges . '</div>';
+		return egnitech_one_render_trust_badges( $product_id );
 	}
 }
 add_shortcode( 'egnitech_product_trust_badges', 'egnitech_one_product_trust_badges_shortcode' );

@@ -1,38 +1,131 @@
-/* Product Trust Badges meta box (product edit screen only). */
+/* Product Trust Badges meta box (product edit screen only): the badge list and the icon dialog. */
 
-.egnitech-trust-badge-field {
-	margin: 1em 0;
+.egnitech-trust-badges > .description {
+	margin: 4px 0 12px;
 }
 
-.egnitech-trust-badge-field > label {
-	display: block;
-	margin-bottom: 6px;
+/* Badge rows. */
+.egnitech-trust-badges__list {
+	display: grid;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
-.egnitech-trust-badge-row {
+.egnitech-trust-badge-item {
 	display: flex;
-	align-items: stretch;
-	gap: 12px;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	padding: 8px 8px 8px 4px;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+	transition: border-color 0.15s;
 }
 
-.egnitech-trust-badge-row .large-text {
-	flex: 1;
-	min-width: 0;
+.egnitech-trust-badge-item:hover,
+.egnitech-trust-badge-item:focus-within {
+	border-color: #8c8f94;
 }
 
-/* A switched-off row is dimmed but stays editable. */
-.egnitech-trust-badge-row:has(.egnitech-trust-badge-switch input:not(:checked)) :is(.egnitech-icon-picker > summary, .large-text) {
+.egnitech-trust-badge-item.is-dragging {
+	border-style: dashed;
 	opacity: 0.5;
 }
 
-/* Active switch: the checkbox drawn as a switch. */
+/* A switched-off badge is dimmed but stays editable. */
+.egnitech-trust-badge-item:has(.egnitech-trust-badge-switch input:not(:checked)) :is(.egnitech-trust-badge-item__icon, .egnitech-trust-badge-item__text) {
+	opacity: 0.5;
+}
+
+.egnitech-trust-badge-item__handle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 32px;
+	color: #8c8f94;
+	cursor: grab;
+}
+
+.egnitech-trust-badge-item__handle:active {
+	cursor: grabbing;
+}
+
+.egnitech-trust-badge-item__icon {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	height: 36px;
+	padding: 0 4px 0 8px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	background: #fff;
+	color: #1d2327;
+	cursor: pointer;
+}
+
+.egnitech-trust-badge-item__icon:hover {
+	border-color: var(--wp-admin-theme-color, #2271b1);
+}
+
+.egnitech-trust-badge-item__svg svg {
+	display: block;
+	width: 24px;
+	height: 24px;
+}
+
+.egnitech-trust-badge-item__text {
+	flex: 1;
+	min-width: 0;
+	min-height: 36px;
+}
+
+.egnitech-trust-badge-item__tool,
+.egnitech-icon-dialog__close {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 0;
+	border-radius: 4px;
+	background: none;
+	color: #50575e;
+	cursor: pointer;
+}
+
+.egnitech-trust-badge-item__tool:hover:not(:disabled),
+.egnitech-icon-dialog__close:hover {
+	background: #f0f0f1;
+	color: #1d2327;
+}
+
+.egnitech-trust-badge-item__tool.is-remove:hover:not(:disabled) {
+	color: #d63638;
+}
+
+.egnitech-trust-badge-item__tool:disabled {
+	cursor: default;
+	opacity: 0.3;
+}
+
+.egnitech-trust-badge-item__icon:focus-visible,
+.egnitech-trust-badge-item__tool:focus-visible,
+.egnitech-icon-dialog__close:focus-visible,
+.egnitech-icon-dialog__icon:focus-visible {
+	outline: 2px solid var(--wp-admin-theme-color, #2271b1);
+	outline-offset: 1px;
+}
+
+/* Show switch: the checkbox drawn as a switch. */
 .egnitech-trust-badge-switch {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
-	min-width: 88px;
 	cursor: pointer;
-	white-space: nowrap;
 }
 
 .egnitech-trust-badge-switch input[type="checkbox"] {
@@ -72,99 +165,168 @@
 	transform: translateX(16px);
 }
 
-/* Icon picker: a button showing the chosen icon, opening a grid of radio buttons. */
-.egnitech-icon-picker {
-	position: relative;
+/* Empty state, Add button and counter. */
+.egnitech-trust-badges__empty {
+	display: none;
+	margin: 0;
+	padding: 16px;
+	border: 1px dashed #c3c4c7;
+	border-radius: 8px;
+	color: #646970;
+	text-align: center;
 }
 
-.egnitech-icon-picker > summary {
-	box-sizing: border-box;
+.egnitech-trust-badges.is-empty .egnitech-trust-badges__empty {
+	display: block;
+}
+
+.egnitech-trust-badges__footer {
 	display: flex;
 	align-items: center;
-	gap: 4px;
-	height: 100%;
-	min-height: 32px;
-	padding: 0 6px 0 10px;
-	border: 1px solid #8c8f94;
-	border-radius: 4px;
-	background: #fff;
-	color: #1d2327;
-	cursor: pointer;
-	list-style: none;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 12px;
 }
 
-.egnitech-icon-picker > summary::-webkit-details-marker {
+.wp-core-ui .egnitech-trust-badges .egnitech-trust-badges__add {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+/* The icon would otherwise take the button's line height and sit low. */
+.wp-core-ui .egnitech-trust-badges .egnitech-trust-badges__add .dashicons {
+	line-height: 1;
+}
+
+.egnitech-trust-badges__count {
+	color: #646970;
+}
+
+/* Icon dialog. It opens in the browser's top layer, so the meta box cannot clip it. */
+.egnitech-icon-dialog {
+	width: min(560px, calc(100vw - 32px));
+	max-height: min(600px, calc(100vh - 64px));
+	padding: 0;
+	border: 0;
+	border-radius: 8px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.egnitech-icon-dialog::backdrop {
+	background: rgba(0, 0, 0, 0.35);
+}
+
+/* A display rule on the icons would otherwise beat the hidden attribute that search sets. */
+.egnitech-icon-dialog [hidden] {
 	display: none;
 }
 
-.egnitech-icon-picker > summary::after {
-	content: "\f140";
-	font: normal 20px/1 dashicons;
+.egnitech-icon-dialog__inner {
+	display: flex;
+	flex-direction: column;
+	max-height: inherit;
 }
 
-.egnitech-icon-picker > summary:focus-visible {
-	outline: 2px solid var(--wp-admin-theme-color, #2271b1);
-	outline-offset: 1px;
+.egnitech-icon-dialog__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 12px 8px 16px;
 }
 
-.egnitech-icon-picker svg {
+#egnitech-product-trust-badges .egnitech-icon-dialog__title {
+	margin: 0;
+	padding: 0;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.egnitech-icon-dialog__search {
+	width: calc(100% - 32px);
+	margin: 0 16px 8px;
+}
+
+.egnitech-icon-dialog__body {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	padding: 0 16px 16px;
+}
+
+#egnitech-product-trust-badges .egnitech-icon-dialog__heading {
+	margin: 12px 0 6px;
+	padding: 0;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.egnitech-icon-dialog__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+	gap: 4px;
+}
+
+.egnitech-icon-dialog__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 44px;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	background: none;
+	color: #1d2327;
+	cursor: pointer;
+}
+
+.egnitech-icon-dialog__icon:hover {
+	background: #f0f0f1;
+}
+
+.egnitech-icon-dialog__icon[aria-pressed="true"] {
+	border-color: var(--wp-admin-theme-color, #2271b1);
+	background: #f0f6fc;
+}
+
+.egnitech-icon-dialog__icon svg {
 	display: block;
 	width: 24px;
 	height: 24px;
 }
 
-.egnitech-icon-picker__panel {
-	position: absolute;
-	z-index: 100;
-	top: calc(100% + 4px);
-	left: 0;
-	width: min(520px, 80vw);
-	max-height: 340px;
-	overflow-y: auto;
-	padding: 4px 12px 12px;
-	border: 1px solid #c3c4c7;
-	border-radius: 4px;
-	background: #fff;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+.egnitech-icon-dialog__none {
+	padding: 16px 0;
+	color: #646970;
+	text-align: center;
 }
 
-.egnitech-icon-picker__heading {
-	margin: 10px 0 6px;
-	font-weight: 600;
-}
-
-.egnitech-icon-picker__grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-	gap: 4px;
-}
-
-.egnitech-icon-picker__option {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 40px;
-	border: 1px solid transparent;
-	border-radius: 4px;
-	color: #1d2327;
-	cursor: pointer;
-}
-
-.egnitech-icon-picker__option:hover {
-	background: #f0f0f1;
-}
-
-.egnitech-icon-picker__option:has(input:checked) {
-	border-color: var(--wp-admin-theme-color, #2271b1);
-	background: #f0f6fc;
-}
-
-.egnitech-icon-picker__option:has(input:focus-visible) {
-	outline: 2px solid var(--wp-admin-theme-color, #2271b1);
-	outline-offset: 1px;
-}
-
-/* WordPress's own icons are solid shapes. */
-.egnitech-icon-picker .trust-icon--solid {
+/* WordPress's own icons are solid shapes, drawn smaller inside their square: enlarged to
+   match the theme's, as on the product page. */
+.egnitech-trust-badges .trust-icon--solid {
 	fill: currentColor;
+}
+
+.egnitech-trust-badge-item__svg .trust-icon--solid,
+.egnitech-icon-dialog__icon .trust-icon--solid {
+	width: 32px;
+	height: 32px;
+	margin: -4px;
+}
+
+/* Narrow screens: the text field takes a line of its own. */
+@media screen and (max-width: 600px) {
+	.egnitech-trust-badge-item {
+		flex-wrap: wrap;
+	}
+
+	.egnitech-trust-badge-item__text {
+		flex-basis: 100%;
+		order: 1;
+	}
+
+	.egnitech-trust-badge-item__tool[data-action="up"] {
+		margin-left: auto;
+	}
 }

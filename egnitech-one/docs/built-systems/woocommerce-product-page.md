@@ -1,6 +1,6 @@
 # WooCommerce product page
 
-Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/single-product-details.php` and its `style.css`, `patterns/product-gallery.php` with its `index.js` and `style.css`, the shortcodes and `render_block` filters in `inc/theme-setup.php`, `inc/woocommerce-cart-drawer.php`, `assets/js/woocommerce-mini-cart-auto-open.js`, `patterns/single-product-details/sticky-buy-now.js` and its `.css`. Quantity pricing is in `bulk-discounts.md`.
+Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/single-product-details.php` and its `style.css`, `patterns/product-gallery.php` with its `index.js` and `style.css`, the shortcodes and `render_block` filters in `inc/theme-setup.php`, `inc/woocommerce-cart-drawer.php`, `assets/js/woocommerce-mini-cart-auto-open.js`, `patterns/single-product-details/sticky-buy-now.js` and its `.css`, `inc/woocommerce-trust-badges.php` and `inc/woocommerce-trust-badges-admin.php` with `assets/{css,js}/admin-trust-badges.*`. Quantity pricing is in `bulk-discounts.md`.
 
 ## How the page is put together
 
@@ -21,7 +21,7 @@ Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/
   - **3:4 applies on desktop too, by the owner's choice.** There the gallery is taller than most laptop screens, so its thumbnails can sit below the fold.
   - A variation's picture swapped in by the script was not counted when the frame was picked; it gets the fill like any other mismatch.
 - **The gallery script refuses to start inside any iframe**, to stay out of the editor. In an iframe-based preview tool it looks broken and is not.
-- **The trust-badge fallback text is written for one shop.** A product with empty badge fields shows "Eco-Friendly UV Tech", "1 Year Warranty" and "Secure Checkout" (`egnitech_one_product_trust_badges_shortcode`). This is the parent theme: a site selling anything else must fill the three fields on every product, or the fallback must change.
+- **The trust-badge defaults are written for one shop.** A product whose badge list was never saved shows "Eco-Friendly UV Tech", "1 Year Warranty" and "Secure Checkout" (`egnitech_one_trust_badge_defaults()`), and its meta box starts with those three rows, so saving it stores them. This is the parent theme: a site selling anything else must edit or remove them on every product, or the defaults must change.
 - **The title and price have fixed sizes, not `clamp()` or a fluid preset**, because the owner asked for the same look on every device (24 Nov 2026). Fluid presets change with screen width, which is why this is an exception to the theme's typography rule.
   - **The only step is the title: 1.25rem on phones and tablets, 1.75rem from 992px** (the two-column desktop layout), at the owner's request (24 Nov 2026). The price stays one size everywhere.
   - **The "↓45%" badge is a fixed green, not Accent, and the old price keeps its ₹** (owner's choices, 24 Nov 2026; the design reference shows the old price without ₹).
@@ -30,6 +30,26 @@ Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/
 - **Never size or bold the spans inside the price's `<del>` or `<ins>`.** They must inherit from the row. A rule that reached them made the old price as big as the new one while `<del>` still drew its strike line for smaller text, until 24 Nov 2026.
 - **An empty short description prints nothing.** `egnitech_one_render_product_short_description_block` stops WordPress building an excerpt out of the long description, and prints the short description with its HTML kept.
 - **The related-products section is WooCommerce's own pattern, called by slug.** If a WooCommerce update renames or drops that pattern, the section disappears with no error.
+
+## Trust badges
+
+- **Each product has an ordered list of up to 10 badges**, each with text, an icon and an on/off switch, edited in its Product Trust Badges box: add, remove, reorder (owner's request, 24 Nov 2026). It is one meta value, `_egnitech_trust_badges`. With none switched on the shortcode prints nothing, not an empty strip.
+- **Every write is cleaned by the meta's sanitize callback** (`register_post_meta()` in `inc/woocommerce-trust-badges.php`): badges without text are dropped, an icon that is not offered becomes the tick, and the list is cut to 10. The save handler passes the posted list through unchanged. **Never** clean it only in the save handler or the script: other write paths (WP-CLI, imports) would skip it.
+- **No stored list and an empty stored list mean different things.** No list: the product was never saved since the list existed, so it shows its three old fixed rows, read from their old keys (`_egnitech_trust_badge_{1,2,3}` with `_icon` and `_active`) and the old fallbacks. Empty list: the badges were removed on purpose, so none show.
+  - **Never** delete the key when the list is empty, or the three defaults come back.
+  - **Never** delete the old keys without converting them first: products not saved since 24 Nov 2026 still read them.
+  - With the box on the page (the nonce), no posted list means every badge was removed. Quick Edit posts no nonce and leaves the list alone.
+- **Icons are stored by name, never as SVG markup**: a theme icon (`lock`) or a WordPress core icon (`core/shield`). A core icon a WordPress update drops becomes the tick when the list is next read.
+- **The picker offers the theme's own icons and WordPress's core icon collection** (owner's decision, 24 Nov 2026). The product page prints only the chosen icons, inline. **Never** load an icon font or a whole icon set on the product page: product-page weight is the owner's concern, and Dashicons alone is a 59KB stylesheet.
+  - **zap, shield and lock are the Feather drawings the badges first shipped with.** The rest are Lucide. **Never** swap those three for Lucide's redrawn versions: every product still on its defaults would change.
+  - **Core icons are solid and drawn smaller inside their square**, so `.trust-icon--solid` fills and enlarges them on the page and in the picker.
+  - **Only the `core/` collection is offered.** In WordPress 7.0 the registry cannot take new icons; `wp_register_icon()` is 7.1-only, so the theme's icons live in its own file.
+- **The editor is plain JavaScript and native HTML** (owner's choice, 24 Nov 2026, over WordPress's React components, which would break the theme's vanilla-JS rule). It sits inside the product form, so:
+  - every button is `type="button"`, there is no nested `<form>`, and Enter in the icon search picks an icon instead of saving the product;
+  - the row `<template>` holds no `id`s, and each new row gets an index no other row uses. The form posts rows in on-screen order, which is the page's order.
+  - its script depends on WordPress's `wp-a11y` (no jQuery) to announce adds, moves and removals to screen readers. Without that dependency the announcements stop silently.
+- **One icon `<dialog>` serves every row.** A grid per row would be over a thousand icons at 10 rows. The dialog opens in the browser's top layer, so WooCommerce's `overflow: hidden` on product meta boxes cannot clip it.
+- **A row is draggable only while its handle is held**, so text in its field can still be selected with the mouse. Dragging has been tested with simulated events only; the Move up / Move down buttons are the keyboard and touch path.
 
 ## Add to cart and the cart drawer
 

@@ -351,7 +351,7 @@ if ( ! function_exists( 'egnitech_one_trust_badges_admin_assets' ) ) {
 		wp_enqueue_script(
 			'egnitech-one-admin-trust-badges',
 			get_theme_file_uri( 'assets/js/admin-trust-badges.js' ),
-			array(),
+			array( 'wp-a11y' ),
 			egnitech_one_asset_version( get_theme_file_path( 'assets/js/admin-trust-badges.js' ) ),
 			array(
 				'strategy'  => 'defer',
