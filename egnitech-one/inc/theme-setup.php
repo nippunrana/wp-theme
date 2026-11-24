@@ -580,6 +580,15 @@ if ( ! function_exists( 'egnitech_one_product_gallery_shortcode' ) ) {
 		if ( 'yes' !== $show_lightbox_icon ) {
 			$gallery_classes[] = 'egnitech-gallery--no-lightbox-icon';
 		}
+
+		// One frame for the whole gallery, so swiping never changes its height: 3:4 when most
+		// pictures are tall (a tie goes to the first picture), 1:1 otherwise.
+		$is_tall = static fn ( array $img ): bool => $img['width'] > 0 && $img['height'] >= 1.15 * $img['width'];
+		$tall    = count( array_filter( $images, $is_tall ) );
+		$total   = count( $images );
+		if ( 2 * $tall > $total || ( 2 * $tall === $total && $is_tall( $images[0] ) ) ) {
+			$gallery_classes[] = 'egnitech-custom-gallery--portrait';
+		}
 		?>
 		<div class="<?php echo esc_attr( implode( ' ', $gallery_classes ) ); ?>" id="egnitech-product-gallery" data-images="<?php echo esc_attr( wp_json_encode( $images ) ); ?>">
 			<!-- Main Display Image Container -->

@@ -29,6 +29,14 @@
 	aspect-ratio: 1 / 1;
 }
 
+/* Chosen per product in egnitech_one_product_gallery_shortcode(): most pictures are tall.
+   Phones size each slide instead (see the max-width: 767px block). */
+@media (min-width: 768px) {
+	.egnitech-custom-gallery--portrait .egnitech-gallery-main-wrapper {
+		aspect-ratio: 3 / 4;
+	}
+}
+
 .egnitech-gallery-main {
 	display: flex;
 	overflow-x: auto;
@@ -91,10 +99,12 @@
 	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
 }
 
+/* The whole picture, never cropped: one that does not match the frame gets a light fill around it. */
 .egnitech-gallery-trigger img {
 	width: 100%;
 	height: 100%;
-	object-fit: cover;
+	object-fit: contain;
+	background: light-dark(#ffffff, #161616);
 	display: block;
 	transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -397,7 +407,7 @@
 	}
 	
 	.egnitech-gallery-slide {
-		flex: 0 0 86%; /* Active slide width so the next one peeks in */
+		flex: 0 0 92%; /* Active slide width so the next one peeks in */
 		scroll-snap-align: start;
 		height: auto;
 	}
@@ -407,8 +417,12 @@
 		width: 100%;
 		height: auto;
 		aspect-ratio: 1 / 1;
-		object-fit: cover;
+		object-fit: contain;
 		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+	}
+
+	.egnitech-custom-gallery--portrait .egnitech-gallery-slide img {
+		aspect-ratio: 3 / 4;
 	}
 	
 	.egnitech-gallery-arrow {
