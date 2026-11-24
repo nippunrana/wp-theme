@@ -13,7 +13,7 @@
 	gap: var(--wp--preset--spacing--20);
 	padding-block: var(--wp--preset--spacing--20);
 	padding-inline: var(--wp--preset--spacing--50);
-	background-color: var(--wp--preset--color--base);
+	background-color: color-mix(in srgb, var(--wp--preset--color--base) 60%, transparent); /* 40% see-through (owner's choice). */
 	border-top: 1px solid var(--wp--preset--color--border);
 	box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
 	transform: translateY(100%);
@@ -29,6 +29,7 @@
 	align-items: center;
 	border: 2px solid var(--wp--preset--color--border);
 	border-radius: 8px;
+	background-color: var(--wp--preset--color--base);
 }
 
 .egnitech-sticky-buy__step {

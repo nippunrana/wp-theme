@@ -1,7 +1,7 @@
 # Plan: move the product page to WooCommerce's "Add to Cart + Options" block
 
 - **Written:** 15 Nov 2026
-- **Last reviewed:** 16 Nov 2026 (WooCommerce 11.3.0, WordPress 7.1.4)
+- **Last reviewed:** 24 Nov 2026 (WooCommerce 11.3.1, WordPress 7.1.4)
 - **Status:** Waiting. Do not start until the trigger below is met.
 
 ## Trigger
@@ -33,6 +33,7 @@ Also read that release's notes for changes to the block's Interactivity API stor
 5. **The full-width row** is theme CSS today. The new block's Product Button has a width setting, so the CSS override should go entirely.
 6. **The "Buy Now" label** comes from `woocommerce_product_single_add_to_cart_text`. Confirm the new block's button reads that filter.
 7. **The second Buy Now button** (Add to Cart and Buy Now both on) is a `<button>` printed on `woocommerce_after_add_to_cart_button`. Inside the new block that forces legacy mode, as in item 1, so it must be rebuilt on the new block's own markup. Its per-click checkout marker (`egnitech-buy-now`) must be carried over as well.
+8. **The sticky Buy Now bar** (`sticky-buy-now.js`) finds `form.cart`, its buy button and the stepper's −/+ buttons by their current classes, and presses them. It reads the cart script's `loading` class to block a second tap. It must be pointed at the new block's controls.
 
 ## Goal
 

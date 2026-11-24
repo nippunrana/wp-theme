@@ -1,6 +1,6 @@
 # WooCommerce product page
 
-Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/single-product-details.php` and its `style.css`, `patterns/product-gallery.php` with its `index.js` and `style.css`, the shortcodes and `render_block` filters in `inc/theme-setup.php`, `inc/woocommerce-cart-drawer.php`, `assets/js/woocommerce-mini-cart-auto-open.js`. Quantity pricing is in `bulk-discounts.md`.
+Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/single-product-details.php` and its `style.css`, `patterns/product-gallery.php` with its `index.js` and `style.css`, the shortcodes and `render_block` filters in `inc/theme-setup.php`, `inc/woocommerce-cart-drawer.php`, `assets/js/woocommerce-mini-cart-auto-open.js`, `patterns/single-product-details/sticky-buy-now.js` and its `.css`. Quantity pricing is in `bulk-discounts.md`.
 
 ## How the page is put together
 
@@ -63,3 +63,10 @@ Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/
 - **The mini-cart's "open drawer on add" behaviour is forced when the block is rendered** (`egnitech_one_force_mini_cart_drawer_behavior`). Changing that setting on the Mini-Cart block in the Site Editor has no effect.
 - **Opening the drawer depends on WooCommerce's internal class names** (the mini-cart button and the drawer overlay's hidden state). After a WooCommerce update that renames them, items are still added but the drawer stays shut.
 - **The script loads on every front-end page while WooCommerce is active**, and declares jQuery as a dependency (`assets-and-versioning.md`). Without WooCommerce it is not loaded at all.
+
+## Sticky Buy Now bar
+
+- **The bar has no cart logic of its own. Its −, + and button press the page's real ones** (`sticky-buy-now.js`). That is why Buy Now's checkout marker, the cart drawer, variation checks and bulk-discount prices all behave as they do on the page. **Never** give the bar its own quantity field, form or add-to-cart request: everything in the section above would have to be built twice.
+- **It moves with the scroll, not on a timer** (owner's choice, 24 Nov 2026). The share of the real button hidden under the header is the share of the bar shown, so the row seems to wrap round from top to bottom. A bar resting part-shown is intended.
+- **Below 992px only, with one action: Buy Now when it is on, otherwise Add to Cart** (owner's choices, 24 Nov 2026). From 992px the page has two columns.
+- **The bar ignores taps while the real button is adding.** The cart script itself has no such guard, so a fast second tap on the page's own button can still send a second add.
