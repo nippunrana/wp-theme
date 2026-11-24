@@ -37,4 +37,5 @@ EgniTech One is a modern, performance-first WordPress block theme designed for s
 == Credits ==
 
 * Inter font by Rasmus Andersson (https://rsms.me/inter/), licensed under SIL Open Font License 1.1
+* Trust badge icons by Lucide (https://lucide.dev), licensed under the ISC License, and Feather (https://feathericons.com), licensed under the MIT License. Notices in inc/woocommerce-trust-badges.php
 * Built with WordPress (https://wordpress.org)

@@ -331,6 +331,38 @@ if ( ! function_exists( 'egnitech_one_admin_scripts' ) ) {
 add_action( 'admin_enqueue_scripts', 'egnitech_one_admin_scripts' );
 
 /**
+ * Enqueue the trust badge icon picker's assets on the product edit screen only.
+ *
+ * @param string $hook The admin page hook.
+ */
+if ( ! function_exists( 'egnitech_one_trust_badges_admin_assets' ) ) {
+	function egnitech_one_trust_badges_admin_assets( string $hook ): void {
+		if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) || 'product' !== get_current_screen()?->post_type ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'egnitech-one-admin-trust-badges',
+			get_theme_file_uri( 'assets/css/admin-trust-badges.css' ),
+			array(),
+			egnitech_one_asset_version( get_theme_file_path( 'assets/css/admin-trust-badges.css' ) )
+		);
+
+		wp_enqueue_script(
+			'egnitech-one-admin-trust-badges',
+			get_theme_file_uri( 'assets/js/admin-trust-badges.js' ),
+			array(),
+			egnitech_one_asset_version( get_theme_file_path( 'assets/js/admin-trust-badges.js' ) ),
+			array(
+				'strategy'  => 'defer',
+				'in_footer' => true,
+			)
+		);
+	}
+}
+add_action( 'admin_enqueue_scripts', 'egnitech_one_trust_badges_admin_assets' );
+
+/**
  * Enqueue reading progress bar if enabled.
  */
 if ( ! function_exists( 'egnitech_one_enqueue_reading_progress' ) ) {

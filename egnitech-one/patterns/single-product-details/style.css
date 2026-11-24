@@ -322,6 +322,12 @@
 	flex-shrink: 0;
 }
 
+/* WordPress's own icons are solid shapes: filled, not outlined. */
+.egnitech-trust-badge .trust-icon--solid {
+	fill: var(--wp--preset--color--accent, #00D4AA);
+	stroke: none;
+}
+
 .egnitech-trust-badge .badge-text {
 	color: var(--wp--preset--color--contrast);
 }

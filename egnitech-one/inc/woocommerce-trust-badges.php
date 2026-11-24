@@ -1,0 +1,184 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * Product trust badges: the three rows' defaults, the icons offered for them, and the
+ * admin icon picker. The meta box, its save handler and the [egnitech_product_trust_badges]
+ * shortcode are in inc/theme-setup.php.
+ *
+ * Icons are stored by name, never as markup: a theme icon ("lock") or a WordPress core
+ * icon ("core/shield"). The product page prints only the chosen icons, inline.
+ *
+ * Icon credits:
+ * - zap, shield and lock: Feather (https://feathericons.com), MIT License,
+ *   Copyright (c) 2013-present Cole Bemis.
+ * - All other theme icons: Lucide 1.79.0 (https://lucide.dev), ISC License,
+ *   Copyright (c) 2026 Lucide Icons and Contributors. Permission to use, copy, modify,
+ *   and/or distribute this software for any purpose with or without fee is hereby
+ *   granted, provided that the above copyright notice and this permission notice appear
+ *   in all copies. THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+ *   WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ *   MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL,
+ *   DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ *   LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+ *   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+ *   SOFTWARE.
+ *
+ * @package EgniTech_One
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * The three badge rows and what each shows when its fields are left empty.
+ *
+ * @return array<int, array{text: string, icon: string}>
+ */
+function egnitech_one_trust_badge_defaults(): array {
+	return array(
+		1 => array(
+			'text' => __( 'Eco-Friendly UV Tech', 'egnitech-one' ),
+			'icon' => 'zap',
+		),
+		2 => array(
+			'text' => __( '1 Year Warranty', 'egnitech-one' ),
+			'icon' => 'shield',
+		),
+		3 => array(
+			'text' => __( 'Secure Checkout', 'egnitech-one' ),
+			'icon' => 'lock',
+		),
+	);
+}
+
+/**
+ * The theme's own icons: inner SVG markup on a 24px grid, drawn as 2px outlines.
+ *
+ * zap, shield and lock are the exact drawings the badges first shipped with, so products
+ * saved before icons could be chosen look the same.
+ *
+ * @return array<string, array{label: string, svg: string}>
+ */
+function egnitech_one_trust_badge_theme_icons(): array {
+	return array(
+		'zap'              => array( 'label' => __( 'Lightning', 'egnitech-one' ), 'svg' => '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>' ),
+		'shield'           => array( 'label' => __( 'Shield', 'egnitech-one' ), 'svg' => '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>' ),
+		'lock'             => array( 'label' => __( 'Lock', 'egnitech-one' ), 'svg' => '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>' ),
+		'shield-check'     => array( 'label' => __( 'Shield with tick', 'egnitech-one' ), 'svg' => '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" />' ),
+		'badge-check'      => array( 'label' => __( 'Verified', 'egnitech-one' ), 'svg' => '<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" /><path d="m16 9-5.5 5.5L8 12" />' ),
+		'circle-check'     => array( 'label' => __( 'Tick', 'egnitech-one' ), 'svg' => '<circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" />' ),
+		'award'            => array( 'label' => __( 'Award', 'egnitech-one' ), 'svg' => '<path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526" /><circle cx="12" cy="8" r="6" />' ),
+		'star'             => array( 'label' => __( 'Star', 'egnitech-one' ), 'svg' => '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />' ),
+		'thumbs-up'        => array( 'label' => __( 'Thumbs up', 'egnitech-one' ), 'svg' => '<path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" /><path d="M7 10v12" />' ),
+		'heart'            => array( 'label' => __( 'Heart', 'egnitech-one' ), 'svg' => '<path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />' ),
+		'truck'            => array( 'label' => __( 'Delivery', 'egnitech-one' ), 'svg' => '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" /><path d="M15 18H9" /><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" /><circle cx="17" cy="18" r="2" /><circle cx="7" cy="18" r="2" />' ),
+		'package'          => array( 'label' => __( 'Package', 'egnitech-one' ), 'svg' => '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" /><path d="M12 22V12" /><polyline points="3.29 7 12 12 20.71 7" /><path d="m7.5 4.27 9 5.15" />' ),
+		'rotate-ccw'       => array( 'label' => __( 'Returns', 'egnitech-one' ), 'svg' => '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" />' ),
+		'credit-card'      => array( 'label' => __( 'Card payment', 'egnitech-one' ), 'svg' => '<rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /><path d="M6 14h2" />' ),
+		'banknote'         => array( 'label' => __( 'Cash', 'egnitech-one' ), 'svg' => '<rect width="20" height="12" x="2" y="6" rx="2" /><circle cx="12" cy="12" r="2" /><path d="M6 12h.01M18 12h.01" />' ),
+		'gift'             => array( 'label' => __( 'Gift', 'egnitech-one' ), 'svg' => '<path d="M12 7v14" /><path d="M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8" /><path d="M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5" /><rect x="3" y="7" width="18" height="4" rx="1" />' ),
+		'headset'          => array( 'label' => __( 'Support', 'egnitech-one' ), 'svg' => '<path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z" /><path d="M21 16v2a4 4 0 0 1-4 4h-5" />' ),
+		'clock'            => array( 'label' => __( 'Clock', 'egnitech-one' ), 'svg' => '<circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />' ),
+		'wrench'           => array( 'label' => __( 'Service', 'egnitech-one' ), 'svg' => '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z" />' ),
+		'leaf'             => array( 'label' => __( 'Leaf', 'egnitech-one' ), 'svg' => '<path d="M11 20a10 10 0 0010-10 25.9 25.9 0 00-1.04-7.281 1 1 0 00-1.755-.325C15.833 5.5 13 5.5 9.8 6.1A7 7 0 0011 20" /><path d="M2 21a5 5 0 012.911-4.544C7.613 15.212 8.351 15.24 11 13" />' ),
+		'recycle'          => array( 'label' => __( 'Recycle', 'egnitech-one' ), 'svg' => '<path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" /><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" /><path d="m14 16-3 3 3 3" /><path d="M8.293 13.596 7.196 9.5 3.1 10.598" /><path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843" /><path d="m13.378 9.633 4.096 1.098 1.097-4.096" />' ),
+		'sun'              => array( 'label' => __( 'Sun', 'egnitech-one' ), 'svg' => '<circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />' ),
+		'droplet'          => array( 'label' => __( 'Water drop', 'egnitech-one' ), 'svg' => '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z" />' ),
+		'battery-full'     => array( 'label' => __( 'Battery', 'egnitech-one' ), 'svg' => '<path d="M10 10v4" /><path d="M14 10v4" /><path d="M22 14v-4" /><path d="M6 10v4" /><rect x="2" y="6" width="16" height="12" rx="2" />' ),
+		'battery-charging' => array( 'label' => __( 'Charging', 'egnitech-one' ), 'svg' => '<path d="m11 7-3 5h4l-3 5" /><path d="M14.856 6H16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.935" /><path d="M22 14v-4" /><path d="M5.14 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2.936" />' ),
+		'plug'             => array( 'label' => __( 'Plug', 'egnitech-one' ), 'svg' => '<path d="M12 22v-5" /><path d="M15 8V2" /><path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z" /><path d="M9 8V2" />' ),
+		'map-pin'          => array( 'label' => __( 'Location', 'egnitech-one' ), 'svg' => '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" />' ),
+		'globe'            => array( 'label' => __( 'Globe', 'egnitech-one' ), 'svg' => '<circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" />' ),
+	);
+}
+
+/**
+ * WordPress's own icons, core collection only (other collections belong to plugins).
+ *
+ * @return array<string, string> Icon name ("core/shield") => label.
+ */
+function egnitech_one_trust_badge_core_icons(): array {
+	$icons = array();
+	foreach ( WP_Icons_Registry::get_instance()->get_registered_icons() as $icon ) {
+		if ( str_starts_with( $icon['name'], 'core/' ) && ! empty( $icon['content'] ) ) {
+			$icons[ $icon['name'] ] = $icon['label'];
+		}
+	}
+	return $icons;
+}
+
+/**
+ * The complete <svg> for a badge icon name, or '' when the name is not an offered icon.
+ *
+ * @param string $name A theme icon ("lock") or a WordPress core icon ("core/shield").
+ */
+function egnitech_one_trust_badge_icon_svg( string $name ): string {
+	if ( str_starts_with( $name, 'core/' ) ) {
+		$icon = WP_Icons_Registry::get_instance()->get_registered_icon( $name );
+		if ( empty( $icon['content'] ) ) {
+			return '';
+		}
+
+		// Core icons are solid shapes with no size of their own.
+		$svg = new WP_HTML_Tag_Processor( $icon['content'] );
+		if ( ! $svg->next_tag( 'svg' ) ) {
+			return '';
+		}
+		$svg->add_class( 'trust-icon' );
+		$svg->add_class( 'trust-icon--solid' );
+		$svg->set_attribute( 'width', '16' );
+		$svg->set_attribute( 'height', '16' );
+		$svg->set_attribute( 'aria-hidden', 'true' );
+		$svg->set_attribute( 'focusable', 'false' );
+		return $svg->get_updated_html();
+	}
+
+	$icons = egnitech_one_trust_badge_theme_icons();
+	if ( ! isset( $icons[ $name ] ) ) {
+		return '';
+	}
+	return '<svg class="trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $icons[ $name ]['svg'] . '</svg>';
+}
+
+/**
+ * Prints one row's icon picker: a button showing the chosen icon that opens a grid of
+ * radio buttons, one per icon. The styles and script are in assets/{css,js}/admin-trust-badges.*.
+ *
+ * @param int    $row      Badge row number.
+ * @param string $selected The chosen icon name; must be one egnitech_one_trust_badge_icon_svg() knows.
+ */
+function egnitech_one_render_trust_badge_icon_picker( int $row, string $selected ): void {
+	$groups = array(
+		__( 'Theme icons', 'egnitech-one' )     => wp_list_pluck( egnitech_one_trust_badge_theme_icons(), 'label' ),
+		__( 'WordPress icons', 'egnitech-one' ) => egnitech_one_trust_badge_core_icons(),
+	);
+	?>
+	<details class="egnitech-icon-picker" name="egnitech-icon-picker">
+		<summary>
+			<span class="egnitech-icon-picker__current"><?php echo egnitech_one_trust_badge_icon_svg( $selected ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- theme markup or core's sanitised SVG. ?></span>
+			<span class="screen-reader-text">
+				<?php
+				/* translators: %d: badge row number. */
+				echo esc_html( sprintf( __( 'Choose the icon for trust badge %d', 'egnitech-one' ), $row ) );
+				?>
+			</span>
+		</summary>
+		<div class="egnitech-icon-picker__panel">
+			<?php foreach ( $groups as $heading => $icons ) : ?>
+				<p class="egnitech-icon-picker__heading"><?php echo esc_html( $heading ); ?></p>
+				<div class="egnitech-icon-picker__grid">
+					<?php foreach ( $icons as $name => $label ) : ?>
+						<label class="egnitech-icon-picker__option" title="<?php echo esc_attr( $label ); ?>">
+							<input type="radio" class="screen-reader-text" name="egnitech_trust_badge_<?php echo (int) $row; ?>_icon" value="<?php echo esc_attr( (string) $name ); ?>" <?php checked( $selected, (string) $name ); ?> />
+							<?php echo egnitech_one_trust_badge_icon_svg( (string) $name ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- theme markup or core's sanitised SVG. ?>
+							<span class="screen-reader-text"><?php echo esc_html( $label ); ?></span>
+						</label>
+					<?php endforeach; ?>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</details>
+	<?php
+}

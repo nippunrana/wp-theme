@@ -297,27 +297,34 @@ if ( ! function_exists( 'egnitech_one_render_product_trust_badges_metabox' ) ) {
 		// Add nonce for security.
 		wp_nonce_field( 'egnitech_save_product_trust_badges', 'egnitech_product_trust_badges_nonce' );
 
-		// Retrieve existing values.
-		$badge_1 = get_post_meta( $post->ID, '_egnitech_trust_badge_1', true );
-		$badge_2 = get_post_meta( $post->ID, '_egnitech_trust_badge_2', true );
-		$badge_3 = get_post_meta( $post->ID, '_egnitech_trust_badge_3', true );
-
-		// Render fields.
-		?>
-		<p>
-			<label for="egnitech_trust_badge_1"><strong><?php esc_html_e( 'Trust Badge 1 (Default: ✓ Eco-Friendly UV Tech)', 'egnitech-one' ); ?></strong></label><br />
-			<input type="text" id="egnitech_trust_badge_1" name="egnitech_trust_badge_1" value="<?php echo esc_attr( $badge_1 ); ?>" class="large-text" placeholder="<?php esc_attr_e( '✓ Eco-Friendly UV Tech', 'egnitech-one' ); ?>" />
-		</p>
-		<p>
-			<label for="egnitech_trust_badge_2"><strong><?php esc_html_e( 'Trust Badge 2 (Default: ✓ 1 Year Warranty)', 'egnitech-one' ); ?></strong></label><br />
-			<input type="text" id="egnitech_trust_badge_2" name="egnitech_trust_badge_2" value="<?php echo esc_attr( $badge_2 ); ?>" class="large-text" placeholder="<?php esc_attr_e( '✓ 1 Year Warranty', 'egnitech-one' ); ?>" />
-		</p>
-		<p>
-			<label for="egnitech_trust_badge_3"><strong><?php esc_html_e( 'Trust Badge 3 (Default: ✓ Secure Checkout)', 'egnitech-one' ); ?></strong></label><br />
-			<input type="text" id="egnitech_trust_badge_3" name="egnitech_trust_badge_3" value="<?php echo esc_attr( $badge_3 ); ?>" class="large-text" placeholder="<?php esc_attr_e( '✓ Secure Checkout', 'egnitech-one' ); ?>" />
-		</p>
+		// One row per badge: on/off switch, icon picker, text.
+		foreach ( egnitech_one_trust_badge_defaults() as $row => $default ) :
+			$text   = get_post_meta( $post->ID, "_egnitech_trust_badge_{$row}", true );
+			$icon   = (string) get_post_meta( $post->ID, "_egnitech_trust_badge_{$row}_icon", true );
+			$active = 'no' !== get_post_meta( $post->ID, "_egnitech_trust_badge_{$row}_active", true );
+			if ( '' === egnitech_one_trust_badge_icon_svg( $icon ) ) {
+				$icon = $default['icon'];
+			}
+			?>
+			<div class="egnitech-trust-badge-field">
+				<label for="egnitech_trust_badge_<?php echo (int) $row; ?>"><strong>
+					<?php
+					/* translators: 1: badge row number, 2: default badge text. */
+					echo esc_html( sprintf( __( 'Trust Badge %1$d (Default: %2$s)', 'egnitech-one' ), $row, $default['text'] ) );
+					?>
+				</strong></label>
+				<div class="egnitech-trust-badge-row">
+					<label class="egnitech-trust-badge-switch">
+						<input type="checkbox" name="egnitech_trust_badge_<?php echo (int) $row; ?>_active" value="yes" <?php checked( $active ); ?> />
+						<?php esc_html_e( 'Active', 'egnitech-one' ); ?>
+					</label>
+					<?php egnitech_one_render_trust_badge_icon_picker( $row, $icon ); ?>
+					<input type="text" id="egnitech_trust_badge_<?php echo (int) $row; ?>" name="egnitech_trust_badge_<?php echo (int) $row; ?>" value="<?php echo esc_attr( $text ); ?>" class="large-text" placeholder="<?php echo esc_attr( $default['text'] ); ?>" />
+				</div>
+			</div>
+		<?php endforeach; ?>
 		<p class="description">
-			<?php esc_html_e( 'Leave these fields blank to use the standard default trust badges.', 'egnitech-one' ); ?>
+			<?php esc_html_e( 'Leave a text field blank to use its default text. Switch a badge off to hide it on this product.', 'egnitech-one' ); ?>
 		</p>
 		<?php
 	}
@@ -346,14 +353,22 @@ if ( ! function_exists( 'egnitech_one_save_product_trust_badges' ) ) {
 		}
 
 		// Save fields.
-		if ( isset( $_POST['egnitech_trust_badge_1'] ) ) {
-			update_post_meta( $post_id, '_egnitech_trust_badge_1', sanitize_text_field( $_POST['egnitech_trust_badge_1'] ) );
-		}
-		if ( isset( $_POST['egnitech_trust_badge_2'] ) ) {
-			update_post_meta( $post_id, '_egnitech_trust_badge_2', sanitize_text_field( $_POST['egnitech_trust_badge_2'] ) );
-		}
-		if ( isset( $_POST['egnitech_trust_badge_3'] ) ) {
-			update_post_meta( $post_id, '_egnitech_trust_badge_3', sanitize_text_field( $_POST['egnitech_trust_badge_3'] ) );
+		foreach ( array_keys( egnitech_one_trust_badge_defaults() ) as $row ) {
+			if ( isset( $_POST[ "egnitech_trust_badge_{$row}" ] ) ) {
+				update_post_meta( $post_id, "_egnitech_trust_badge_{$row}", sanitize_text_field( $_POST[ "egnitech_trust_badge_{$row}" ] ) );
+			}
+
+			// A switched-off checkbox is not posted at all, so "off" is stored as 'no'.
+			// No value at all means on, so products saved before the switch keep their badges.
+			update_post_meta( $post_id, "_egnitech_trust_badge_{$row}_active", isset( $_POST[ "egnitech_trust_badge_{$row}_active" ] ) ? 'yes' : 'no' );
+
+			// Only an offered icon's name is stored; anything else leaves the row's default icon.
+			$icon = isset( $_POST[ "egnitech_trust_badge_{$row}_icon" ] ) ? sanitize_text_field( wp_unslash( $_POST[ "egnitech_trust_badge_{$row}_icon" ] ) ) : '';
+			if ( '' !== egnitech_one_trust_badge_icon_svg( $icon ) ) {
+				update_post_meta( $post_id, "_egnitech_trust_badge_{$row}_icon", $icon );
+			} else {
+				delete_post_meta( $post_id, "_egnitech_trust_badge_{$row}_icon" );
+			}
 		}
 	}
 }
@@ -371,39 +386,32 @@ if ( ! function_exists( 'egnitech_one_product_trust_badges_shortcode' ) ) {
 			return '';
 		}
 
-		$badge_1 = get_post_meta( $product_id, '_egnitech_trust_badge_1', true );
-		$badge_2 = get_post_meta( $product_id, '_egnitech_trust_badge_2', true );
-		$badge_3 = get_post_meta( $product_id, '_egnitech_trust_badge_3', true );
+		$badges = '';
+		foreach ( egnitech_one_trust_badge_defaults() as $row => $default ) {
+			// Switched off in the product's meta box.
+			if ( 'no' === get_post_meta( $product_id, "_egnitech_trust_badge_{$row}_active", true ) ) {
+				continue;
+			}
 
-		// Fallbacks
-		if ( empty( $badge_1 ) ) {
-			$badge_1 = __( 'Eco-Friendly UV Tech', 'egnitech-one' );
-		}
-		if ( empty( $badge_2 ) ) {
-			$badge_2 = __( '1 Year Warranty', 'egnitech-one' );
-		}
-		if ( empty( $badge_3 ) ) {
-			$badge_3 = __( 'Secure Checkout', 'egnitech-one' );
+			$text = get_post_meta( $product_id, "_egnitech_trust_badge_{$row}", true );
+			if ( empty( $text ) ) {
+				$text = $default['text'];
+			}
+
+			$icon = egnitech_one_trust_badge_icon_svg( (string) get_post_meta( $product_id, "_egnitech_trust_badge_{$row}_icon", true ) );
+			if ( '' === $icon ) {
+				$icon = egnitech_one_trust_badge_icon_svg( $default['icon'] );
+			}
+
+			$badges .= '<div class="egnitech-trust-badge">' . $icon . '<span class="badge-text">' . esc_html( $text ) . '</span></div>';
 		}
 
-		ob_start();
-		?>
-		<div class="egnitech-product-trust-badges">
-			<div class="egnitech-trust-badge">
-				<svg class="trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-				<span class="badge-text"><?php echo esc_html( $badge_1 ); ?></span>
-			</div>
-			<div class="egnitech-trust-badge">
-				<svg class="trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-				<span class="badge-text"><?php echo esc_html( $badge_2 ); ?></span>
-			</div>
-			<div class="egnitech-trust-badge">
-				<svg class="trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-				<span class="badge-text"><?php echo esc_html( $badge_3 ); ?></span>
-			</div>
-		</div>
-		<?php
-		return (string) ob_get_clean();
+		// Every badge switched off: no empty strip.
+		if ( '' === $badges ) {
+			return '';
+		}
+
+		return '<div class="egnitech-product-trust-badges">' . $badges . '</div>';
 	}
 }
 add_shortcode( 'egnitech_product_trust_badges', 'egnitech_one_product_trust_badges_shortcode' );

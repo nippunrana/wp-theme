@@ -54,3 +54,6 @@ require_once get_theme_file_path( 'inc/turnstile.php' );
 // 11. Stored secrets (encryption for the SMTP password and the Turnstile secret key)
 require_once get_theme_file_path( 'inc/secrets.php' );
 
+// 12. Product trust badge icons and the admin icon picker (the meta box and shortcode are in theme-setup.php)
+require_once get_theme_file_path( 'inc/woocommerce-trust-badges.php' );
+
