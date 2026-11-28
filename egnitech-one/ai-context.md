@@ -62,7 +62,7 @@ Each file in `docs/built-systems/` holds only what the code cannot say: bans, de
 | Logo palettes | Built | [docs/built-systems/logo-palettes.md](docs/built-systems/logo-palettes.md) | Palettes from the logo's colours, applied to Global Styles from Theme Options. Never apply from the options form |
 | Dark / light mode | Built | [docs/built-systems/dark-mode.md](docs/built-systems/dark-mode.md) | Traps only; the bans are in the section above |
 | Header, footer, sidebar & templates | Built | [docs/built-systems/templates-and-patterns.md](docs/built-systems/templates-and-patterns.md) | A Site Editor save freezes a template and the PHP inside its pattern |
-| WooCommerce product page | Built | [docs/built-systems/woocommerce-product-page.md](docs/built-systems/woocommerce-product-page.md) | Template, custom gallery, trust badges, add-to-cart, the cart drawer and the sticky Buy Now bar |
+| WooCommerce product page | Built | [docs/built-systems/woocommerce-product-page.md](docs/built-systems/woocommerce-product-page.md) | Template, custom gallery, trust badges, add-to-cart, the cart drawer, the sticky Buy Now bar and the reviews drawer |
 | Bulk discounts | Built | [docs/built-systems/bulk-discounts.md](docs/built-systems/bulk-discounts.md) | Changes what customers are charged. The same sum lives in three places |
 | Custom scripts | Built | [docs/built-systems/custom-scripts.md](docs/built-systems/custom-scripts.md) | Header and footer code from Theme Options, printed unescaped |
 | SMTP mail | Built | [docs/built-systems/smtp.md](docs/built-systems/smtp.md) | Also sets the sender of every email, SMTP on or off |

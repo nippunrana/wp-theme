@@ -44,13 +44,35 @@
 
 	/* ----- Turnstile, on first open ----- */
 
+	const form = drawer.querySelector('form');
+	const turnstileWidget = drawer.querySelector('.cf-turnstile');
+	let turnstileNotice = null;
 	let turnstileLoading = false;
+
+	// The check starts only when the drawer opens, so a fast visitor can press Submit before it
+	// finishes. The server would refuse that review; hold it here instead and say why.
+	if (form && turnstileWidget) {
+		turnstileNotice = document.createElement('p');
+		turnstileNotice.className = 'egnitech-review-drawer__error';
+		turnstileNotice.setAttribute('role', 'alert');
+		turnstileNotice.hidden = true;
+		turnstileWidget.after(turnstileNotice);
+
+		form.addEventListener('submit', function (event) {
+			const token = form.querySelector('[name="cf-turnstile-response"]');
+			if (token && token.value) {
+				return;
+			}
+			event.preventDefault();
+			turnstileNotice.textContent = drawer.dataset.turnstileError;
+			turnstileNotice.hidden = false;
+		});
+	}
 
 	function loadTurnstile() {
 		const src = button.dataset.turnstileSrc;
-		const widget = drawer.querySelector('.cf-turnstile');
 		// No widget for logged-in visitors or with Turnstile off; no src when the page loaded it already.
-		if (!src || !widget || turnstileLoading || window.turnstile) {
+		if (!src || !turnstileNotice || turnstileLoading || window.turnstile) {
 			return;
 		}
 		turnstileLoading = true;
@@ -62,10 +84,13 @@
 		script.src = url.href;
 		script.async = true;
 		script.addEventListener('load', function () {
-			window.turnstile.render(widget, {
-				sitekey: widget.dataset.sitekey,
-				action: widget.dataset.action,
-				theme: widget.dataset.theme,
+			window.turnstile.render(turnstileWidget, {
+				sitekey: turnstileWidget.dataset.sitekey,
+				action: turnstileWidget.dataset.action,
+				theme: turnstileWidget.dataset.theme,
+				callback: function () {
+					turnstileNotice.hidden = true;
+				},
 			});
 		});
 		// Blocked or offline: let the next open try again.
@@ -105,7 +130,7 @@
 	caption.setAttribute('aria-hidden', 'true');
 
 	const error = document.createElement('p');
-	error.className = 'egnitech-star-input__error';
+	error.className = 'egnitech-review-drawer__error';
 	error.setAttribute('role', 'alert');
 	error.hidden = true;
 

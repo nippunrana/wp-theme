@@ -1,6 +1,6 @@
 # WooCommerce product page
 
-Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/single-product-details.php` and its `style.css`, `patterns/product-gallery.php` with its `index.js` and `style.css`, the shortcodes and `render_block` filters in `inc/theme-setup.php`, `inc/woocommerce-cart-drawer.php`, `assets/js/woocommerce-mini-cart-auto-open.js`, `patterns/single-product-details/sticky-buy-now.js` and its `.css`, `inc/woocommerce-trust-badges.php` and `inc/woocommerce-trust-badges-admin.php` with `assets/{css,js}/admin-trust-badges.*`. Quantity pricing is in `bulk-discounts.md`.
+Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/single-product-details.php` and its `style.css`, `patterns/product-gallery.php` with its `index.js` and `style.css`, the shortcodes and `render_block` filters in `inc/theme-setup.php`, `inc/woocommerce-cart-drawer.php`, `assets/js/woocommerce-mini-cart-auto-open.js`, `patterns/single-product-details/sticky-buy-now.js` and its `.css`, `inc/woocommerce-trust-badges.php` and `inc/woocommerce-trust-badges-admin.php` with `assets/{css,js}/admin-trust-badges.*`, `inc/woocommerce-reviews.php` with `patterns/single-product-details/reviews.{css,js}`. Quantity pricing is in `bulk-discounts.md`.
 
 ## How the page is put together
 
@@ -60,6 +60,16 @@ Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/
   - its script depends on WordPress's `wp-a11y` (no jQuery) to announce adds, moves and removals to screen readers. Without that dependency the announcements stop silently.
 - **One icon `<dialog>` serves every row.** A grid per row would be over a thousand icons at 10 rows. The dialog opens in the browser's top layer, so WooCommerce's `overflow: hidden` on product meta boxes cannot clip it.
 - **A row is draggable only while its handle is held**, so text in its field can still be selected with the mouse. Dragging has been tested with simulated events only; the Move up / Move down buttons are the keyboard and touch path.
+
+## Reviews
+
+- **The theme does only the look; WooCommerce and WordPress decide everything else** (owner's decision, 28 Nov 2026). The list and form are WooCommerce's classic reviews template, printed by the Product Reviews block with no inner blocks. Who may review, required fields, ratings and moderation come from WooCommerce > Settings > Products and Settings > Discussion. **Never** rebuild the form or re-check those settings in theme code.
+  - WooCommerce's composed review blocks were considered and not used: in WooCommerce 11.3 they print no "verified owner" label.
+- **The drawer is a `<dialog>` printed around WooCommerce's own form** through `comment_form_before` / `comment_form_after`, hooked only while the reviews section renders. **Never** move the form there with JavaScript or fetch it on click: a closed dialog costs the page nothing, and the form is the same for every logged-out visitor, so it is safe in the page cache.
+- **"Write a review" appears only when WooCommerce printed a form.** With reviews limited to verified owners, WooCommerce prints its own message instead, and that message is what the visitor sees.
+- **WooCommerce's star script (`wc-single-product`) does not load in a block theme**, which is why the rating was a bare "Rate…" list until 28 Nov 2026. `reviews.js` draws star buttons over it. The `<select>` stays in the form, visually hidden, and is still what is posted and what "required" checks. **Never** remove it or swap it for theme fields.
+- **WooCommerce styles the review list with two-id selectors** (`.woocommerce #reviews #comments …`). `reviews.css` matches that weight and wins only by loading later.
+- **The average and count are part of the cached page**, like the list. Nothing purges a product page when a review is approved (`page-cache.md`), so both stay stale until the cache is cleared.
 
 ## Add to cart and the cart drawer
 

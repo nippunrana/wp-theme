@@ -103,7 +103,7 @@ function egnitech_one_render_product_reviews( WC_Product $product ): string {
  */
 function egnitech_one_review_drawer_open(): void {
 	?>
-	<dialog id="egnitech-review-drawer" class="egnitech-review-drawer" aria-labelledby="egnitech-review-drawer-title" data-rating-error="<?php esc_attr_e( 'Please select a rating.', 'egnitech-one' ); ?>">
+	<dialog id="egnitech-review-drawer" class="egnitech-review-drawer" aria-labelledby="egnitech-review-drawer-title" data-rating-error="<?php esc_attr_e( 'Please select a rating.', 'egnitech-one' ); ?>" data-turnstile-error="<?php echo esc_attr( egnitech_one_turnstile_error_message() ); ?>">
 		<div class="egnitech-review-drawer__panel">
 			<div class="egnitech-review-drawer__header">
 				<div>

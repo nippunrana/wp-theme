@@ -472,7 +472,8 @@ html.egnitech-review-drawer-open {
 	vertical-align: middle;
 }
 
-.egnitech-star-input__error {
+/* Rating and security-check messages (reviews.js). */
+.egnitech-review-drawer__error {
 	margin: 6px 0 0;
 	font-size: 0.8125rem;
 	color: #dc2626;
