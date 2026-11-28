@@ -181,8 +181,8 @@ function egnitech_one_purge_cache_on_trust_badge_style_change(): void {
 		egnitech_one_purge_all_site_cache();
 	}
 }
-add_action( 'update_option_' . EGNITECH_ONE_TRUST_BADGE_STYLE_OPTION, 'egnitech_one_purge_cache_on_trust_badge_style_change' );
-add_action( 'add_option_' . EGNITECH_ONE_TRUST_BADGE_STYLE_OPTION, 'egnitech_one_purge_cache_on_trust_badge_style_change' );
+add_action( 'update_option_egnitech_one_woocommerce_trust_badge_style', 'egnitech_one_purge_cache_on_trust_badge_style_change' );
+add_action( 'add_option_egnitech_one_woocommerce_trust_badge_style', 'egnitech_one_purge_cache_on_trust_badge_style_change' );
 
 /**
  * A badge's colour name: its own, or, when it has none, the palette colour at its position

@@ -314,7 +314,7 @@
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	background: var(--egnitech-badge-color, #FFD43B);
+	background: var(--egnitech-badge-color, #ffd43b);
 	color: #111;
 	padding: 6px 14px;
 	border-radius: 30px;
@@ -345,11 +345,11 @@
    behind the icon. */
 .egnitech-trust-badges--soft .egnitech-trust-badge {
 	padding: 4px 14px 4px 4px;
-	background-color: color-mix(in srgb, var(--egnitech-badge-color, #FFD43B), #fff 82%);
-	border: 1px solid color-mix(in srgb, var(--egnitech-badge-color, #FFD43B), #fff 45%);
+	border: 1px solid color-mix(in srgb, var(--egnitech-badge-color, #ffd43b), #fff 45%);
+	background-color: color-mix(in srgb, var(--egnitech-badge-color, #ffd43b), #fff 82%);
 	box-shadow:
 		0 1px 2px rgba(0, 0, 0, 0.04),
-		0 4px 10px -4px color-mix(in srgb, var(--egnitech-badge-color, #FFD43B), transparent 40%);
+		0 4px 10px -4px color-mix(in srgb, var(--egnitech-badge-color, #ffd43b), transparent 40%);
 }
 
 .egnitech-trust-badges--soft .egnitech-trust-badge .trust-icon {
@@ -359,11 +359,11 @@
 	margin: 0;
 	padding: 6px;
 	border-radius: 50%;
-	background-color: var(--egnitech-badge-color, #FFD43B);
-	background-image: linear-gradient(180deg, color-mix(in srgb, var(--egnitech-badge-color, #FFD43B), #fff 30%), var(--egnitech-badge-color, #FFD43B));
+	background-color: var(--egnitech-badge-color, #ffd43b);
+	background-image: linear-gradient(180deg, color-mix(in srgb, var(--egnitech-badge-color, #ffd43b), #fff 30%), var(--egnitech-badge-color, #ffd43b));
 	box-shadow:
 		inset 0 1px 0 rgba(255, 255, 255, 0.55),
-		0 2px 6px -1px color-mix(in srgb, var(--egnitech-badge-color, #FFD43B), transparent 30%);
+		0 2px 6px -1px color-mix(in srgb, var(--egnitech-badge-color, #ffd43b), transparent 30%);
 }
 
 /* Solid icons fill more of their square, so they get a smaller drawing and more padding. */
@@ -376,23 +376,23 @@
 /* Glossy: full colour with a light top, a white inner highlight, a deeper rim and a shadow
    tinted with the pill's own colour. */
 .egnitech-trust-badges--glossy .egnitech-trust-badge {
-	background-image: linear-gradient(180deg, color-mix(in srgb, var(--egnitech-badge-color, #FFD43B), #fff 35%) 0%, var(--egnitech-badge-color, #FFD43B) 70%);
-	border: 1px solid color-mix(in srgb, var(--egnitech-badge-color, #FFD43B), #000 12%);
+	border: 1px solid color-mix(in srgb, var(--egnitech-badge-color, #ffd43b), #000 12%);
+	background-image: linear-gradient(180deg, color-mix(in srgb, var(--egnitech-badge-color, #ffd43b), #fff 35%) 0%, var(--egnitech-badge-color, #ffd43b) 70%);
 	box-shadow:
 		inset 0 1px 0 rgba(255, 255, 255, 0.6),
 		0 1px 2px rgba(0, 0, 0, 0.06),
-		0 4px 12px -2px color-mix(in srgb, var(--egnitech-badge-color, #FFD43B), transparent 45%);
+		0 4px 12px -2px color-mix(in srgb, var(--egnitech-badge-color, #ffd43b), transparent 45%);
 }
 
 /* Duotone: a diagonal blend into the next hue at the same lightness, so the black text reads
    as well as on the plain colour, with Glossy's highlight and tinted shadow. */
 .egnitech-trust-badges--duotone .egnitech-trust-badge {
-	background-image: linear-gradient(120deg, var(--egnitech-badge-color, #FFD43B) 0%, oklch(from var(--egnitech-badge-color, #FFD43B) l c calc(h + 35)) 100%);
-	border: 1px solid color-mix(in srgb, var(--egnitech-badge-color, #FFD43B), #000 10%);
+	border: 1px solid color-mix(in srgb, var(--egnitech-badge-color, #ffd43b), #000 10%);
+	background-image: linear-gradient(120deg, var(--egnitech-badge-color, #ffd43b) 0%, oklch(from var(--egnitech-badge-color, #ffd43b) l c calc(h + 35)) 100%);
 	box-shadow:
 		inset 0 1px 0 rgba(255, 255, 255, 0.5),
 		0 1px 2px rgba(0, 0, 0, 0.06),
-		0 6px 14px -4px color-mix(in srgb, var(--egnitech-badge-color, #FFD43B), transparent 40%);
+		0 6px 14px -4px color-mix(in srgb, var(--egnitech-badge-color, #ffd43b), transparent 40%);
 }
 
 /* Product Meta (SKU, Category, Tags) */
