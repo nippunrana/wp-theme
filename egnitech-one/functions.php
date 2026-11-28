@@ -60,3 +60,6 @@ if ( is_admin() ) {
 	require_once get_theme_file_path( 'inc/woocommerce-trust-badges-admin.php' );
 }
 
+// 13. Product page reviews: summary row and the review form drawer (called from the sections shortcode in theme-setup.php)
+require_once get_theme_file_path( 'inc/woocommerce-reviews.php' );
+

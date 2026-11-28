@@ -394,10 +394,7 @@ if ( ! function_exists( 'egnitech_one_product_sections_shortcode' ) ) {
 			<?php endif; ?>
 
 			<?php if ( $has_reviews ) : ?>
-				<div class="egnitech-product-section egnitech-section-reviews">
-					<h3 class="egnitech-section-title"><?php esc_html_e( 'Customer Reviews', 'egnitech-one' ); ?></h3>
-					<?php echo do_blocks( '<!-- wp:woocommerce/product-reviews /-->' ); ?>
-				</div>
+				<?php echo egnitech_one_render_product_reviews( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped when built. ?>
 			<?php endif; ?>
 		</div>
 		<?php
