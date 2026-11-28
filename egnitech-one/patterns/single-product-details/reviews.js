@@ -27,18 +27,38 @@
 		loadTurnstile();
 	});
 
-	drawer.querySelector('.egnitech-review-drawer__close').addEventListener('click', function () {
-		drawer.close();
-	});
+	// Slide out first, then close. A closed dialog leaves the top layer at once in Safari and
+	// Firefox, so the slide-out must play while it is still open. With no transition running
+	// (reduced motion) the list of animations is empty and the dialog closes straight away.
+	function closeDrawer() {
+		if (!drawer.open || drawer.classList.contains('is-closing')) {
+			return;
+		}
+		drawer.classList.add('is-closing');
+		Promise.all(drawer.getAnimations().map(function (animation) {
+			return animation.finished;
+		})).finally(function () {
+			drawer.close();
+		});
+	}
+
+	drawer.querySelector('.egnitech-review-drawer__close').addEventListener('click', closeDrawer);
 
 	// A click on the backdrop lands on the <dialog> itself; the panel covers everything else.
 	drawer.addEventListener('click', function (event) {
 		if (event.target === drawer) {
-			drawer.close();
+			closeDrawer();
 		}
 	});
 
+	// Esc. When the browser does not let the cancel be stopped, the dialog simply closes at once.
+	drawer.addEventListener('cancel', function (event) {
+		event.preventDefault();
+		closeDrawer();
+	});
+
 	drawer.addEventListener('close', function () {
+		drawer.classList.remove('is-closing');
 		root.classList.remove('egnitech-review-drawer-open');
 	});
 
