@@ -2,9 +2,10 @@
 declare(strict_types=1);
 
 /**
- * Product Trust Badges meta box markup: the badge rows, the row template the script clones
- * for "Add badge", and the one icon dialog every row shares. The meta box is registered and
- * saved in inc/theme-setup.php; the data lives in inc/woocommerce-trust-badges.php.
+ * Product Trust Badges meta box markup: the colour controls, the badge rows, the row template
+ * the script clones for "Add badge", and the icon and colour dialogs every row shares. The meta
+ * box is registered and saved in inc/theme-setup.php; the data lives in
+ * inc/woocommerce-trust-badges.php.
  * Styles and script: assets/{css,js}/admin-trust-badges.*.
  *
  * Everything sits inside the product edit form: every button is type="button", and nothing
@@ -49,6 +50,11 @@ function egnitech_one_render_trust_badges_box( \WP_Post $post ): void {
 		'moved'      => __( 'Badge moved to position %1$d of %2$d.', 'egnitech-one' ),
 		/* translators: %s: icon name. */
 		'changeIcon' => __( 'Change icon (now: %s)', 'egnitech-one' ),
+		/* translators: %s: colour name. */
+		'changeColor' => __( 'Change colour (now: %s)', 'egnitech-one' ),
+		'randomised' => __( 'Each badge has a new colour.', 'egnitech-one' ),
+		/* translators: %s: colour name. */
+		'allColor'   => __( 'Every badge is now %s.', 'egnitech-one' ),
 	);
 	?>
 	<div class="egnitech-trust-badges<?php echo 0 === $count ? ' is-empty' : ''; ?>" data-limit="<?php echo (int) EGNITECH_ONE_TRUST_BADGE_LIMIT; ?>" data-next-index="<?php echo (int) $count; ?>" data-i18n="<?php echo esc_attr( (string) wp_json_encode( $i18n ) ); ?>">
@@ -56,9 +62,25 @@ function egnitech_one_render_trust_badges_box( \WP_Post $post ): void {
 			<?php esc_html_e( 'Shown under the Add to Cart button, in this order. Switch a badge off to hide it without deleting it. A badge left without text is removed when the product is saved.', 'egnitech-one' ); ?>
 		</p>
 
+		<div class="egnitech-trust-badges__colors">
+			<button type="button" class="button egnitech-trust-badges__random">
+				<span class="dashicons dashicons-randomize" aria-hidden="true"></span>
+				<?php esc_html_e( 'Randomise colours', 'egnitech-one' ); ?>
+			</button>
+			<?php /* No name: the choice is applied to the rows' own fields and never posted. */ ?>
+			<select class="egnitech-trust-badges__all-color" aria-label="<?php esc_attr_e( 'One colour for every badge', 'egnitech-one' ); ?>">
+				<option value=""><?php esc_html_e( 'One colour for all…', 'egnitech-one' ); ?></option>
+				<?php foreach ( egnitech_one_trust_badge_colors() as $color => $details ) : ?>
+					<option value="<?php echo esc_attr( $color ); ?>"><?php echo esc_html( $details['label'] ); ?></option>
+				<?php endforeach; ?>
+			</select>
+		</div>
+
 		<ul class="egnitech-trust-badges__list">
 			<?php
 			foreach ( $badges as $index => $badge ) {
+				// A badge without a colour shows, and on the next save stores, its position's colour.
+				$badge['color'] = egnitech_one_trust_badge_color( $badge['color'], $index );
 				egnitech_one_render_trust_badge_item( (string) $index, $badge );
 			}
 			?>
@@ -83,6 +105,7 @@ function egnitech_one_render_trust_badges_box( \WP_Post $post ): void {
 				array(
 					'text'   => '',
 					'icon'   => EGNITECH_ONE_TRUST_BADGE_ICON,
+					'color'  => '', // The script picks one when the row is added.
 					'active' => true,
 				)
 			);
@@ -90,6 +113,7 @@ function egnitech_one_render_trust_badges_box( \WP_Post $post ): void {
 		</template>
 
 		<?php egnitech_one_render_trust_badge_icon_dialog(); ?>
+		<?php egnitech_one_render_trust_badge_color_dialog(); ?>
 	</div>
 	<?php
 }
@@ -98,11 +122,12 @@ function egnitech_one_render_trust_badges_box( \WP_Post $post ): void {
  * Prints one badge row. Also printed once inside the <template>, with index "__INDEX__",
  * which the script replaces with a fresh number. No ids in here: clones would repeat them.
  *
- * @param string                                          $index Position in the posted list.
- * @param array{text: string, icon: string, active: bool} $badge The badge.
+ * @param string                                                         $index Position in the posted list.
+ * @param array{text: string, icon: string, color: string, active: bool} $badge The badge.
  */
 function egnitech_one_render_trust_badge_item( string $index, array $badge ): void {
-	$name = 'egnitech_trust_badges[' . $index . ']';
+	$name  = 'egnitech_trust_badges[' . $index . ']';
+	$color = egnitech_one_trust_badge_colors()[ $badge['color'] ] ?? null;
 	?>
 	<li class="egnitech-trust-badge-item">
 		<span class="egnitech-trust-badge-item__handle" aria-hidden="true" title="<?php esc_attr_e( 'Drag to reorder', 'egnitech-one' ); ?>">
@@ -120,6 +145,10 @@ function egnitech_one_render_trust_badge_item( string $index, array $badge ): vo
 			<span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
 		</button>
 		<input type="hidden" name="<?php echo esc_attr( $name ); ?>[icon]" value="<?php echo esc_attr( $badge['icon'] ); ?>" />
+
+		<?php /* translators: %s: colour name. */ ?>
+		<button type="button" class="egnitech-trust-badge-item__color" data-action="color" aria-haspopup="dialog" aria-label="<?php echo esc_attr( sprintf( __( 'Change colour (now: %s)', 'egnitech-one' ), $color['label'] ?? '' ) ); ?>" title="<?php esc_attr_e( 'Colour', 'egnitech-one' ); ?>"<?php echo $color ? ' style="--egnitech-badge-color: ' . esc_attr( $color['hex'] ) . '"' : ''; ?>></button>
+		<input type="hidden" name="<?php echo esc_attr( $name ); ?>[color]" value="<?php echo esc_attr( $badge['color'] ); ?>" />
 
 		<input type="text" name="<?php echo esc_attr( $name ); ?>[text]" value="<?php echo esc_attr( $badge['text'] ); ?>" class="egnitech-trust-badge-item__text" aria-label="<?php esc_attr_e( 'Badge text', 'egnitech-one' ); ?>" placeholder="<?php esc_attr_e( 'Badge text, e.g. Free delivery', 'egnitech-one' ); ?>" />
 
@@ -173,6 +202,29 @@ function egnitech_one_render_trust_badge_icon_dialog(): void {
 				<?php endforeach; ?>
 				<p class="egnitech-icon-dialog__none" hidden><?php esc_html_e( 'No icons match your search.', 'egnitech-one' ); ?></p>
 			</div>
+		</div>
+	</dialog>
+	<?php
+}
+
+/**
+ * Prints the colour dialog all rows share. Each choice is drawn as the pill it makes:
+ * the colour with the page's fixed near-black text.
+ */
+function egnitech_one_render_trust_badge_color_dialog(): void {
+	?>
+	<dialog class="egnitech-color-dialog" aria-labelledby="egnitech-color-dialog-title">
+		<div class="egnitech-icon-dialog__header">
+			<h2 id="egnitech-color-dialog-title" class="egnitech-icon-dialog__title"><?php esc_html_e( 'Choose a colour', 'egnitech-one' ); ?></h2>
+			<button type="button" class="egnitech-icon-dialog__close" data-action="close" aria-label="<?php esc_attr_e( 'Close', 'egnitech-one' ); ?>">
+				<span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
+			</button>
+		</div>
+
+		<div class="egnitech-color-dialog__grid">
+			<?php foreach ( egnitech_one_trust_badge_colors() as $color => $details ) : ?>
+				<button type="button" class="egnitech-color-dialog__swatch" data-color="<?php echo esc_attr( $color ); ?>" style="--egnitech-badge-color: <?php echo esc_attr( $details['hex'] ); ?>"><?php echo esc_html( $details['label'] ); ?></button>
+			<?php endforeach; ?>
 		</div>
 	</dialog>
 	<?php

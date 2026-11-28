@@ -1,7 +1,31 @@
-/* Product Trust Badges meta box (product edit screen only): the badge list and the icon dialog. */
+/* Product Trust Badges meta box (product edit screen only): the colour controls, the badge
+   list, and the icon and colour dialogs. */
 
 .egnitech-trust-badges > .description {
 	margin: 4px 0 12px;
+}
+
+/* Randomise colours and One colour for all, above the rows. Nothing to colour with no rows. */
+.egnitech-trust-badges__colors {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.egnitech-trust-badges.is-empty .egnitech-trust-badges__colors {
+	display: none;
+}
+
+.wp-core-ui .egnitech-trust-badges .egnitech-trust-badges__random {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.wp-core-ui .egnitech-trust-badges .egnitech-trust-badges__random .dashicons {
+	line-height: 1;
 }
 
 /* Badge rows. */
@@ -36,7 +60,7 @@
 }
 
 /* A switched-off badge is dimmed but stays editable. */
-.egnitech-trust-badge-item:has(.egnitech-trust-badge-switch input:not(:checked)) :is(.egnitech-trust-badge-item__icon, .egnitech-trust-badge-item__text) {
+.egnitech-trust-badge-item:has(.egnitech-trust-badge-switch input:not(:checked)) :is(.egnitech-trust-badge-item__icon, .egnitech-trust-badge-item__color, .egnitech-trust-badge-item__text) {
 	opacity: 0.5;
 }
 
@@ -69,6 +93,23 @@
 
 .egnitech-trust-badge-item__icon:hover {
 	border-color: var(--wp-admin-theme-color, #2271b1);
+}
+
+/* The row's colour, as a round swatch. */
+.egnitech-trust-badge-item__color {
+	flex-shrink: 0;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	background: var(--egnitech-badge-color, #dcdcde);
+	box-shadow: 0 0 0 1px #8c8f94;
+	cursor: pointer;
+}
+
+.egnitech-trust-badge-item__color:hover {
+	box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #2271b1);
 }
 
 .egnitech-trust-badge-item__svg svg {
@@ -114,6 +155,8 @@
 }
 
 .egnitech-trust-badge-item__icon:focus-visible,
+.egnitech-trust-badge-item__color:focus-visible,
+.egnitech-color-dialog__swatch:focus-visible,
 .egnitech-trust-badge-item__tool:focus-visible,
 .egnitech-icon-dialog__close:focus-visible,
 .egnitech-icon-dialog__icon:focus-visible {
@@ -203,8 +246,9 @@
 	color: #646970;
 }
 
-/* Icon dialog. It opens in the browser's top layer, so the meta box cannot clip it. */
-.egnitech-icon-dialog {
+/* Icon and colour dialogs. They open in the browser's top layer, so the meta box cannot clip them. */
+.egnitech-icon-dialog,
+.egnitech-color-dialog {
 	width: min(560px, calc(100vw - 32px));
 	max-height: min(600px, calc(100vh - 64px));
 	padding: 0;
@@ -213,7 +257,8 @@
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
-.egnitech-icon-dialog::backdrop {
+.egnitech-icon-dialog::backdrop,
+.egnitech-color-dialog::backdrop {
 	background: rgba(0, 0, 0, 0.35);
 }
 
@@ -300,6 +345,33 @@
 	padding: 16px 0;
 	color: #646970;
 	text-align: center;
+}
+
+/* Colour dialog: each choice drawn as the pill it makes, with the page's fixed near-black text. */
+.egnitech-color-dialog__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+	gap: 8px;
+	padding: 4px 16px 16px;
+}
+
+.egnitech-color-dialog__swatch {
+	height: 36px;
+	padding: 0 12px;
+	border: 2px solid transparent;
+	border-radius: 30px;
+	background: var(--egnitech-badge-color);
+	color: #111;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.egnitech-color-dialog__swatch:hover {
+	border-color: rgba(0, 0, 0, 0.25);
+}
+
+.egnitech-color-dialog__swatch[aria-pressed="true"] {
+	border-color: #111;
 }
 
 /* WordPress's own icons are solid shapes, drawn smaller inside their square: enlarged to

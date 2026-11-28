@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * Product trust badges: the icons offered for them, and each product's badge list (up to
+ * Product trust badges: the icons and colours offered for them, and each product's badge list (up to
  * EGNITECH_ONE_TRUST_BADGE_LIMIT) with its cleaning, reading and rendering. The meta box, its
  * save handler and the [egnitech_product_trust_badges] shortcode are hooked in
  * inc/theme-setup.php; the meta box markup is in inc/woocommerce-trust-badges-admin.php.
@@ -106,6 +106,45 @@ function egnitech_one_trust_badge_theme_icons(): array {
 }
 
 /**
+ * The badge colours, in the order a badge without a chosen colour takes them (by its
+ * position in the list). Each is light enough for the pill's fixed near-black text and icon:
+ * 7.8:1 contrast or more, WCAG AAA. The hex values live only here; the page and the meta
+ * box both read them.
+ *
+ * @return array<string, array{label: string, hex: string}>
+ */
+function egnitech_one_trust_badge_colors(): array {
+	return array(
+		'sunflower' => array( 'label' => __( 'Sunflower', 'egnitech-one' ), 'hex' => '#FFD43B' ),
+		'mint'      => array( 'label' => __( 'Mint', 'egnitech-one' ), 'hex' => '#38D9A9' ),
+		'coral'     => array( 'label' => __( 'Coral', 'egnitech-one' ), 'hex' => '#FF8787' ),
+		'sky'       => array( 'label' => __( 'Sky', 'egnitech-one' ), 'hex' => '#74C0FC' ),
+		'lime'      => array( 'label' => __( 'Lime', 'egnitech-one' ), 'hex' => '#A9E34B' ),
+		'rose'      => array( 'label' => __( 'Rose', 'egnitech-one' ), 'hex' => '#F783AC' ),
+		'tangerine' => array( 'label' => __( 'Tangerine', 'egnitech-one' ), 'hex' => '#FFA94D' ),
+		'aqua'      => array( 'label' => __( 'Aqua', 'egnitech-one' ), 'hex' => '#3BC9DB' ),
+		'lavender'  => array( 'label' => __( 'Lavender', 'egnitech-one' ), 'hex' => '#B197FC' ),
+		'leaf'      => array( 'label' => __( 'Leaf', 'egnitech-one' ), 'hex' => '#69DB7C' ),
+	);
+}
+
+/**
+ * A badge's colour name: its own, or, when it has none, the palette colour at its position
+ * in the list (switched-off badges counted), so neighbours differ without anyone choosing.
+ *
+ * @param string $color    The stored colour name, or ''.
+ * @param int    $position The badge's 0-based position in the product's list.
+ */
+function egnitech_one_trust_badge_color( string $color, int $position ): string {
+	$colors = egnitech_one_trust_badge_colors();
+	if ( isset( $colors[ $color ] ) ) {
+		return $color;
+	}
+	$names = array_keys( $colors );
+	return $names[ $position % count( $names ) ];
+}
+
+/**
  * WordPress's own icons, core collection only (other collections belong to plugins).
  *
  * @return array<string, string> Icon name ("core/shield") => label.
@@ -155,10 +194,11 @@ function egnitech_one_trust_badge_icon_svg( string $name ): string {
 
 /**
  * Cleans a badge list before it is stored (the meta's sanitize callback) and when it is read.
- * Drops badges without text, replaces an icon that is not offered, keeps at most the limit.
+ * Drops badges without text, replaces an icon that is not offered, empties a colour that is
+ * not offered (the badge then takes its position's colour), keeps at most the limit.
  *
- * @param mixed $badges Raw list: array of array{text, icon, active}.
- * @return list<array{text: string, icon: string, active: bool}>
+ * @param mixed $badges Raw list: array of array{text, icon, color, active}.
+ * @return list<array{text: string, icon: string, color: string, active: bool}>
  */
 function egnitech_one_sanitize_trust_badges( mixed $badges ): array {
 	if ( ! is_array( $badges ) ) {
@@ -181,9 +221,15 @@ function egnitech_one_sanitize_trust_badges( mixed $badges ): array {
 			$icon = EGNITECH_ONE_TRUST_BADGE_ICON;
 		}
 
+		$color = is_string( $badge['color'] ?? null ) ? $badge['color'] : '';
+		if ( ! isset( egnitech_one_trust_badge_colors()[ $color ] ) ) {
+			$color = '';
+		}
+
 		$clean[] = array(
 			'text'   => $text,
 			'icon'   => $icon,
+			'color'  => $color,
 			'active' => ! empty( $badge['active'] ),
 		);
 
@@ -216,7 +262,7 @@ add_action( 'init', 'egnitech_one_register_trust_badges_meta' );
  * A product whose list was never saved gets its three old fixed rows, read from their old
  * meta keys with the old fallbacks, so it looks as it did. A saved empty list means no badges.
  *
- * @return list<array{text: string, icon: string, active: bool}>
+ * @return list<array{text: string, icon: string, color: string, active: bool}>
  */
 function egnitech_one_get_trust_badges( int $product_id ): array {
 	if ( metadata_exists( 'post', $product_id, EGNITECH_ONE_TRUST_BADGES_META ) ) {
@@ -231,6 +277,7 @@ function egnitech_one_get_trust_badges( int $product_id ): array {
 		$badges[] = array(
 			'text'   => empty( $text ) ? $default['text'] : (string) $text,
 			'icon'   => '' === egnitech_one_trust_badge_icon_svg( $icon ) ? $default['icon'] : $icon,
+			'color'  => '',
 			'active' => 'no' !== get_post_meta( $product_id, "_egnitech_trust_badge_{$row}_active", true ),
 		);
 	}
@@ -241,10 +288,12 @@ function egnitech_one_get_trust_badges( int $product_id ): array {
  * The product page's badge strip: the switched-on badges in order, or '' when there are none.
  */
 function egnitech_one_render_trust_badges( int $product_id ): string {
+	$colors = egnitech_one_trust_badge_colors();
 	$badges = '';
-	foreach ( egnitech_one_get_trust_badges( $product_id ) as $badge ) {
+	foreach ( egnitech_one_get_trust_badges( $product_id ) as $position => $badge ) {
 		if ( $badge['active'] ) {
-			$badges .= '<div class="egnitech-trust-badge">' . egnitech_one_trust_badge_icon_svg( $badge['icon'] ) . '<span class="badge-text">' . esc_html( $badge['text'] ) . '</span></div>';
+			$hex     = $colors[ egnitech_one_trust_badge_color( $badge['color'], $position ) ]['hex'];
+			$badges .= '<div class="egnitech-trust-badge" style="--egnitech-badge-color: ' . esc_attr( $hex ) . '">' . egnitech_one_trust_badge_icon_svg( $badge['icon'] ) . '<span class="badge-text">' . esc_html( $badge['text'] ) . '</span></div>';
 		}
 	}
 

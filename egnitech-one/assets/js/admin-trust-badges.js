@@ -1,6 +1,9 @@
 /**
- * Product Trust Badges meta box (product edit screen): add, remove and reorder badges, and
- * choose each badge's icon from one shared dialog.
+ * Product Trust Badges meta box (product edit screen): add, remove and reorder badges, choose
+ * each badge's icon and colour from shared dialogs, and randomise or unify all colours.
+ *
+ * Random colours are picked here, once, and saved. The product page never picks one: it is
+ * cached whole, so a colour picked there would freeze into the cache and change on each purge.
  *
  * The rows are ordinary fields of the product form, named egnitech_trust_badges[n][…]. The
  * form posts them in on-screen order, which is the order the product page shows. A new row is
@@ -20,10 +23,14 @@
 	const search = dialog.querySelector( '.egnitech-icon-dialog__search' );
 	const noMatch = dialog.querySelector( '.egnitech-icon-dialog__none' );
 	const icons = [ ...dialog.querySelectorAll( '.egnitech-icon-dialog__icon' ) ];
+	const colorDialog = box.querySelector( '.egnitech-color-dialog' );
+	const swatches = [ ...colorDialog.querySelectorAll( '.egnitech-color-dialog__swatch' ) ];
+	const allColor = box.querySelector( '.egnitech-trust-badges__all-color' );
 	const limit = Number( box.dataset.limit );
 	const i18n = JSON.parse( box.dataset.i18n );
 	let nextIndex = Number( box.dataset.nextIndex );
 	let editing = null; // The row whose icon the dialog is choosing.
+	let coloring = null; // The row whose colour the colour dialog is choosing.
 	let dragged = null;
 
 	const rows = () => [ ...list.children ];
@@ -54,6 +61,35 @@
 		announcePosition( row );
 	};
 
+	const colorOf = ( row ) => row.querySelector( 'input[name$="[color]"]' ).value;
+
+	// Stores a colour on a row and shows it on the row's colour button.
+	const setColor = ( row, color ) => {
+		const swatch = swatches.find( ( item ) => item.dataset.color === color );
+		const button = row.querySelector( '[data-action="color"]' );
+		row.querySelector( 'input[name$="[color]"]' ).value = color;
+		button.style.setProperty( '--egnitech-badge-color', swatch.style.getPropertyValue( '--egnitech-badge-color' ) );
+		button.setAttribute( 'aria-label', fill( i18n.changeColor, swatch.textContent.trim() ) );
+	};
+
+	// The palette in random order (Fisher–Yates).
+	const shuffled = () => {
+		const colors = swatches.map( ( swatch ) => swatch.dataset.color );
+		for ( let i = colors.length - 1; i > 0; i-- ) {
+			const j = Math.floor( Math.random() * ( i + 1 ) );
+			[ colors[ i ], colors[ j ] ] = [ colors[ j ], colors[ i ] ];
+		}
+		return colors;
+	};
+
+	// A new badge's colour: one no other badge uses, or failing that, not the last badge's.
+	const newColor = () => {
+		const used = rows().map( colorOf );
+		const last = used.at( -1 );
+		const colors = shuffled();
+		return colors.find( ( color ) => ! used.includes( color ) ) || colors.find( ( color ) => color !== last );
+	};
+
 	const filterIcons = () => {
 		const query = search.value.trim().toLowerCase();
 		let matches = 0;
@@ -71,7 +107,7 @@
 
 	const openDialog = ( row ) => {
 		editing = row;
-		const current = row.querySelector( 'input[type="hidden"]' ).value;
+		const current = row.querySelector( 'input[name$="[icon]"]' ).value;
 		icons.forEach( ( icon ) => icon.setAttribute( 'aria-pressed', String( icon.dataset.icon === current ) ) );
 		search.value = '';
 		filterIcons();
@@ -81,7 +117,7 @@
 
 	const chooseIcon = ( icon ) => {
 		const button = editing.querySelector( '[data-action="icon"]' );
-		editing.querySelector( 'input[type="hidden"]' ).value = icon.dataset.icon;
+		editing.querySelector( 'input[name$="[icon]"]' ).value = icon.dataset.icon;
 		button.querySelector( '.egnitech-trust-badge-item__svg' ).replaceChildren( icon.querySelector( 'svg' ).cloneNode( true ) );
 		button.setAttribute( 'aria-label', fill( i18n.changeIcon, icon.getAttribute( 'aria-label' ) ) );
 		dialog.close();
@@ -96,6 +132,7 @@
 			field.name = field.name.replace( '__INDEX__', String( nextIndex ) );
 		} );
 		nextIndex++;
+		setColor( row, newColor() );
 		list.append( row );
 		refresh();
 		row.querySelector( '.egnitech-trust-badge-item__text' ).focus();
@@ -111,6 +148,11 @@
 
 		if ( 'icon' === button.dataset.action ) {
 			openDialog( row );
+		} else if ( 'color' === button.dataset.action ) {
+			coloring = row;
+			swatches.forEach( ( swatch ) => swatch.setAttribute( 'aria-pressed', String( swatch.dataset.color === colorOf( row ) ) ) );
+			colorDialog.showModal();
+			( swatches.find( ( swatch ) => 'true' === swatch.getAttribute( 'aria-pressed' ) ) || swatches[ 0 ] ).focus();
 		} else if ( 'up' === button.dataset.action ) {
 			list.insertBefore( row, row.previousElementSibling );
 			afterMove( row, button );
@@ -195,6 +237,40 @@
 	dialog.addEventListener( 'close', () => {
 		editing?.querySelector( '[data-action="icon"]' ).focus();
 		editing = null;
+	} );
+
+	colorDialog.addEventListener( 'click', ( event ) => {
+		const swatch = event.target.closest( '.egnitech-color-dialog__swatch' );
+		if ( swatch ) {
+			setColor( coloring, swatch.dataset.color );
+			colorDialog.close();
+		} else if ( event.target === colorDialog || event.target.closest( '[data-action="close"]' ) ) {
+			colorDialog.close(); // The backdrop, or the close button.
+		}
+	} );
+
+	colorDialog.addEventListener( 'close', () => {
+		coloring?.querySelector( '[data-action="color"]' ).focus();
+		coloring = null;
+	} );
+
+	// With at most as many badges as colours, a shuffled palette gives every badge its own.
+	box.querySelector( '.egnitech-trust-badges__random' ).addEventListener( 'click', () => {
+		let colors = [];
+		rows().forEach( ( row ) => {
+			colors = colors.length ? colors : shuffled();
+			setColor( row, colors.pop() );
+		} );
+		announce( i18n.randomised );
+	} );
+
+	allColor.addEventListener( 'change', () => {
+		if ( ! allColor.value ) {
+			return;
+		}
+		rows().forEach( ( row ) => setColor( row, allColor.value ) );
+		announce( fill( i18n.allColor, allColor.selectedOptions[ 0 ].textContent.trim() ) );
+		allColor.value = '';
 	} );
 
 	search.addEventListener( 'input', filterIcons );

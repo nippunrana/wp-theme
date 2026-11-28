@@ -35,7 +35,7 @@ Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/
 
 ## Trust badges
 
-- **Each product has an ordered list of up to 10 badges**, each with text, an icon and an on/off switch, edited in its Product Trust Badges box: add, remove, reorder (owner's request, 24 Nov 2026). It is one meta value, `_egnitech_trust_badges`. With none switched on the shortcode prints nothing, not an empty strip.
+- **Each product has an ordered list of up to 10 badges**, each with text, an icon, a colour and an on/off switch, edited in its Product Trust Badges box: add, remove, reorder (owner's request, 24 Nov 2026; colour added 28 Nov 2026). It is one meta value, `_egnitech_trust_badges`. With none switched on the shortcode prints nothing, not an empty strip.
 - **Every write is cleaned by the meta's sanitize callback** (`register_post_meta()` in `inc/woocommerce-trust-badges.php`): badges without text are dropped, an icon that is not offered becomes the tick, and the list is cut to 10. The save handler passes the posted list through unchanged. **Never** clean it only in the save handler or the script: other write paths (WP-CLI, imports) would skip it.
 - **No stored list and an empty stored list mean different things.** No list: the product was never saved since the list existed, so it shows its three old fixed rows, read from their old keys (`_egnitech_trust_badge_{1,2,3}` with `_icon` and `_active`) and the old fallbacks. Empty list: the badges were removed on purpose, so none show.
   - **Never** delete the key when the list is empty, or the three defaults come back.
@@ -46,6 +46,10 @@ Code: `templates/single-product.html`, `patterns/single-product.php`, `patterns/
   - **zap, shield and lock are the Feather drawings the badges first shipped with.** The rest are Lucide. **Never** swap those three for Lucide's redrawn versions: every product still on its defaults would change.
   - **Core icons are solid and drawn smaller inside their square**, so `.trust-icon--solid` fills and enlarges them on the page and in the picker.
   - **Only the `core/` collection is offered.** In WordPress 7.0 the registry cannot take new icons; `wp_register_icon()` is 7.1-only, so the theme's icons live in its own file.
+- **Badge colours come from one fixed palette, with fixed near-black text and icons in light and dark mode alike** (owner's decision, 28 Nov 2026). The point is that the badges stand out from the theme, so **never** add the Accent or a theme preset to the palette, and **never** add a text-colour setting. A colour joins the palette only if it reaches 7:1 contrast with `#111`; a dark colour would need its own text colour in the palette, not a setting.
+- **Random colours are picked in the editor and saved, never when the page is drawn.** The page is cached whole, so a colour picked at render would freeze into the cache and change on every purge. Randomise gives each badge a different colour; a new badge takes one no other badge uses.
+- **A badge with no stored colour takes the palette colour at its position** (switched-off badges counted), so products never saved since colours existed still get distinct colours. The editor shows that colour and stores it on the next save. The sanitize callback runs on every read, so it empties an unknown colour and **never** picks a random one.
+- **Pages cached before colours existed show every badge in the CSS fallback colour** until the page cache is cleared.
 - **The editor is plain JavaScript and native HTML** (owner's choice, 24 Nov 2026, over WordPress's React components, which would break the theme's vanilla-JS rule). It sits inside the product form, so:
   - every button is `type="button"`, there is no nested `<form>`, and Enter in the icon search picks an icon instead of saving the product;
   - the row `<template>` holds no `id`s, and each new row gets an index no other row uses. The form posts rows in on-screen order, which is the page's order.
