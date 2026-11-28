@@ -150,6 +150,7 @@ if ( ! function_exists( 'egnitech_one_prime_options' ) ) {
 				'egnitech_one_woocommerce_add_to_cart_button',
 				'egnitech_one_woocommerce_buy_now',
 				'egnitech_one_woocommerce_buy_now_behaviour',
+				'egnitech_one_woocommerce_trust_badge_style',
 				'egnitech_one_turnstile_enabled',
 				'egnitech_one_turnstile_site_key',
 				'egnitech_one_turnstile_secret_key',

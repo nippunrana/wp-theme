@@ -41,6 +41,13 @@ const EGNITECH_ONE_TRUST_BADGE_ICON = 'circle-check';
 /** Product meta holding the badge list. */
 const EGNITECH_ONE_TRUST_BADGES_META = '_egnitech_trust_badges';
 
+/** Theme Options setting holding the site-wide badge style, and the style used until it is saved. */
+const EGNITECH_ONE_TRUST_BADGE_STYLE_OPTION = 'egnitech_one_woocommerce_trust_badge_style';
+const EGNITECH_ONE_TRUST_BADGE_STYLE        = 'soft';
+
+/** Product meta holding a product's own badge style; empty means the site's. */
+const EGNITECH_ONE_TRUST_BADGE_STYLE_META = '_egnitech_trust_badge_style';
+
 /**
  * The three fixed rows products had before the badge list, and what each showed when its
  * fields were left empty. Used only for products whose badge list was never saved.
@@ -127,6 +134,55 @@ function egnitech_one_trust_badge_colors(): array {
 		'leaf'      => array( 'label' => __( 'Leaf', 'egnitech-one' ), 'hex' => '#69DB7C' ),
 	);
 }
+
+/**
+ * The badge finishes offered in Theme Options. Each is a class on the badge strip, styled in
+ * patterns/single-product-details/style.css.
+ *
+ * @return array<string, string> Style name => label.
+ */
+function egnitech_one_trust_badge_styles(): array {
+	return array(
+		'soft'    => __( 'Soft: pale pill, coloured icon disc', 'egnitech-one' ),
+		'glossy'  => __( 'Glossy: full colour with depth', 'egnitech-one' ),
+		'duotone' => __( 'Duotone: two-colour gradient', 'egnitech-one' ),
+	);
+}
+
+/**
+ * The site's badge style: the saved one, or the default when it is unset or not offered.
+ */
+function egnitech_one_site_trust_badge_style(): string {
+	$style = egnitech_one_get_option( EGNITECH_ONE_TRUST_BADGE_STYLE_OPTION, EGNITECH_ONE_TRUST_BADGE_STYLE );
+	return is_string( $style ) && isset( egnitech_one_trust_badge_styles()[ $style ] ) ? $style : EGNITECH_ONE_TRUST_BADGE_STYLE;
+}
+
+/**
+ * Cleans a product's own badge style (the meta's sanitize callback): a style that is not
+ * offered becomes '', which means the site's style.
+ */
+function egnitech_one_sanitize_product_trust_badge_style( mixed $style ): string {
+	return is_string( $style ) && isset( egnitech_one_trust_badge_styles()[ $style ] ) ? $style : '';
+}
+
+/**
+ * The style a product's badges are drawn in: its own, or the site's when it has none.
+ */
+function egnitech_one_trust_badge_style( int $product_id ): string {
+	$style = egnitech_one_sanitize_product_trust_badge_style( get_post_meta( $product_id, EGNITECH_ONE_TRUST_BADGE_STYLE_META, true ) );
+	return '' === $style ? egnitech_one_site_trust_badge_style() : $style;
+}
+
+/**
+ * Cached product pages carry the badge style, so clear them when it changes.
+ */
+function egnitech_one_purge_cache_on_trust_badge_style_change(): void {
+	if ( function_exists( 'egnitech_one_purge_all_site_cache' ) ) {
+		egnitech_one_purge_all_site_cache();
+	}
+}
+add_action( 'update_option_' . EGNITECH_ONE_TRUST_BADGE_STYLE_OPTION, 'egnitech_one_purge_cache_on_trust_badge_style_change' );
+add_action( 'add_option_' . EGNITECH_ONE_TRUST_BADGE_STYLE_OPTION, 'egnitech_one_purge_cache_on_trust_badge_style_change' );
 
 /**
  * A badge's colour name: its own, or, when it has none, the palette colour at its position
@@ -253,6 +309,15 @@ function egnitech_one_register_trust_badges_meta(): void {
 			'sanitize_callback' => 'egnitech_one_sanitize_trust_badges',
 		)
 	);
+	register_post_meta(
+		'product',
+		EGNITECH_ONE_TRUST_BADGE_STYLE_META,
+		array(
+			'type'              => 'string',
+			'single'            => true,
+			'sanitize_callback' => 'egnitech_one_sanitize_product_trust_badge_style',
+		)
+	);
 }
 add_action( 'init', 'egnitech_one_register_trust_badges_meta' );
 
@@ -297,5 +362,5 @@ function egnitech_one_render_trust_badges( int $product_id ): string {
 		}
 	}
 
-	return '' === $badges ? '' : '<div class="egnitech-product-trust-badges">' . $badges . '</div>';
+	return '' === $badges ? '' : '<div class="egnitech-product-trust-badges egnitech-trust-badges--' . esc_attr( egnitech_one_trust_badge_style( $product_id ) ) . '">' . $badges . '</div>';
 }

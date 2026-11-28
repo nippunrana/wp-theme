@@ -5,7 +5,8 @@
 	margin: 4px 0 12px;
 }
 
-/* Randomise colours and One colour for all, above the rows. Nothing to colour with no rows. */
+/* Randomise colours, One colour for all and the product's badge style, above the rows.
+   Hidden with no rows; the style is still posted. */
 .egnitech-trust-badges__colors {
 	display: flex;
 	flex-wrap: wrap;
@@ -26,6 +27,13 @@
 
 .wp-core-ui .egnitech-trust-badges .egnitech-trust-badges__random .dashicons {
 	line-height: 1;
+}
+
+.egnitech-trust-badges__style {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-left: auto;
 }
 
 /* Badge rows. */
@@ -347,7 +355,7 @@
 	text-align: center;
 }
 
-/* Colour dialog: each choice drawn as the pill it makes, with the page's fixed near-black text. */
+/* Colour dialog: each choice drawn as a plain pill in its colour, with the page's fixed near-black text. */
 .egnitech-color-dialog__grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));

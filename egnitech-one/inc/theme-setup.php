@@ -329,6 +329,10 @@ if ( ! function_exists( 'egnitech_one_save_product_trust_badges' ) ) {
 		// capped by egnitech_one_sanitize_trust_badges(), registered with the meta.
 		$badges = isset( $_POST['egnitech_trust_badges'] ) && is_array( $_POST['egnitech_trust_badges'] ) ? array_values( $_POST['egnitech_trust_badges'] ) : array();
 		update_post_meta( $post_id, EGNITECH_ONE_TRUST_BADGES_META, $badges );
+
+		// The product's own badge style; '' (Site default) and anything not offered mean the
+		// site's style. Cleaned by egnitech_one_sanitize_product_trust_badge_style().
+		update_post_meta( $post_id, EGNITECH_ONE_TRUST_BADGE_STYLE_META, $_POST['egnitech_trust_badge_style'] ?? '' );
 	}
 }
 add_action( 'save_post_product', 'egnitech_one_save_product_trust_badges' );

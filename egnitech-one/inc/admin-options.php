@@ -500,6 +500,11 @@ register_setting( 'egnitech_one_options', 'egnitech_one_woocommerce_buy_now_beha
 'default'           => 'checkout',
 'sanitize_callback' => 'egnitech_one_sanitize_buy_now_behaviour',
 ] );
+register_setting( 'egnitech_one_options', EGNITECH_ONE_TRUST_BADGE_STYLE_OPTION, [
+'type'              => 'string',
+'default'           => EGNITECH_ONE_TRUST_BADGE_STYLE,
+'sanitize_callback' => 'egnitech_one_sanitize_trust_badge_style',
+] );
 }
 
 /* ----- FastCGI Cache ----- */
@@ -598,6 +603,13 @@ return in_array( $input, $valid, true ) ? (string) $input : 'none';
 function egnitech_one_sanitize_buy_now_behaviour( mixed $input ): string {
 $valid = array( 'checkout', 'cart' );
 return in_array( $input, $valid, true ) ? (string) $input : 'checkout';
+}
+
+/**
+ * Sanitize the trust badge style option.
+ */
+function egnitech_one_sanitize_trust_badge_style( mixed $input ): string {
+return is_string( $input ) && isset( egnitech_one_trust_badge_styles()[ $input ] ) ? $input : EGNITECH_ONE_TRUST_BADGE_STYLE;
 }
 
 /**
@@ -774,6 +786,7 @@ $gallery_layout        = get_option( 'egnitech_one_woocommerce_gallery_layout', 
 $add_to_cart_button    = get_option( 'egnitech_one_woocommerce_add_to_cart_button', 'yes' );
 $buy_now               = get_option( 'egnitech_one_woocommerce_buy_now', '' );
 $buy_now_behaviour     = get_option( 'egnitech_one_woocommerce_buy_now_behaviour', 'checkout' );
+$trust_badge_style     = get_option( EGNITECH_ONE_TRUST_BADGE_STYLE_OPTION, EGNITECH_ONE_TRUST_BADGE_STYLE );
 
 
 // SMTP options.
@@ -1493,6 +1506,30 @@ esc_html_e( 'Customize the "Built by EgniTech" text. HTML allowed.', 'egnitech-o
 						<option value="checkout" <?php selected( 'checkout', $buy_now_behaviour ); ?>><?php esc_html_e( 'Go to checkout', 'egnitech-one' ); ?></option>
 						<option value="cart" <?php selected( 'cart', $buy_now_behaviour ); ?>><?php esc_html_e( 'Open the cart drawer', 'egnitech-one' ); ?></option>
 					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="egnitech-card">
+		<div class="egnitech-card-header">
+			<h2 class="egnitech-card-title"><?php esc_html_e( 'Trust Badges', 'egnitech-one' ); ?></h2>
+			<p class="egnitech-card-desc"><?php esc_html_e( 'How the badges under the Buy Now button look on every product. Each badge keeps the colour chosen for it in the product editor. Saving a change clears the page cache, so visitors see it straight away.', 'egnitech-one' ); ?></p>
+		</div>
+		<div class="egnitech-card-body">
+			<div class="egnitech-option-row">
+				<div class="egnitech-option-info">
+					<label><?php esc_html_e( 'Badge Style', 'egnitech-one' ); ?></label>
+				</div>
+				<div class="egnitech-option-control">
+					<div class="egnitech-radio-group">
+						<?php foreach ( egnitech_one_trust_badge_styles() as $style => $style_label ) : ?>
+							<label class="egnitech-radio-label">
+								<input type="radio" name="<?php echo esc_attr( EGNITECH_ONE_TRUST_BADGE_STYLE_OPTION ); ?>" value="<?php echo esc_attr( $style ); ?>" <?php checked( $style, $trust_badge_style ); ?> />
+								<span class="egnitech-radio-btn"><?php echo esc_html( $style_label ); ?></span>
+							</label>
+						<?php endforeach; ?>
+					</div>
 				</div>
 			</div>
 		</div>

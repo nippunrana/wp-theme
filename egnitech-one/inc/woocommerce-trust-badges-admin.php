@@ -74,6 +74,20 @@ function egnitech_one_render_trust_badges_box( \WP_Post $post ): void {
 					<option value="<?php echo esc_attr( $color ); ?>"><?php echo esc_html( $details['label'] ); ?></option>
 				<?php endforeach; ?>
 			</select>
+			<?php
+			$site_style    = egnitech_one_trust_badge_styles()[ egnitech_one_site_trust_badge_style() ];
+			$product_style = egnitech_one_sanitize_product_trust_badge_style( get_post_meta( $post->ID, EGNITECH_ONE_TRUST_BADGE_STYLE_META, true ) );
+			?>
+			<label class="egnitech-trust-badges__style">
+				<?php esc_html_e( 'Style:', 'egnitech-one' ); ?>
+				<select name="egnitech_trust_badge_style">
+					<?php /* translators: %s: the site's badge style, set in Theme Options. */ ?>
+					<option value=""><?php echo esc_html( sprintf( __( 'Site default (%s)', 'egnitech-one' ), $site_style ) ); ?></option>
+					<?php foreach ( egnitech_one_trust_badge_styles() as $style => $style_label ) : ?>
+						<option value="<?php echo esc_attr( $style ); ?>" <?php selected( $style, $product_style ); ?>><?php echo esc_html( $style_label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</label>
 		</div>
 
 		<ul class="egnitech-trust-badges__list">
@@ -208,8 +222,8 @@ function egnitech_one_render_trust_badge_icon_dialog(): void {
 }
 
 /**
- * Prints the colour dialog all rows share. Each choice is drawn as the pill it makes:
- * the colour with the page's fixed near-black text.
+ * Prints the colour dialog all rows share. Each choice is drawn as a plain pill in its colour
+ * with the page's fixed near-black text; the site's badge style adds the finish on the page.
  */
 function egnitech_one_render_trust_badge_color_dialog(): void {
 	?>
