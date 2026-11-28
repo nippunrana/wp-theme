@@ -494,6 +494,67 @@ textarea.egnitech-textarea {
     box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.15);
 }
 
+/* Trust badge style cards: each previews sample pills in its style. The pills come from the
+   product page's patterns/single-product-details/style.css, loaded on this screen too. */
+.egnitech-badge-style-group {
+    display: grid;
+    gap: var(--egnitech-spacing-md);
+}
+
+.egnitech-badge-style {
+    position: relative;
+    cursor: pointer;
+}
+
+.egnitech-badge-style input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.egnitech-badge-style__card {
+    display: grid;
+    gap: 2px;
+    padding: 12px;
+    border: 2px solid var(--egnitech-border);
+    border-radius: var(--egnitech-radius-sm);
+    background: #fff;
+    transition: border-color 0.2s;
+}
+
+.egnitech-badge-style:hover .egnitech-badge-style__card {
+    border-color: #d1d5db;
+}
+
+.egnitech-badge-style input[type="radio"]:checked+.egnitech-badge-style__card {
+    border-color: var(--egnitech-primary);
+}
+
+.egnitech-badge-style input[type="radio"]:focus-visible+.egnitech-badge-style__card {
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.15);
+}
+
+.egnitech-badge-style__name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--egnitech-text-main);
+}
+
+.egnitech-badge-style__description {
+    font-size: 13px;
+    color: var(--egnitech-text-muted);
+}
+
+/* A light ground like the product page's, so the pills' shadows show. */
+.egnitech-badge-style__preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+    padding: 14px 12px;
+    border-radius: 6px;
+    background: #f8f9fc;
+}
+
 /* Custom Checkboxes */
 .egnitech-checkbox-list {
     display: flex;

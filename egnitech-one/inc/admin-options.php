@@ -787,6 +787,11 @@ $add_to_cart_button    = get_option( 'egnitech_one_woocommerce_add_to_cart_butto
 $buy_now               = get_option( 'egnitech_one_woocommerce_buy_now', '' );
 $buy_now_behaviour     = get_option( 'egnitech_one_woocommerce_buy_now_behaviour', 'checkout' );
 $trust_badge_style     = get_option( EGNITECH_ONE_TRUST_BADGE_STYLE_OPTION, EGNITECH_ONE_TRUST_BADGE_STYLE );
+// Sample pills for the style previews: the default badges in the first palette colours.
+$trust_badge_samples   = '';
+foreach ( array_values( egnitech_one_trust_badge_defaults() ) as $position => $badge ) {
+	$trust_badge_samples .= egnitech_one_trust_badge_pill( $badge['icon'], $badge['text'], egnitech_one_trust_badge_colors()[ egnitech_one_trust_badge_color( '', $position ) ]['hex'] );
+}
 
 
 // SMTP options.
@@ -1522,12 +1527,16 @@ esc_html_e( 'Customize the "Built by EgniTech" text. HTML allowed.', 'egnitech-o
 					<label><?php esc_html_e( 'Badge Style', 'egnitech-one' ); ?></label>
 				</div>
 				<div class="egnitech-option-control">
-					<div class="egnitech-radio-group">
+					<div class="egnitech-badge-style-group">
 						<?php foreach ( egnitech_one_trust_badge_styles() as $style => $style_details ) : ?>
-							<label class="egnitech-radio-label">
+							<label class="egnitech-badge-style">
 								<input type="radio" name="<?php echo esc_attr( EGNITECH_ONE_TRUST_BADGE_STYLE_OPTION ); ?>" value="<?php echo esc_attr( $style ); ?>" <?php checked( $style, $trust_badge_style ); ?> />
-								<?php /* translators: 1: style name, 2: its description. */ ?>
-								<span class="egnitech-radio-btn"><?php echo esc_html( sprintf( __( '%1$s: %2$s', 'egnitech-one' ), $style_details['label'], $style_details['description'] ) ); ?></span>
+								<span class="egnitech-badge-style__card">
+									<span class="egnitech-badge-style__name"><?php echo esc_html( $style_details['label'] ); ?></span>
+									<span class="egnitech-badge-style__description"><?php echo esc_html( $style_details['description'] ); ?></span>
+									<?php // The pills are drawn by the product page's stylesheet, loaded on this screen (inc/enqueue-assets.php). ?>
+									<span class="egnitech-badge-style__preview egnitech-trust-badges--<?php echo esc_attr( $style ); ?>" aria-hidden="true"><?php echo $trust_badge_samples; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts. ?></span>
+								</span>
 							</label>
 						<?php endforeach; ?>
 					</div>

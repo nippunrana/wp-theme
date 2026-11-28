@@ -350,6 +350,13 @@ function egnitech_one_get_trust_badges( int $product_id ): array {
 }
 
 /**
+ * One badge pill. A span, so the Theme Options style previews can sit inside their radio labels.
+ */
+function egnitech_one_trust_badge_pill( string $icon, string $text, string $hex ): string {
+	return '<span class="egnitech-trust-badge" style="--egnitech-badge-color: ' . esc_attr( $hex ) . '">' . egnitech_one_trust_badge_icon_svg( $icon ) . '<span class="badge-text">' . esc_html( $text ) . '</span></span>';
+}
+
+/**
  * The product page's badge strip: the switched-on badges in order, or '' when there are none.
  */
 function egnitech_one_render_trust_badges( int $product_id ): string {
@@ -357,8 +364,7 @@ function egnitech_one_render_trust_badges( int $product_id ): string {
 	$badges = '';
 	foreach ( egnitech_one_get_trust_badges( $product_id ) as $position => $badge ) {
 		if ( $badge['active'] ) {
-			$hex     = $colors[ egnitech_one_trust_badge_color( $badge['color'], $position ) ]['hex'];
-			$badges .= '<div class="egnitech-trust-badge" style="--egnitech-badge-color: ' . esc_attr( $hex ) . '">' . egnitech_one_trust_badge_icon_svg( $badge['icon'] ) . '<span class="badge-text">' . esc_html( $badge['text'] ) . '</span></div>';
+			$badges .= egnitech_one_trust_badge_pill( $badge['icon'], $badge['text'], $colors[ egnitech_one_trust_badge_color( $badge['color'], $position ) ]['hex'] );
 		}
 	}
 

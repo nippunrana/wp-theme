@@ -306,6 +306,11 @@ if ( ! function_exists( 'egnitech_one_admin_scripts' ) ) {
 			$admin_css_ver
 		);
 
+		// The product page's stylesheet draws the Trust Badges style previews (inc/theme-setup.php).
+		if ( class_exists( 'WooCommerce' ) ) {
+			wp_enqueue_style( 'egnitech-one-single-product-details' );
+		}
+
 		$admin_js_ver = egnitech_one_asset_version( get_theme_file_path( 'assets/js/admin-options.js' ) );
 		wp_enqueue_script(
 			'egnitech-one-admin',
