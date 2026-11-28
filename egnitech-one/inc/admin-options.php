@@ -1523,10 +1523,11 @@ esc_html_e( 'Customize the "Built by EgniTech" text. HTML allowed.', 'egnitech-o
 				</div>
 				<div class="egnitech-option-control">
 					<div class="egnitech-radio-group">
-						<?php foreach ( egnitech_one_trust_badge_styles() as $style => $style_label ) : ?>
+						<?php foreach ( egnitech_one_trust_badge_styles() as $style => $style_details ) : ?>
 							<label class="egnitech-radio-label">
 								<input type="radio" name="<?php echo esc_attr( EGNITECH_ONE_TRUST_BADGE_STYLE_OPTION ); ?>" value="<?php echo esc_attr( $style ); ?>" <?php checked( $style, $trust_badge_style ); ?> />
-								<span class="egnitech-radio-btn"><?php echo esc_html( $style_label ); ?></span>
+								<?php /* translators: 1: style name, 2: its description. */ ?>
+								<span class="egnitech-radio-btn"><?php echo esc_html( sprintf( __( '%1$s: %2$s', 'egnitech-one' ), $style_details['label'], $style_details['description'] ) ); ?></span>
 							</label>
 						<?php endforeach; ?>
 					</div>

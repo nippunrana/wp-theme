@@ -29,11 +29,19 @@
 	line-height: 1;
 }
 
-.egnitech-trust-badges__style {
+.wp-core-ui .egnitech-trust-badges .egnitech-trust-badges__style {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
+	gap: 4px;
 	margin-left: auto;
+}
+
+.wp-core-ui .egnitech-trust-badges .egnitech-trust-badges__style .dashicons {
+	line-height: 1;
+}
+
+.egnitech-trust-badges__style-name {
+	font-weight: 600;
 }
 
 /* Badge rows. */
@@ -165,6 +173,7 @@
 .egnitech-trust-badge-item__icon:focus-visible,
 .egnitech-trust-badge-item__color:focus-visible,
 .egnitech-color-dialog__swatch:focus-visible,
+.egnitech-style-dialog__option:focus-visible,
 .egnitech-trust-badge-item__tool:focus-visible,
 .egnitech-icon-dialog__close:focus-visible,
 .egnitech-icon-dialog__icon:focus-visible {
@@ -254,9 +263,10 @@
 	color: #646970;
 }
 
-/* Icon and colour dialogs. They open in the browser's top layer, so the meta box cannot clip them. */
+/* Icon, colour and style dialogs. They open in the browser's top layer, so the meta box cannot clip them. */
 .egnitech-icon-dialog,
-.egnitech-color-dialog {
+.egnitech-color-dialog,
+.egnitech-style-dialog {
 	width: min(560px, calc(100vw - 32px));
 	max-height: min(600px, calc(100vh - 64px));
 	padding: 0;
@@ -266,7 +276,8 @@
 }
 
 .egnitech-icon-dialog::backdrop,
-.egnitech-color-dialog::backdrop {
+.egnitech-color-dialog::backdrop,
+.egnitech-style-dialog::backdrop {
 	background: rgba(0, 0, 0, 0.35);
 }
 
@@ -380,6 +391,55 @@
 
 .egnitech-color-dialog__swatch[aria-pressed="true"] {
 	border-color: #111;
+}
+
+/* Style dialog: one card per choice, each previewing this product's badges in that style.
+   The pills come from the product page's patterns/single-product-details/style.css, loaded here too. */
+.egnitech-style-dialog__list {
+	display: grid;
+	gap: 8px;
+	padding: 4px 16px 16px;
+}
+
+.egnitech-style-dialog__option {
+	display: grid;
+	gap: 2px;
+	width: 100%;
+	padding: 12px;
+	border: 2px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+	color: #1d2327;
+	text-align: left;
+	cursor: pointer;
+}
+
+.egnitech-style-dialog__option:hover {
+	border-color: #8c8f94;
+}
+
+.egnitech-style-dialog__option[aria-pressed="true"] {
+	border-color: var(--wp-admin-theme-color, #2271b1);
+}
+
+.egnitech-style-dialog__name {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.egnitech-style-dialog__description {
+	color: #646970;
+}
+
+/* A light ground like the product page's, so the pills' shadows show. */
+.egnitech-style-dialog__preview {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 8px;
+	padding: 14px 12px;
+	border-radius: 6px;
+	background: #f8f9fc;
 }
 
 /* WordPress's own icons are solid shapes, drawn smaller inside their square: enlarged to

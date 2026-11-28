@@ -1,6 +1,7 @@
 /**
  * Product Trust Badges meta box (product edit screen): add, remove and reorder badges, choose
- * each badge's icon and colour from shared dialogs, and randomise or unify all colours.
+ * each badge's icon and colour from shared dialogs, randomise or unify all colours, and choose
+ * the product's badge style from a dialog that previews each style with this product's badges.
  *
  * Random colours are picked here, once, and saved. The product page never picks one: it is
  * cached whole, so a colour picked there would freeze into the cache and change on each purge.
@@ -26,6 +27,10 @@
 	const colorDialog = box.querySelector( '.egnitech-color-dialog' );
 	const swatches = [ ...colorDialog.querySelectorAll( '.egnitech-color-dialog__swatch' ) ];
 	const allColor = box.querySelector( '.egnitech-trust-badges__all-color' );
+	const styleDialog = box.querySelector( '.egnitech-style-dialog' );
+	const styleOptions = [ ...styleDialog.querySelectorAll( '.egnitech-style-dialog__option' ) ];
+	const styleField = box.querySelector( 'input[name="egnitech_trust_badge_style"]' );
+	const styleButton = box.querySelector( '.egnitech-trust-badges__style' );
 	const limit = Number( box.dataset.limit );
 	const i18n = JSON.parse( box.dataset.i18n );
 	let nextIndex = Number( box.dataset.nextIndex );
@@ -88,6 +93,31 @@
 		const last = used.at( -1 );
 		const colors = shuffled();
 		return colors.find( ( color ) => ! used.includes( color ) ) || colors.find( ( color ) => color !== last );
+	};
+
+	// A pill as the product page prints it; the preview's style class does the rest.
+	const pill = ( svg, text, color ) => {
+		const badge = document.createElement( 'span' );
+		const label = document.createElement( 'span' );
+		badge.className = 'egnitech-trust-badge';
+		badge.style.setProperty( '--egnitech-badge-color', color );
+		label.className = 'badge-text';
+		label.textContent = text;
+		badge.append( svg.cloneNode( true ), label );
+		return badge;
+	};
+
+	// The first four switched-on badges with text, as they stand in the box, or one sample.
+	const previewPills = () => {
+		const pills = rows()
+			.filter( ( row ) => row.querySelector( '.egnitech-trust-badge-switch input' ).checked && row.querySelector( '.egnitech-trust-badge-item__text' ).value.trim() )
+			.slice( 0, 4 )
+			.map( ( row ) => pill(
+				row.querySelector( '.egnitech-trust-badge-item__svg svg' ),
+				row.querySelector( '.egnitech-trust-badge-item__text' ).value.trim(),
+				row.querySelector( '[data-action="color"]' ).style.getPropertyValue( '--egnitech-badge-color' )
+			) );
+		return pills.length ? pills : [ pill( template.content.querySelector( '.egnitech-trust-badge-item__svg svg' ), i18n.sample, swatches[ 0 ].style.getPropertyValue( '--egnitech-badge-color' ) ) ];
 	};
 
 	const filterIcons = () => {
@@ -253,6 +283,28 @@
 		coloring?.querySelector( '[data-action="color"]' ).focus();
 		coloring = null;
 	} );
+
+	styleButton.addEventListener( 'click', () => {
+		styleOptions.forEach( ( option ) => {
+			option.setAttribute( 'aria-pressed', String( option.dataset.style === styleField.value ) );
+			option.querySelector( '.egnitech-style-dialog__preview' ).replaceChildren( ...previewPills() );
+		} );
+		styleDialog.showModal();
+		styleOptions.find( ( option ) => 'true' === option.getAttribute( 'aria-pressed' ) ).focus();
+	} );
+
+	styleDialog.addEventListener( 'click', ( event ) => {
+		const option = event.target.closest( '.egnitech-style-dialog__option' );
+		if ( option ) {
+			styleField.value = option.dataset.style;
+			styleButton.querySelector( '.egnitech-trust-badges__style-name' ).textContent = option.querySelector( '.egnitech-style-dialog__name' ).textContent;
+			styleDialog.close();
+		} else if ( event.target === styleDialog || event.target.closest( '[data-action="close"]' ) ) {
+			styleDialog.close(); // The backdrop, or the close button.
+		}
+	} );
+
+	styleDialog.addEventListener( 'close', () => styleButton.focus() );
 
 	// With at most as many badges as colours, a shuffled palette gives every badge its own.
 	box.querySelector( '.egnitech-trust-badges__random' ).addEventListener( 'click', () => {

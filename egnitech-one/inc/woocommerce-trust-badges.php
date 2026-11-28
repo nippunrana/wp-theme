@@ -136,16 +136,16 @@ function egnitech_one_trust_badge_colors(): array {
 }
 
 /**
- * The badge finishes offered in Theme Options. Each is a class on the badge strip, styled in
- * patterns/single-product-details/style.css.
+ * The badge styles offered in Theme Options and per product. Each is a class on the badge
+ * strip, styled in patterns/single-product-details/style.css.
  *
- * @return array<string, string> Style name => label.
+ * @return array<string, array{label: string, description: string}>
  */
 function egnitech_one_trust_badge_styles(): array {
 	return array(
-		'soft'    => __( 'Soft: pale pill, coloured icon disc', 'egnitech-one' ),
-		'glossy'  => __( 'Glossy: full colour with depth', 'egnitech-one' ),
-		'duotone' => __( 'Duotone: two-colour gradient', 'egnitech-one' ),
+		'soft'    => array( 'label' => __( 'Soft', 'egnitech-one' ), 'description' => __( 'Pale pill, coloured icon disc', 'egnitech-one' ) ),
+		'glossy'  => array( 'label' => __( 'Glossy', 'egnitech-one' ), 'description' => __( 'Full colour with depth', 'egnitech-one' ) ),
+		'duotone' => array( 'label' => __( 'Duotone', 'egnitech-one' ), 'description' => __( 'Two-colour gradient', 'egnitech-one' ) ),
 	);
 }
 

@@ -55,6 +55,7 @@ function egnitech_one_render_trust_badges_box( \WP_Post $post ): void {
 		'randomised' => __( 'Each badge has a new colour.', 'egnitech-one' ),
 		/* translators: %s: colour name. */
 		'allColor'   => __( 'Every badge is now %s.', 'egnitech-one' ),
+		'sample'     => __( 'Your badge text', 'egnitech-one' ),
 	);
 	?>
 	<div class="egnitech-trust-badges<?php echo 0 === $count ? ' is-empty' : ''; ?>" data-limit="<?php echo (int) EGNITECH_ONE_TRUST_BADGE_LIMIT; ?>" data-next-index="<?php echo (int) $count; ?>" data-i18n="<?php echo esc_attr( (string) wp_json_encode( $i18n ) ); ?>">
@@ -75,19 +76,15 @@ function egnitech_one_render_trust_badges_box( \WP_Post $post ): void {
 				<?php endforeach; ?>
 			</select>
 			<?php
-			$site_style    = egnitech_one_trust_badge_styles()[ egnitech_one_site_trust_badge_style() ];
 			$product_style = egnitech_one_sanitize_product_trust_badge_style( get_post_meta( $post->ID, EGNITECH_ONE_TRUST_BADGE_STYLE_META, true ) );
+			$style_choices = egnitech_one_trust_badge_style_choices();
 			?>
-			<label class="egnitech-trust-badges__style">
+			<input type="hidden" name="egnitech_trust_badge_style" value="<?php echo esc_attr( $product_style ); ?>" />
+			<button type="button" class="button egnitech-trust-badges__style" aria-haspopup="dialog">
 				<?php esc_html_e( 'Style:', 'egnitech-one' ); ?>
-				<select name="egnitech_trust_badge_style">
-					<?php /* translators: %s: the site's badge style, set in Theme Options. */ ?>
-					<option value=""><?php echo esc_html( sprintf( __( 'Site default (%s)', 'egnitech-one' ), $site_style ) ); ?></option>
-					<?php foreach ( egnitech_one_trust_badge_styles() as $style => $style_label ) : ?>
-						<option value="<?php echo esc_attr( $style ); ?>" <?php selected( $style, $product_style ); ?>><?php echo esc_html( $style_label ); ?></option>
-					<?php endforeach; ?>
-				</select>
-			</label>
+				<span class="egnitech-trust-badges__style-name"><?php echo esc_html( $style_choices[ $product_style ]['label'] ); ?></span>
+				<span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
+			</button>
 		</div>
 
 		<ul class="egnitech-trust-badges__list">
@@ -128,6 +125,7 @@ function egnitech_one_render_trust_badges_box( \WP_Post $post ): void {
 
 		<?php egnitech_one_render_trust_badge_icon_dialog(); ?>
 		<?php egnitech_one_render_trust_badge_color_dialog(); ?>
+		<?php egnitech_one_render_trust_badge_style_dialog(); ?>
 	</div>
 	<?php
 }
@@ -238,6 +236,57 @@ function egnitech_one_render_trust_badge_color_dialog(): void {
 		<div class="egnitech-color-dialog__grid">
 			<?php foreach ( egnitech_one_trust_badge_colors() as $color => $details ) : ?>
 				<button type="button" class="egnitech-color-dialog__swatch" data-color="<?php echo esc_attr( $color ); ?>" style="--egnitech-badge-color: <?php echo esc_attr( $details['hex'] ); ?>"><?php echo esc_html( $details['label'] ); ?></button>
+			<?php endforeach; ?>
+		</div>
+	</dialog>
+	<?php
+}
+
+/**
+ * The choices a product's badge style offers: the site's style first (stored as ''), then
+ * each style. Each choice previews in the style it stands for.
+ *
+ * @return array<string, array{label: string, description: string, style: string}>
+ */
+function egnitech_one_trust_badge_style_choices(): array {
+	$site   = egnitech_one_site_trust_badge_style();
+	$styles = egnitech_one_trust_badge_styles();
+
+	$choices = array(
+		'' => array(
+			/* translators: %s: the site's badge style, set in Theme Options. */
+			'label'       => sprintf( __( 'Site default (%s)', 'egnitech-one' ), $styles[ $site ]['label'] ),
+			'description' => __( 'Follows Theme Options > WooCommerce > Trust Badges.', 'egnitech-one' ),
+			'style'       => $site,
+		),
+	);
+	foreach ( $styles as $style => $details ) {
+		$choices[ $style ] = $details + array( 'style' => $style );
+	}
+	return $choices;
+}
+
+/**
+ * Prints the style dialog: each choice with a preview the script fills from this product's
+ * badges as they stand in the box, saved or not.
+ */
+function egnitech_one_render_trust_badge_style_dialog(): void {
+	?>
+	<dialog class="egnitech-style-dialog" aria-labelledby="egnitech-style-dialog-title">
+		<div class="egnitech-icon-dialog__header">
+			<h2 id="egnitech-style-dialog-title" class="egnitech-icon-dialog__title"><?php esc_html_e( 'Choose a badge style', 'egnitech-one' ); ?></h2>
+			<button type="button" class="egnitech-icon-dialog__close" data-action="close" aria-label="<?php esc_attr_e( 'Close', 'egnitech-one' ); ?>">
+				<span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
+			</button>
+		</div>
+
+		<div class="egnitech-style-dialog__list">
+			<?php foreach ( egnitech_one_trust_badge_style_choices() as $value => $choice ) : ?>
+				<button type="button" class="egnitech-style-dialog__option" data-style="<?php echo esc_attr( (string) $value ); ?>">
+					<span class="egnitech-style-dialog__name"><?php echo esc_html( $choice['label'] ); ?></span>
+					<span class="egnitech-style-dialog__description"><?php echo esc_html( $choice['description'] ); ?></span>
+					<span class="egnitech-style-dialog__preview egnitech-trust-badges--<?php echo esc_attr( $choice['style'] ); ?>" aria-hidden="true"></span>
+				</button>
 			<?php endforeach; ?>
 		</div>
 	</dialog>
